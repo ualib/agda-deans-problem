@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+type: software
+title: "agda-deans-problem: the formal development of a paper on Dean's problem"
+abstract: >-
+  The formal development, in Agda, of the paper "No free lattice contains an
+  infinite ascending chain of copies of FL(3)" by William DeMeo and Ralph
+  Freese, which answers R. A. Dean's question in the negative: no free
+  lattice contains an infinite strictly ascending chain of sublattices, each
+  isomorphic to the free lattice on three generators.  The main theorem is
+  proved for free lattices over generators with decidable equality, by finite
+  searches and induction; the paper says which of its other statements are
+  checked, and in what form.  It builds on the lattice library agda-lattices, pinned at one
+  commit, and the Agda Universal Algebra Library.  Every module is checked
+  under --without-K --exact-split --safe.
+authors:
+  - family-names: "DeMeo"
+    given-names: "William"
+    orcid: "https://orcid.org/0000-0003-1832-5690"
+license: Apache-2.0
+repository-code: "https://github.com/ualib/agda-deans-problem"
+keywords:
+  - Agda
+  - lattice theory
+  - free lattices
+  - Dean's problem
+  - formal verification

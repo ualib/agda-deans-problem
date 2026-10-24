@@ -1,0 +1,3 @@
+name: agda-deans-problem
+depend: standard-library-2.3 agda-algebras agda-lattices
+include: src

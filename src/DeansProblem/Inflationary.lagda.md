@@ -1,0 +1,503 @@
+---
+layout: default
+file: "src/DeansProblem/Inflationary.lagda.md"
+title: "DeansProblem.Inflationary module"
+date: "2026-10-14"
+author: "the agda-lattices development team"
+---
+
+### Inflationary self-embeddings of FL(3), and rigidity for a class
+
+This is the [DeansProblem.Inflationary][] module of the [agda-lattices][] library.
+
+[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+
+A self-embedding `Θ` of `FL(3)` (a freely generating substitution, Corollary
+1.13 of [Freese, Ježek, and Nation (1995)][]) is *inflationary* when `g ≤ Θ g`
+for every generator `g`, hence `w ≤ Θ w` for every element
+(`inflationary-term`{.AgdaFunction}).  The self-embedding of Theorem D of
+[the paper][] (Section 6), `θ₁ : x ↦ x ∨ (y ∧ z), y ↦ y ∨ (x ∧ z), z ↦ z`, is
+one; and a proper self-embedding `Θ` whose fixed sublattice contains a copy of
+`FL(3)` has, up to duality, `Θ` or `Θ²` inflationary (Corollary E1, Section 7,
+[DeansProblem.Shape][]).
+This module proves what such embeddings must look like and when nothing but the
+identity fixes their image pointwise, the *rigidity* that would rule out a
+coherent chain of length three ([DeansProblem.Coherent.Finite][]).
+
++  **A fixed join of two generators**
+   (`fixes-join`{.AgdaFunction}, `fixes-join-third`{.AgdaFunction}).  If
+   `Θ (x ∨ y) = x ∨ y` then `Θ x` and `Θ y` lie below `x ∨ y`, and either
+   `x ≤ Θ x` and `y ≤ Θ y`, or `x ≤ Θ y` and `y ≤ Θ x` (the latter makes `Θ²`
+   inflationary on `x` and `y`); and the third generator satisfies `z ≤ Θ z`,
+   since `Θ z ≤ x ∨ y` would put `Θ (x ∨ y ∨ z)` below `Θ (x ∨ y)` and so
+   `z` below `x ∨ y`.  By the descent of [DeansProblem.Fixed][], every
+   self-embedding with a fixed point of complexity at least two has a power
+   fixing a join or meet of two generators (the descent never ends at the top
+   or bottom element), so every self-embedding with a fixed copy of `FL(3)`
+   has, up to permutation and duality, a power that is inflationary with
+   `x ≤ Θ x ≤ x ∨ y`, `y ≤ Θ y ≤ x ∨ y` and `z ≤ Θ z`.
++  **A fixed generator of a power is fixed**
+   (`power-fixes→fixes`{.AgdaFunction}).  If `Θᵉ⁺¹ g = g` for a proper `Θ`
+   then `Θ g = g`: by Corollary 1.6 the element `Θᵉ g` is a generator `g′`
+   with `Θ g′ = g`, and if `g′ ≠ g` then `Θᵉ⁺¹` fixes two generators, so it is
+   the identity ([DeansProblem.Partition][]) and `Θ` is onto.  So whether a
+   self-embedding fixes a generator is decided by any of its powers.
++  **The fixed points of an inflationary embedding**.  Lemma 9.13 makes the
+   image of a non-generator canonical joinand `c` of a fixed point `w` a
+   canonical joinand of `w` again; it lies above `c`, and the canonical
+   joinands form an antichain, so it is `c`: an inflationary embedding fixes
+   every non-generator node of the canonical tree of each of its fixed points
+   (`fixed-joinand-inflationary`{.AgdaFunction},
+   `fixed-meetand-inflationary`{.AgdaFunction}, `node-fixed`{.AgdaFunction}).
+   A fixed canonical meet with a generator meetand `g` has `Θ g ≤ g`, by
+   Whitman's rule for a meet below a generator, so `Θ g = g`
+   (`meetand-gen-fixed`{.AgdaFunction}); hence a proper inflationary
+   self-embedding of `FL(3)` fixes at most one generator, and no fixed point of
+   one that fixes `z` has a meet node with `x` or `y` as a meetand.  If `Θ`
+   moves every generator, no fixed point lies below a generator
+   (`strict-fixed-not-below`{.AgdaFunction}).
++  **Inflation transfers through a fixed element**
+   (`inflation-transfer`{.AgdaFunction}).  Let `Φ` fix the generator `z` and an
+   element `a` with `x ≤ a` and `y ≰ a`.  Then `x ≤ Φ x`.  The proof reads the
+   filter above `x` as a homomorphism to the two-element lattice: a generator
+   lies below `t [ σ ]` exactly when `t` is satisfied by the valuation
+   `v ↦ (the generator lies below σ v)` (`Sat`{.AgdaFunction},
+   `≤[]→sat`{.AgdaFunction}, `sat→≤[]`{.AgdaFunction}), and `x ≤ a = a [ Φ ]`
+   makes `a` satisfied by `v ↦ x ≤ Φ v`, which holds at `v = z` never and at
+   `v = x` only if `x ≤ Φ x`; were it false there, `a` would be satisfied by
+   `v ↦ v ≡ y`, that is, `y ≤ a`.
++  **Rigidity for a class** (`rigid-fixed`{.AgdaFunction},
+   `rigid-class`{.AgdaFunction}).  Let `Θ₁ = (a, b, z)` be a self-embedding
+   fixing `z` with `x ≤ a`, `y ≰ a`, `y ≤ b`, `x ≰ b` (every inflationary
+   self-embedding fixing `z` is of this form), let `Φ` be a self-embedding
+   fixing `a`, `b` and `z`, hence every element of the sublattice they
+   generate, and suppose the canonical tree of some element `Φ` fixes has a
+   meet node with `x` or `y` among its meetands (`Node`{.AgdaDatatype}).
+   Then `Φ` is the identity: it is inflationary by the transfer, fixes the
+   meet node, hence its generator meetand, hence two generators.  For `θ₁`
+   the node is `y ∧ z`, the meetand of `x ∨ (y ∧ z)`; the worked examples in
+   [DeansProblem.Examples.Rigidity][] apply the theorem to it and to a second
+   member of the class.
+
+<!--
+```agda
+{-# OPTIONS --without-K --exact-split --safe #-}
+
+module DeansProblem.Inflationary where
+
+open import Agda.Primitive  using () renaming ( Set to Type )
+
+-- Imports from the Agda Standard Library ---------------------------------------
+open import Data.Empty                             using ( ⊥ ; ⊥-elim )
+open import Data.Fin.Base                          using ( Fin )
+open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
+open import Data.Fin.Properties                    using ( _≟_ )
+open import Data.List.Base                         using ( List ; [] ; _∷_ ; map )
+open import Data.List.Membership.Propositional     using ( _∈_ ; find )
+open import Data.List.Relation.Unary.Any           using ( here ; there )
+open import Data.List.Relation.Unary.Any.Properties
+                                                   using ( map⁻ )
+open import Data.Nat.Base                          using ( ℕ ; suc )
+open import Data.Product                           using ( _×_ ; _,_ ; proj₁ ; proj₂ )
+open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
+open import Function                               using ( _∘_ )
+open import Level                                  using ( Level )
+open import Relation.Binary.PropositionalEquality  using ( _≡_ ; _≢_ ; refl ; sym ; subst )
+open import Relation.Nullary                       using ( ¬_ )
+open import Relation.Nullary.Decidable.Core        using ( Dec ; yes ; no )
+
+-- Imports from the Agda Universal Algebra Library ------------------------------
+open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ⋀⁺
+                                                         ; ⋀⁺-gen-below )
+open import Lattices.Free.Canonical.Joinands       using ( canonicalJoinands ; canonicalMeetands
+                                                         ; canonicalMeetands-lower )
+open import Lattices.Free.Canonical.Uniqueness     using ( antichain-≤ )
+open import DeansProblem.Chain                     using ( iter ; []-iter-suc ; []-iter-sucʳ )
+open import Lattices.Free.Embedding                using ( canonicalJoinands-antichain
+                                                         ; canonicalMeetands-antichain
+                                                         ; meetand-representation ; meetand₀ ; meetands₊ )
+open import DeansProblem.Fixed                     using ( fixed-joinand ; fixed-meetand ; iter-free )
+open import Lattices.Free.Generation               using ( FreelyGenerates ; freelyGenerates→injective
+                                                         ; generator-in-image )
+open import DeansProblem.Partition                 using ( other ; other' ; cover₃ ; ∉others₃
+                                                         ; module Partition ; fix-two-generators )
+open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-mono ; []-cong ; ⋀⁺-[]
+                                                         ; injective→reflects )
+open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
+open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl ; ≤ʷ-trans ; ∨≤ ; ∨≤-inv ; ℊ≤∧
+                                                         ; ℊ≤ℊ ; ℊ≤ℊ-inv ; ℊ≤∨ˡ ; ℊ≤∨ʳ ; ℊ≤∨-inv
+                                                         ; ≤∧ ; ≤∧-inv ; ∧≤ℊ-inv ; ≤∨ˡ ; ≤∨ʳ ; ∧ˡ≤ ; ∧ʳ≤
+                                                         ; ∨̇-upperˡ ; ∨̇-upperʳ ; module Decision )
+
+private variable
+  ℓ χ υ : Level
+  X : Type χ
+  Y : Type υ
+```
+-->
+
+#### Satisfaction, and the filter above a generator
+
+A valuation of the generators by types satisfies a term as a Boolean formula
+would (`Sat`{.AgdaFunction}): a generator by its value, a join when either
+joinand is satisfied, a meet when both meetands are.  The filter above a
+generator `g` of `FL(Y)`, read through a substitution `σ : Sub X Y`, is the set
+of terms satisfied by `v ↦ ℊ g ≤ʷ σ v` (`≤[]→sat`{.AgdaFunction},
+`sat→≤[]`{.AgdaFunction}): `g` is join prime, and lies below a meet when it
+lies below both meetands.  Satisfaction is monotone in the valuation
+(`sat-mono`{.AgdaFunction}), and no term is satisfied by the empty valuation
+(`sat-empty`{.AgdaFunction}).  The dual (`Satᵈ`{.AgdaFunction}) reads the ideal
+below a generator.
+
+```agda
+-- Boolean satisfaction of a term under a valuation of its generators by types.
+Sat : (X → Type ℓ) → LatTerm X → Type ℓ
+Sat β (ℊ v)    = β v
+Sat β (s ∨̇ t)  = Sat β s ⊎ Sat β t
+Sat β (s ∧̇ t)  = Sat β s × Sat β t
+
+-- A generator below a substituted term: the term is satisfied by "the generator lies below the image".
+≤[]→sat : (g : Y) (σ : Sub X Y) (t : LatTerm X) → ℊ g ≤ʷ t [ σ ] → Sat (λ v → ℊ g ≤ʷ σ v) t
+≤[]→sat g σ (ℊ v)    p = p
+≤[]→sat g σ (s ∨̇ t)  p = [ inj₁ ∘ ≤[]→sat g σ s , inj₂ ∘ ≤[]→sat g σ t ]′ (ℊ≤∨-inv p)
+≤[]→sat g σ (s ∧̇ t)  p = ≤[]→sat g σ s (proj₁ (≤∧-inv p)) , ≤[]→sat g σ t (proj₂ (≤∧-inv p))
+
+-- And conversely.
+sat→≤[] : (g : Y) (σ : Sub X Y) (t : LatTerm X) → Sat (λ v → ℊ g ≤ʷ σ v) t → ℊ g ≤ʷ t [ σ ]
+sat→≤[] g σ (ℊ v)    p         = p
+sat→≤[] g σ (s ∨̇ t)  (inj₁ p)  = ℊ≤∨ˡ (sat→≤[] g σ s p)
+sat→≤[] g σ (s ∨̇ t)  (inj₂ p)  = ℊ≤∨ʳ (sat→≤[] g σ t p)
+sat→≤[] g σ (s ∧̇ t)  (p , q)   = ℊ≤∧ (sat→≤[] g σ s p) (sat→≤[] g σ t q)
+
+-- Satisfaction is monotone in the valuation.
+sat-mono : {β β′ : X → Type ℓ} → (∀ v → β v → β′ v) → (t : LatTerm X) → Sat β t → Sat β′ t
+sat-mono f (ℊ v)    p         = f v p
+sat-mono f (s ∨̇ t)  (inj₁ p)  = inj₁ (sat-mono f s p)
+sat-mono f (s ∨̇ t)  (inj₂ p)  = inj₂ (sat-mono f t p)
+sat-mono f (s ∧̇ t)  (p , q)   = sat-mono f s p , sat-mono f t q
+
+-- No term is satisfied by the empty valuation.
+sat-empty : {β : X → Type ℓ} → (∀ v → β v → ⊥) → (t : LatTerm X) → Sat β t → ⊥
+sat-empty f (ℊ v)    p         = f v p
+sat-empty f (s ∨̇ t)  (inj₁ p)  = sat-empty f s p
+sat-empty f (s ∨̇ t)  (inj₂ p)  = sat-empty f t p
+sat-empty f (s ∧̇ t)  (p , q)   = sat-empty f s p
+
+-- The dual: a substituted term below a generator.
+Satᵈ : (X → Type ℓ) → LatTerm X → Type ℓ
+Satᵈ β (ℊ v)    = β v
+Satᵈ β (s ∨̇ t)  = Satᵈ β s × Satᵈ β t
+Satᵈ β (s ∧̇ t)  = Satᵈ β s ⊎ Satᵈ β t
+
+[]≤→satᵈ : (g : Y) (σ : Sub X Y) (t : LatTerm X) → t [ σ ] ≤ʷ ℊ g → Satᵈ (λ v → σ v ≤ʷ ℊ g) t
+[]≤→satᵈ g σ (ℊ v)    p = p
+[]≤→satᵈ g σ (s ∨̇ t)  p = []≤→satᵈ g σ s (proj₁ (∨≤-inv p)) , []≤→satᵈ g σ t (proj₂ (∨≤-inv p))
+[]≤→satᵈ g σ (s ∧̇ t)  p = [ inj₁ ∘ []≤→satᵈ g σ s , inj₂ ∘ []≤→satᵈ g σ t ]′ (∧≤ℊ-inv p)
+
+satᵈ-empty : {β : X → Type ℓ} → (∀ v → β v → ⊥) → (t : LatTerm X) → Satᵈ β t → ⊥
+satᵈ-empty f (ℊ v)    p         = f v p
+satᵈ-empty f (s ∨̇ t)  (p , q)   = satᵈ-empty f s p
+satᵈ-empty f (s ∧̇ t)  (inj₁ p)  = satᵈ-empty f s p
+satᵈ-empty f (s ∧̇ t)  (inj₂ p)  = satᵈ-empty f t p
+```
+
+#### Inflationary substitutions
+
+```agda
+-- A substitution is inflationary when every generator lies below its image.
+Inflationary : Sub X X → Type _
+Inflationary Φ = ∀ v → ℊ v ≤ʷ Φ v
+
+-- Then every term lies below its image.
+inflationary-term : {Φ : Sub X X} → Inflationary Φ → (t : LatTerm X) → t ≤ʷ t [ Φ ]
+inflationary-term inf (ℊ v)    = inf v
+inflationary-term inf (s ∨̇ t)  = ∨≤ (≤∨ˡ (inflationary-term inf s)) (≤∨ʳ (inflationary-term inf t))
+inflationary-term inf (s ∧̇ t)  = ≤∧ (∧ˡ≤ (inflationary-term inf s)) (∧ʳ≤ (inflationary-term inf t))
+```
+
+#### The fixed points of an inflationary self-embedding
+
+Fix an inflationary, freely generating `Φ : Sub (Fin n) (Fin n)`.  If `Φ` fixes
+`w` and `c` is a non-generator canonical joinand of `w`, then `c [ Φ ]` is a
+canonical joinand of `w` (Lemma 9.13 with Theorem 1.17,
+`fixed-joinand`{.AgdaFunction} of [DeansProblem.Fixed][]) lying above `c`, and
+the antichain of canonical joinands leaves `c [ Φ ] ≈ʷ c`
+(`fixed-joinand-inflationary`{.AgdaFunction}); dually for meetands.  So `Φ`
+fixes every node of the canonical tree of `w` reached through non-generator
+joinands and meetands (`Node`{.AgdaDatatype}, `node-fixed`{.AgdaFunction}).  A
+fixed canonical meet `u` with a generator meetand `g` has `Φ g ≈ʷ ℊ g`
+(`meetand-gen-fixed`{.AgdaFunction}): `u [ Φ ]` is the meet of the images of
+the meetands and lies below `ℊ g`, so some image `m [ Φ ]` lies below `ℊ g`
+(Whitman's rule for a meet below a generator), `m ≤ m [ Φ ] ≤ ℊ g` makes `m`
+the meetand `ℊ g` by the antichain, and `Φ g ≤ ℊ g`.
+
+```agda
+-- The nodes of the canonical tree of w reached through non-generator canonical joinands and meetands.
+data Node {n : ℕ} (w : LatTerm (Fin n)) : LatTerm (Fin n) → Type where
+  root     : Node w w
+  joinand  : ∀ {u c} → Node w u → c ∈ canonicalJoinands (_≟_ {n}) u → (∀ v → ¬ (c ≈ʷ ℊ v)) → Node w c
+  meetand  : ∀ {u c} → Node w u → c ∈ canonicalMeetands (_≟_ {n}) u → (∀ v → ¬ (c ≈ʷ ℊ v)) → Node w c
+
+module _ {n : ℕ} (Φ : Sub (Fin n) (Fin n)) (Φ-free : FreelyGenerates Φ) (inf : Inflationary Φ) where
+  private
+    CJ CM : LatTerm (Fin n) → List (LatTerm (Fin n))
+    CJ = canonicalJoinands (_≟_ {n})
+    CM = canonicalMeetands (_≟_ {n})
+
+  -- An inflationary embedding fixes each non-generator canonical joinand of a fixed point.
+  fixed-joinand-inflationary : (w : LatTerm (Fin n)) → w [ Φ ] ≈ʷ w → {c : LatTerm (Fin n)} → c ∈ CJ w
+                             → (∀ v → ¬ (c ≈ʷ ℊ v)) → c [ Φ ] ≈ʷ c
+  fixed-joinand-inflationary w fix {c} c∈ ng =
+    let (c′ , c′∈ , e) = find (fixed-joinand Φ Φ-free w fix c∈ ng)
+        c≤c′ : c ≤ʷ c′
+        c≤c′ = ≤ʷ-trans (inflationary-term inf c) (proj₁ e)
+    in ≤ʷ-trans (proj₁ e) (antichain-≤ ≤ʷ-refl (canonicalJoinands-antichain _≟_ w) c∈ c′∈ c≤c′)
+     , inflationary-term inf c
+
+  -- And each non-generator canonical meetand.
+  fixed-meetand-inflationary : (w : LatTerm (Fin n)) → w [ Φ ] ≈ʷ w → {c : LatTerm (Fin n)} → c ∈ CM w
+                             → (∀ v → ¬ (c ≈ʷ ℊ v)) → c [ Φ ] ≈ʷ c
+  fixed-meetand-inflationary w fix {c} c∈ ng =
+    let (c′ , c′∈ , e) = find (fixed-meetand Φ Φ-free w fix c∈ ng)
+        c≤c′ : c ≤ʷ c′
+        c≤c′ = ≤ʷ-trans (inflationary-term inf c) (proj₁ e)
+    in ≤ʷ-trans (proj₁ e) (antichain-≤ ≤ʷ-refl (canonicalMeetands-antichain _≟_ w) c∈ c′∈ c≤c′)
+     , inflationary-term inf c
+
+  -- Every node of the canonical tree of a fixed point is fixed.
+  node-fixed : (w : LatTerm (Fin n)) → w [ Φ ] ≈ʷ w → {u : LatTerm (Fin n)} → Node w u → u [ Φ ] ≈ʷ u
+  node-fixed w fix root                = fix
+  node-fixed w fix (joinand nd c∈ ng)  = fixed-joinand-inflationary _ (node-fixed w fix nd) c∈ ng
+  node-fixed w fix (meetand nd c∈ ng)  = fixed-meetand-inflationary _ (node-fixed w fix nd) c∈ ng
+
+  -- A fixed canonical meet with a generator meetand g has Φ g = g.
+  meetand-gen-fixed : (u : LatTerm (Fin n)) → u [ Φ ] ≈ʷ u → {g : Fin n} → ℊ g ∈ CM u → Φ g ≈ʷ ℊ g
+  meetand-gen-fixed u fix {g} g∈ =
+    let -- u [ Φ ] is the meet of the images of the canonical meetands of u, and lies below ℊ g.
+        below : ⋀⁺ (meetand₀ _≟_ u [ Φ ]) (map (_[ Φ ]) (meetands₊ _≟_ u)) ≤ʷ ℊ g
+        below = ≤ʷ-trans (subst (_≤ʷ u) (⋀⁺-[] Φ (meetand₀ _≟_ u) (meetands₊ _≟_ u))
+                                (≤ʷ-trans (proj₁ ([]-cong Φ (≈ʷ-sym (meetand-representation _≟_ u))))
+                                          (proj₁ fix)))
+                         (canonicalMeetands-lower _≟_ g∈)
+        (m , m∈ , m[Φ]≤g) = find (map⁻ (⋀⁺-gen-below below))
+        -- m ≤ m [ Φ ] ≤ ℊ g, so the meetand m is ℊ g, up to equality.
+        g≤m : ℊ g ≤ʷ m
+        g≤m = antichain-≤ ≤ʷ-refl (canonicalMeetands-antichain _≟_ u) m∈ g∈
+                          (≤ʷ-trans (inflationary-term inf m) m[Φ]≤g)
+    in ≤ʷ-trans ([]-mono Φ g≤m) m[Φ]≤g , inf g
+
+  -- If Φ moves every generator, no fixed point lies below a generator.
+  strict-fixed-not-below : (∀ v → ¬ (Φ v ≤ʷ ℊ v)) → (w : LatTerm (Fin n)) → w [ Φ ] ≈ʷ w
+                         → (g : Fin n) → ¬ (w ≤ʷ ℊ g)
+  strict-fixed-not-below strict w fix g w≤g =
+    satᵈ-empty none w ([]≤→satᵈ g Φ w (≤ʷ-trans (proj₁ fix) w≤g))
+    where
+    -- Φ v ≤ g is impossible: v ≤ Φ v ≤ g makes v the generator g, and then Φ g ≤ g.
+    none : ∀ v → Φ v ≤ʷ ℊ g → ⊥
+    none v p = strict g (subst (λ u → Φ u ≤ʷ ℊ g) (ℊ≤ℊ-inv (≤ʷ-trans (inf v) p)) p)
+```
+
+#### A fixed join of two generators, and a fixed generator of a power
+
+Fix a freely generating `Φ : Sub (Fin 3) (Fin 3)`, a generator `z`, and write
+`x`, `y` for the other two (`other`{.AgdaFunction}, `other'`{.AgdaFunction} of
+[DeansProblem.Partition][]).  If `Φ x ∨ Φ y = x ∨ y` then `x ≤ Φ x` or
+`x ≤ Φ y`, and likewise for `y`, by join primality; both below `Φ x` would put
+`Φ y ≤ x ∨ y ≤ Φ x`, hence `y ≤ x` since an embedding reflects the order
+(`fixes-join`{.AgdaFunction}).  And `z ≤ Φ z` (`fixes-join-third`{.AgdaFunction}):
+otherwise `Φ z ≤ x ∨ y` by the partition at `z`, so `Φ (x ∨ y ∨ z) ≤ Φ (x ∨ y)`
+and `z ≤ x ∨ y`.
+
+```agda
+module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) where
+  private
+    Φ-inj = freelyGenerates→injective Φ Φ-free
+
+    -- The two generators other than z differ from each other and from z.
+    other≢other' : ∀ z → other z ≢ other' z
+    other≢other' 0F ()
+    other≢other' 1F ()
+    other≢other' 2F ()
+
+    z≢other : ∀ z → z ≢ other z
+    z≢other z e = ∉others₃ z (here e)
+
+    z≢other' : ∀ z → z ≢ other' z
+    z≢other' z e = ∉others₃ z (there (here e))
+
+  -- If Φ x ∨ Φ y = x ∨ y, then x and y lie below the images, straight or swapped, and the images below x ∨ y.
+  fixes-join : (z : Fin 3) → Φ (other z) ∨̇ Φ (other' z) ≈ʷ ℊ (other z) ∨̇ ℊ (other' z)
+             → ((ℊ (other z) ≤ʷ Φ (other z) × ℊ (other' z) ≤ʷ Φ (other' z))
+                 ⊎ (ℊ (other z) ≤ʷ Φ (other' z) × ℊ (other' z) ≤ʷ Φ (other z)))
+               × Φ (other z) ≤ʷ ℊ (other z) ∨̇ ℊ (other' z) × Φ (other' z) ≤ʷ ℊ (other z) ∨̇ ℊ (other' z)
+  fixes-join z e =
+    cases (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperˡ (proj₂ e))) (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperʳ (proj₂ e)))
+    , ≤ʷ-trans ∨̇-upperˡ (proj₁ e) , ≤ʷ-trans ∨̇-upperʳ (proj₁ e)
+    where
+    x y : Fin 3
+    x = other z
+    y = other' z
+
+    -- Both generators below one image would make the other image, hence the other generator, below it.
+    cases : ℊ x ≤ʷ Φ x ⊎ ℊ x ≤ʷ Φ y → ℊ y ≤ʷ Φ x ⊎ ℊ y ≤ʷ Φ y
+          → (ℊ x ≤ʷ Φ x × ℊ y ≤ʷ Φ y) ⊎ (ℊ x ≤ʷ Φ y × ℊ y ≤ʷ Φ x)
+    cases (inj₁ p) (inj₂ q) = inj₁ (p , q)
+    cases (inj₂ p) (inj₁ q) = inj₂ (p , q)
+    cases (inj₁ p) (inj₁ q) =
+      ⊥-elim (other≢other' z (sym (ℊ≤ℊ-inv (injective→reflects Φ {s = ℊ y} {t = ℊ x} Φ-inj
+                (≤ʷ-trans (≤ʷ-trans ∨̇-upperʳ (proj₁ e)) (∨≤ p q))))))
+    cases (inj₂ p) (inj₂ q) =
+      ⊥-elim (other≢other' z (ℊ≤ℊ-inv (injective→reflects Φ {s = ℊ x} {t = ℊ y} Φ-inj
+                (≤ʷ-trans (≤ʷ-trans ∨̇-upperˡ (proj₁ e)) (∨≤ p q)))))
+
+  -- If Φ x ∨ Φ y = x ∨ y, then z ≤ Φ z.
+  fixes-join-third : (z : Fin 3) → Φ (other z) ∨̇ Φ (other' z) ≈ʷ ℊ (other z) ∨̇ ℊ (other' z) → ℊ z ≤ʷ Φ z
+  fixes-join-third z e = [ (λ p → ⊥-elim (below p)) , (λ q → q) ]′ (partition (Φ z))
+    where
+    open Partition z (other z) (other' z ∷ []) (cover₃ z) (∉others₃ z)
+
+    -- Φ z ≤ x ∨ y would make Φ (x ∨ y ∨ z) ≤ Φ (x ∨ y), so z ≤ x ∨ y.
+    below : Φ z ≤ʷ ℊ (other z) ∨̇ ℊ (other' z) → ⊥
+    below p =
+      [ (λ q → z≢other z (ℊ≤ℊ-inv q)) , (λ q → z≢other' z (ℊ≤ℊ-inv q)) ]′
+        (ℊ≤∨-inv (proj₂ (∨≤-inv (injective→reflects Φ
+          {s = (ℊ (other z) ∨̇ ℊ (other' z)) ∨̇ ℊ z} {t = ℊ (other z) ∨̇ ℊ (other' z)} Φ-inj
+          (∨≤ ≤ʷ-refl (≤ʷ-trans p (proj₂ e)))))))
+```
+
+A positive power `Φᵉ⁺¹` of a proper `Φ` that fixes a generator `g` has `Φ g = g`
+(`power-fixes→fixes`{.AgdaFunction}).  By Corollary 1.6
+(`generator-in-image`{.AgdaFunction}), `Φᵉ g` is a generator `j` with `Φ j = g`.
+If `j = g` we are done.  Otherwise `Φᵉ⁺¹` fixes `j` as well (`Φᵉ⁺¹ j = Φᵉ g = j`),
+so it fixes two generators and is the identity
+(`fix-two-generators`{.AgdaFunction}); then the generator `Φ` misses is
+`Φ (Φᵉ m)`, in the image of `Φ`, and Corollary 1.6 makes it one of the `Φ i`.
+
+```agda
+  -- If a positive power of Φ fixes a generator, Φ fixes it.
+  power-fixes→fixes : (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Φ i)) → (e : ℕ) (g : Fin 3)
+                    → iter Φ (suc e) g ≈ʷ ℊ g → Φ g ≈ʷ ℊ g
+  power-fixes→fixes m m∉ e g fix =
+    let (j , g≈Φj) = generator-in-image Φ (iter Φ e g) (≈ʷ-sym step)
+    in decide j (j ≟ g) g≈Φj
+    where
+    -- Φᵉ⁺¹ g is Φ applied to Φᵉ g.
+    step : iter Φ e g [ Φ ] ≈ʷ ℊ g
+    step = subst (_≈ʷ ℊ g) ([]-iter-sucʳ (ℊ g) Φ e) fix
+
+    decide : (j : Fin 3) → Dec (j ≡ g) → ℊ g ≈ʷ Φ j → Φ g ≈ʷ ℊ g
+    decide j (yes refl)  g≈Φj = ≈ʷ-sym g≈Φj
+    decide j (no j≢g)    g≈Φj =
+      let -- Φᵉ g = j, by injectivity, so Φᵉ⁺¹ fixes j too.
+          e≈j : iter Φ e g ≈ʷ ℊ j
+          e≈j = Φ-inj {iter Φ e g} {ℊ j} (≈ʷ-trans step g≈Φj)
+          fixj : iter Φ (suc e) j ≈ʷ ℊ j
+          fixj = ≈ʷ-trans (subst (_≈ʷ Φ j [ iter Φ e ]) (sym ([]-iter-suc (ℊ j) Φ e)) ≈ʷ-refl)
+                          (≈ʷ-trans ([]-cong (iter Φ e) (≈ʷ-sym g≈Φj)) e≈j)
+          -- So Φᵉ⁺¹ is the identity, and the missed generator is in the image of Φ.
+          all : ∀ v → iter Φ (suc e) v ≈ʷ ℊ v
+          all = fix-two-generators (iter Φ (suc e)) (iter-free Φ Φ-free (suc e)) {g} {j}
+                                   (λ g≡j → j≢g (sym g≡j)) fix fixj
+          (j′ , m≈Φj′) = generator-in-image Φ (iter Φ e m)
+                           (≈ʷ-sym (subst (_≈ʷ ℊ m) ([]-iter-sucʳ (ℊ m) Φ e) (all m)))
+      in ⊥-elim (m∉ j′ m≈Φj′)
+```
+
+#### Inflation transfers through a fixed element
+
+Let `Φ` fix `z` and an element `a` with `x ≤ a` and `y ≰ a`, where `x`, `y`,
+`z` are the three generators in some order.  Then `x ≤ Φ x`
+(`inflation-transfer`{.AgdaFunction}).  Decide `x ≤ Φ x` by Whitman's
+procedure; if it fails, read `x ≤ a = a [ Φ ]` as the satisfaction of `a` by
+`v ↦ x ≤ Φ v`, which holds at neither `x` (the case) nor `z` (`Φ z = z`), so
+only at `y`; then `a` is satisfied by `v ↦ y ≤ v`, which says `y ≤ a`.
+
+```agda
+  -- Inflation transfers: Φ z = z, Φ a = a, x ≤ a and y ≰ a give x ≤ Φ x.
+  inflation-transfer : (g h k : Fin 3) → (∀ v → v ≡ g ⊎ v ≡ h ⊎ v ≡ k) → g ≢ k → Φ k ≈ʷ ℊ k
+                     → (a : LatTerm (Fin 3)) → a [ Φ ] ≈ʷ a → ℊ g ≤ʷ a → ¬ (ℊ h ≤ʷ a) → ℊ g ≤ʷ Φ g
+  inflation-transfer g h k cover g≢k fixk a fixa g≤a h≰a = decide (ℊ g ≤ʷ? Φ g)
+    where
+    open Decision (_≟_ {3}) using ( _≤ʷ?_ )
+
+    decide : Dec (ℊ g ≤ʷ Φ g) → ℊ g ≤ʷ Φ g
+    decide (yes p)   = p
+    decide (no ¬p)   = ⊥-elim (h≰a (subst (ℊ h ≤ʷ_) ([]-ℊ a) (sat→≤[] h ℊ a (sat-mono shrink a sat))))
+      where
+      -- g lies below a [ Φ ], so a is satisfied by v ↦ g ≤ Φ v.
+      sat : Sat (λ v → ℊ g ≤ʷ Φ v) a
+      sat = ≤[]→sat g Φ a (≤ʷ-trans g≤a (proj₂ fixa))
+
+      -- Only h can satisfy it: not g, by the case, and not k, since Φ k = k and g ≠ k.
+      shrink : ∀ v → ℊ g ≤ʷ Φ v → ℊ h ≤ʷ ℊ v
+      shrink v p =
+        [ (λ v≡g → ⊥-elim (¬p (subst (λ u → ℊ g ≤ʷ Φ u) v≡g p)))
+        , [ (λ v≡h → ℊ≤ℊ (sym v≡h))
+          , (λ v≡k → ⊥-elim (g≢k (ℊ≤ℊ-inv (≤ʷ-trans (subst (λ u → ℊ g ≤ʷ Φ u) v≡k p) (proj₁ fixk))))) ]′ ]′
+        (cover v)
+```
+
+#### Rigidity for a class
+
+Let `Θ₁ = (a, b, z)` fix `z` with `x ≤ a`, `y ≰ a`, `y ≤ b`, `x ≰ b`.  Then
+every freely generating `Φ` fixing `a`, `b` and `z` is inflationary, by the
+transfer (`class-inflationary`{.AgdaFunction}); so it fixes every node of the
+canonical trees of `a` and `b`; and if one of those nodes is a meet with `x` or
+`y` among its meetands, `Φ` fixes that generator too, hence two generators, and
+is the identity (`rigid-class`{.AgdaFunction}).
+
+```agda
+module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) (z : Fin 3) (fixz : Φ z ≈ʷ ℊ z)
+         (a b : LatTerm (Fin 3)) (fixa : a [ Φ ] ≈ʷ a) (fixb : b [ Φ ] ≈ʷ b)
+         (x≤a : ℊ (other z) ≤ʷ a) (y≰a : ¬ (ℊ (other' z) ≤ʷ a))
+         (y≤b : ℊ (other' z) ≤ʷ b) (x≰b : ¬ (ℊ (other z) ≤ʷ b)) where
+  private
+    x y : Fin 3
+    x = other z
+    y = other' z
+
+    -- The three generators cover Fin 3, in the two orders the transfer needs.
+    from-others : ∀ v → v ∈ x ∷ y ∷ [] → v ≡ x ⊎ v ≡ y
+    from-others v (here p)          = inj₁ p
+    from-others v (there (here p))  = inj₂ p
+    from-others v (there (there ()))
+
+    cover-x : ∀ v → v ≡ x ⊎ v ≡ y ⊎ v ≡ z
+    cover-x v = [ (λ p → inj₂ (inj₂ p)) , (λ p → [ inj₁ , (λ q → inj₂ (inj₁ q)) ]′ (from-others v p)) ]′ (cover₃ z v)
+
+    cover-y : ∀ v → v ≡ y ⊎ v ≡ x ⊎ v ≡ z
+    cover-y v = [ (λ p → inj₂ (inj₂ p)) , (λ p → [ (λ q → inj₂ (inj₁ q)) , inj₁ ]′ (from-others v p)) ]′ (cover₃ z v)
+
+    x≢z : x ≢ z
+    x≢z e = ∉others₃ z (here (sym e))
+
+    y≢z : y ≢ z
+    y≢z e = ∉others₃ z (there (here (sym e)))
+
+  -- Φ is inflationary.
+  class-inflationary : Inflationary Φ
+  class-inflationary v =
+    [ (λ v≡x → subst (λ u → ℊ u ≤ʷ Φ u) (sym v≡x) x≤Φx)
+    , [ (λ v≡y → subst (λ u → ℊ u ≤ʷ Φ u) (sym v≡y) y≤Φy)
+      , (λ v≡z → subst (λ u → ℊ u ≤ʷ Φ u) (sym v≡z) (proj₂ fixz)) ]′ ]′ (cover-x v)
+    where
+    x≤Φx : ℊ x ≤ʷ Φ x
+    x≤Φx = inflation-transfer Φ Φ-free x y z cover-x x≢z fixz a fixa x≤a y≰a
+
+    y≤Φy : ℊ y ≤ʷ Φ y
+    y≤Φy = inflation-transfer Φ Φ-free y x z cover-y y≢z fixz b fixb y≤b x≰b
+
+  -- If a node of the tree of any fixed point of Φ is a meet with a generator other than z among its
+  -- meetands, Φ is the identity.
+  rigid-fixed : (w : LatTerm (Fin 3)) → w [ Φ ] ≈ʷ w → {u : LatTerm (Fin 3)} → Node w u → {g : Fin 3} → g ≢ z
+              → ℊ g ∈ canonicalMeetands (_≟_ {3}) u → ∀ v → Φ v ≈ʷ ℊ v
+  rigid-fixed w fixw nd g≢z g∈ =
+    fix-two-generators Φ Φ-free g≢z
+      (meetand-gen-fixed Φ Φ-free class-inflationary _ (node-fixed Φ Φ-free class-inflationary w fixw nd) g∈) fixz
+
+  -- In particular for a node of the tree of a or b.
+  rigid-class : {u : LatTerm (Fin 3)} → Node a u ⊎ Node b u → {g : Fin 3} → g ≢ z
+              → ℊ g ∈ canonicalMeetands (_≟_ {3}) u → ∀ v → Φ v ≈ʷ ℊ v
+  rigid-class (inj₁ nd) = rigid-fixed a fixa nd
+  rigid-class (inj₂ nd) = rigid-fixed b fixb nd
+```

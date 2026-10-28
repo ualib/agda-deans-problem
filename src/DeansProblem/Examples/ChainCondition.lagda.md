@@ -16,12 +16,14 @@ Takahasi's theorem for free groups.  The answer is no.  This module builds an
 infinite strictly ascending chain of 3-generated sublattices of `FL(3)`
 (`ladder`{.AgdaFunction}), so the chain condition fails in `FL(3)`
 (`chain-condition-fails`{.AgdaFunction}), and in every free lattice with three
-generators that a map back to `Fin 3` separates (`ladder-in`{.AgdaFunction}),
-which is any `FL(X)` over three or more generators with decidable equality.
-The links of the chain are not free, so Theorem H
-(`no-copy-chain`{.AgdaFunction} of [DeansProblem.NoChain][]) is untouched:
-each link has `x ∧ y` below its third generator, against the meet condition
-of FJN Corollary 1.13 (argued here, not formalized).  The engine finds the
+distinct generators (`ladder-into`{.AgdaFunction}), with no decidable equality.
+No link of the chain is a copy of `FL(3)` (`no-link-is-a-copy`{.AgdaFunction}),
+so Theorem H (`no-copy-chain`{.AgdaFunction} of [DeansProblem.NoChain][]) is
+untouched: each link has `x ∧ y` below its third generator, against the meet
+condition of FJN Corollary 1.13, and an embedding of `FL(3)` onto the link
+would make its generating triple free.  The links lie in the sublattice
+`⟨x, y, c⟩`, which is infinite (`links⊆⟨x,y,c⟩`{.AgdaFunction},
+`⟨x,y,c⟩-infinite`{.AgdaFunction}).  The engine finds the
 links finite, with 10, 12, 16, 18, 22, … elements, as far as it was run: the
 first 24 links, of at most 78 elements, by `verify_ladder` in
 `scripts/python/freelattices/chains.py`, run as
@@ -41,7 +43,10 @@ chain is
 the links `⟨x, y, Aₖ ∨ Bₖ⟩` and `⟨x, y, Aₖ₊₁⟩` interleaved
 (`interleaved-chain`{.AgdaFunction}).
 
-**Ascent, in any free lattice**.  Replacing the bound `c` by any `w` between
+**Ascent, in any free lattice**.  (Lemma 4.4 of the paper, of which the
+following is the free-lattice form, holds in any lattice:
+[DeansProblem.Ladder][], to which `ladder≡rungs`{.AgdaFunction} ties the
+ladder here.)  Replacing the bound `c` by any `w` between
 `Aₖ ∨ Bₖ` and `c` leaves the rungs up to `k` unchanged
 (`stable`{.AgdaFunction}), by induction on the rung, since every operation in
 them is monotone.  Both `Aₖ₊₁` and `Aₖ₊₁ ∨ Bₖ₊₁` lie between, so the term that
@@ -83,28 +88,42 @@ open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Empty                             using ( ⊥-elim )
+open import Data.List.Base                         using ( List ; [] ; _∷_ )
+open import Data.List.Relation.Unary.Any           using ( Any ; here ; there )
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
 open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc )
-open import Data.Nat.Properties                    using ( ≤-refl )
-open import Data.Product                           using ( _×_ ; _,_ ; proj₁ ; proj₂ )
+open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _<_ ; z≤n )
+                                                   renaming ( _≤_ to _≤ℕ_ )
+open import Data.Nat.Properties                    using ( ≤-refl ; <-cmp )
+open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
 open import Data.Sum.Base                          using ( inj₁ ; inj₂ )
-open import Function                               using ( _∘_ )
+open import Function                               using ( _∘_ ; _↣_ ; mk↣ )
 open import Level                                  using ( Level )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; cong ; subst ; subst₂ )
+open import Relation.Binary                        using ( Tri ; tri< ; tri≈ ; tri> )
+open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst
+                                                         ; subst₂ )
 open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using ( from-no )
-open import Relation.Unary                         using ( _⊆_ ; _⊂_ )
+open import Relation.Unary                         using ( _⊆_ ; _⊂_ ; _≐_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
 open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ∨̇-cong )
 open import DeansProblem.Chain.Condition           using ( ⟨_⟩ ; gen∈ ; gens⊆ ; StrictlyAscending
                                                          ; ChainCondition ; Stabilizes
                                                          ; strict→ascending ; interleaved-chain
-                                                         ; strict-⨟ )
+                                                         ; strict-⨟ ; interleave-all
+                                                         ; copy≐→freelyGenerates )
+open import DeansProblem.Chain.Copies              using ( copy )
+open import DeansProblem.Ladder                    using ( module Rungs )
+import DeansProblem.Ladder
+open import Lattices.Free.Complexity               using ( pigeonhole-≈ )
+open import Lattices.Free.Countable                using ( three-generators ; three-generators-free )
+open import Lattices.Free.Generation               using ( freelyGenerates→injective )
+open import Lattices.Free.Universal                using ( FL ; ≤ʷ→≤ ; ≤→≤ʷ )
+open import Setoid.Subalgebras.Basic               using ( _IsSubalgebraOf_ )
 open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-⨟ ; []-cong
-                                                         ; []-congʳ ; subst-hom )
+                                                         ; []-congʳ ; []-mono ; subst-hom )
 open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
 open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤ʷ-refl ; ≤ʷ-trans
                                                          ; ≤∧ ; ≤∧-inv ; ≤∨ˡ ; ≤∨ʳ ; ∧ˡ≤ ; ∧ʳ≤
@@ -215,6 +234,55 @@ module _ {X : Type χ} (a b c w : LatTerm X) where
     -- The rungs up to k agree.
     below : V.A k ≈ʷ C.A k × V.B k ≈ʷ C.B k
     below = stable k (≤ʷ-trans (C.A-mono k) hA) (≤ʷ-trans (C.B-mono k) hB) w≤c
+```
+
+These are the free-lattice forms of Lemma 4.4 of the paper, which
+[DeansProblem.Ladder][] proves in any lattice.  The ladder of terms is the
+ladder of that module in the lattice `FL(X)`, term for term
+(`ladder≡rungs`{.AgdaFunction}), so its clauses are instances of the general
+ones: the last clause as the paper states it, for every `j ≤ k`
+(`stable≤`{.AgdaFunction}), and the ascent of each side over any distance
+(`A-mono-≤`{.AgdaFunction}), are read off the lattice forms through the
+agreement of the lattice order of `FL(X)` with Whitman's
+(`≤ʷ→≤`{.AgdaFunction}, `≤→≤ʷ`{.AgdaFunction}).
+
+```agda
+module _ {X : Type χ} (a b w : LatTerm X) where
+  private
+    module L = Ladder a b w
+    module R = Rungs (FL X) a b w
+
+  -- The ladder of terms is the ladder of Lemma 4.4 in the lattice FL(X).
+  ladder≡rungs : ∀ k → L.A k ≡ R.A k × L.B k ≡ R.B k
+  ladder≡rungs zero     = refl , refl
+  ladder≡rungs (suc k)  = cong (λ v → w ∧̇ (a ∨̇ v)) (proj₂ (ladder≡rungs k))
+                        , cong (λ v → w ∧̇ (b ∨̇ v)) (proj₁ (ladder≡rungs k))
+
+  -- Each side ascends over any distance (Lemma 4.4 in FL(X)).
+  A-mono-≤ : ∀ {j k} → j ≤ℕ k → L.A j ≤ʷ L.A k
+  A-mono-≤ {j} {k} j≤k = subst₂ _≤ʷ_ (sym (proj₁ (ladder≡rungs j))) (sym (proj₁ (ladder≡rungs k)))
+                                 (≤→≤ʷ (R.A-mono-≤ j≤k))
+
+module _ {X : Type χ} (a b w v : LatTerm X) where
+  private
+    module W = Ladder a b w
+    module V = Ladder a b v
+
+  -- Lemma 4.4, last clause, in FL(X): if E k ≤ v ≤ w, the rungs agree at every j ≤ k.
+  stable≤ : ∀ k → W.E k ≤ʷ v → v ≤ʷ w → ∀ j → j ≤ℕ k → V.A j ≈ʷ W.A j × V.B j ≈ʷ W.B j
+  stable≤ k E≤v v≤w j j≤k =
+      subst₂ _≈ʷ_ (sym (proj₁ (ladder≡rungs a b v j))) (sym (proj₁ (ladder≡rungs a b w j))) (proj₁ general)
+    , subst₂ _≈ʷ_ (sym (proj₂ (ladder≡rungs a b v j))) (sym (proj₂ (ladder≡rungs a b w j))) (proj₂ general)
+    where
+    -- The rungs at k, as the lattice's rungs, lie below v.
+    E≤v′ : Rungs.A (FL X) a b w k ∨̇ Rungs.B (FL X) a b w k ≤ʷ v
+    E≤v′ = subst₂ (λ s t → s ∨̇ t ≤ʷ v) (proj₁ (ladder≡rungs a b w k)) (proj₂ (ladder≡rungs a b w k))
+                  E≤v
+
+    -- Lemma 4.4 in the lattice FL(X).
+    general : Rungs.A (FL X) a b v j ≈ʷ Rungs.A (FL X) a b w j
+            × Rungs.B (FL X) a b v j ≈ʷ Rungs.B (FL X) a b w j
+    general = DeansProblem.Ladder.stable (FL X) a b w v k (≤ʷ→≤ E≤v′) (≤ʷ→≤ v≤w) j j≤k
 ```
 
 #### The links ascend, in any free lattice
@@ -562,12 +630,162 @@ ladder-never-stabilizes : ¬ Stabilizes (strict→ascending ladder)
 ladder-never-stabilizes (N , st) = proj₂ (StrictlyAscending.ascends ladder N) (st N ≤-refl)
 ```
 
-A free lattice `FL(X)` with three generators `f 0`, `f 1`, `f 2` and a map
-`g : X → Fin 3` back with `g (f i) = i` contains a copy of `FL(3)`: substitution
-by `ℊ ∘ f` is injective, since substitution by `ℊ ∘ g` undoes it.  So the ladder
-moves to `FL(X)` (`ladder-in`{.AgdaFunction}, by `strict-⨟`{.AgdaFunction} of
-[DeansProblem.Chain.Condition][]); any `X` with three distinct elements and
-decidable equality has such `f` and `g`.
+#### No link is a copy of FL(3)
+
+Every link is a triple `(x, y, w)` whose third member lies above `x ∧ y`
+(`link-meet`{.AgdaFunction}), since `x ∧ y ≤ x ∧ c = A₀` and `A₀` lies below
+every rung: so the triple fails the meet condition of Corollary 2.5 (FJN
+Corollary 1.13), and does not freely generate.  The clause of Theorem 4.5 is
+about the link, not only its generating triple, and it holds so stated: no
+embedding of `FL(3)` has the link as its image
+(`no-link-is-a-copy`{.AgdaFunction}).  For an embedding whose copy is the
+link, the triple would freely generate, by
+`copy≐→freelyGenerates`{.AgdaFunction} of [DeansProblem.Chain.Condition][]
+(the images of the free generators are `x`, `y` and `w` in some order, by
+Corollary 2.4), and the meet condition at the index of `w` would put that
+index among the other two.
+
+```agda
+-- x ∧ y lies below the bound c.
+x∧y≤c : x ∧̇ y ≤ʷ c
+x∧y≤c = ≤∧ (∧ˡ≤ (≤∨ˡ ≤ʷ-refl)) (∧ʳ≤ (≤∨ˡ ≤ʷ-refl))
+
+-- x ∧ y lies below every rung.
+x∧y≤A : ∀ k → x ∧̇ y ≤ʷ A k
+x∧y≤A k = ≤ʷ-trans (≤∧ (∧ˡ≤ ≤ʷ-refl) x∧y≤c) (A₀≤A k)
+
+-- The third member of every link lies above the meet of the first two.
+link-meet : ∀ n → StrictlyAscending.links ladder n 0F ∧̇ StrictlyAscending.links ladder n 1F
+                  ≤ʷ StrictlyAscending.links ladder n 2F
+link-meet = interleave-all (λ σ → σ 0F ∧̇ σ 1F ≤ʷ σ 2F)
+                           (λ k → triple (E k)) (λ k → triple (A (suc k)))
+                           (λ k → ≤ʷ-trans (x∧y≤A k) (≤∨ˡ ≤ʷ-refl)) (λ k → x∧y≤A (suc k))
+
+-- A triple whose third member lies above the meet of the others generates no copy of FL(3).
+meet-below→no-copy : (σ : Sub (Fin 3) X) → σ 0F ∧̇ σ 1F ≤ʷ σ 2F
+                   → (e : proj₁ (FL (Fin 3)) IsSubalgebraOf proj₁ (FL X)) → ¬ (copy e ≐ ⟨ σ ⟩)
+meet-below→no-copy σ p e e≐ = not-member (proj₂ (copy≐→freelyGenerates e σ e≐) {2F} {0F ∷ 1F ∷ []} p)
+  where
+  -- The index of the third member is neither of the other two.
+  not-member : ¬ Any (2F ≡_) (0F ∷ 1F ∷ [])
+  not-member (here ())
+  not-member (there (here ()))
+  not-member (there (there ()))
+
+-- Theorem 4.5: no link of the ladder is a copy of FL(3).
+no-link-is-a-copy : ∀ n (e : proj₁ (FL (Fin 3)) IsSubalgebraOf proj₁ (FL (Fin 3)))
+                  → ¬ (copy e ≐ ⟨ StrictlyAscending.links ladder n ⟩)
+no-link-is-a-copy n = meet-below→no-copy (StrictlyAscending.links ladder n) (link-meet n)
+```
+
+#### The sublattice ⟨x, y, c⟩
+
+Computation 4.6 of the paper says that the search for the chain ran inside the
+sublattice `⟨x, y, c⟩`, which contains every link and is therefore infinite.
+Every rung is a member of it (`A∈`{.AgdaFunction}, `B∈`{.AgdaFunction}): the
+term that names it is the ladder over the three generators of `FL(3)`, read
+through `(x, y, c)`.  So the generators of every link are members, and every
+link lies in it (`links⊆⟨x,y,c⟩`{.AgdaFunction}).  The rungs of the `A` side
+are pairwise distinct (`A-injective`{.AgdaFunction}): for `j < k`,
+`Aⱼ₊₁ ≤ Aₖ` by Lemma 4.4, so `Aₖ = Aⱼ` would give `Aⱼ₊₁ ≤ Aⱼ`, against
+strictness.  So no finite list covers `⟨x, y, c⟩`
+(`⟨x,y,c⟩-infinite`{.AgdaFunction}): the rungs would repeat, by the pigeonhole
+principle for a sequence in a list (`pigeonhole-≈`{.AgdaFunction} of
+[Lattices.Free.Complexity][]).
+
+```agda
+private
+  -- The ladder over the generators, whose rungs name the rungs over (x, y, c).
+  module G = Ladder {X = Fin 3} (ℊ 0F) (ℊ 1F) (ℊ 2F)
+
+-- Every rung of the A side is a member of ⟨x, y, c⟩.
+A∈ : ∀ k → ⟨ triple c ⟩ (A k)
+A∈ k = G.A k , subst (_≈ʷ A k) (sym (proj₁ (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k))) ≈ʷ-refl
+
+-- Every rung of the B side is a member of ⟨x, y, c⟩.
+B∈ : ∀ k → ⟨ triple c ⟩ (B k)
+B∈ k = G.B k , subst (_≈ʷ B k) (sym (proj₂ (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k))) ≈ʷ-refl
+
+-- The sublattice ⟨x, y, w⟩ lies in ⟨x, y, c⟩ when w does.
+triple⊆ : ∀ {w} → ⟨ triple c ⟩ w → ⟨ triple w ⟩ ⊆ ⟨ triple c ⟩
+triple⊆ w∈ = gens⊆ λ where
+  0F → gen∈ (triple c) 0F
+  1F → gen∈ (triple c) 1F
+  2F → w∈
+
+-- ⟨x, y, c⟩ contains every link.
+links⊆⟨x,y,c⟩ : ∀ n → ⟨ StrictlyAscending.links ladder n ⟩ ⊆ ⟨ triple c ⟩
+links⊆⟨x,y,c⟩ = interleave-all (λ σ → ⟨ σ ⟩ ⊆ ⟨ triple c ⟩)
+                               (λ k → triple (E k)) (λ k → triple (A (suc k)))
+                               (λ k → triple⊆ (E∈ k)) (λ k → triple⊆ (A∈ (suc k)))
+  where
+  -- The join of the k-th rungs is a member.
+  E∈ : ∀ k → ⟨ triple c ⟩ (E k)
+  E∈ k = proj₁ (A∈ k) ∨̇ proj₁ (B∈ k) , ∨̇-cong (proj₂ (A∈ k)) (proj₂ (B∈ k))
+
+-- A later rung of the A side never lies below an earlier one.
+A-later≰ : ∀ {j k} → j < k → ¬ (A k ≤ʷ A j)
+A-later≰ {j} j<k h = A-strict j (≤ʷ-trans (A-mono-≤ x y c j<k) h)
+
+-- The rungs of the A side are pairwise distinct.
+A-injective : ∀ {j k} → A j ≈ʷ A k → j ≡ k
+A-injective {j} {k} e = compare (<-cmp j k)
+  where
+  -- By the order of j and k.
+  compare : Tri (j < k) (j ≡ k) (k < j) → j ≡ k
+  compare (tri< j<k _ _)  = ⊥-elim (A-later≰ j<k (proj₂ e))
+  compare (tri≈ _ j≡k _)  = j≡k
+  compare (tri> _ _ k<j)  = ⊥-elim (A-later≰ k<j (proj₁ e))
+
+-- No finite list covers ⟨x, y, c⟩: it is infinite.
+⟨x,y,c⟩-infinite : ¬ (Σ[ L ∈ List (LatTerm (Fin 3)) ] (∀ {w} → ⟨ triple c ⟩ w → Any (w ≈ʷ_) L))
+⟨x,y,c⟩-infinite (L , covers) =
+  let (j , k , j<k , e) = pigeonhole-≈ L A (λ k → covers (A∈ k)) in A-later≰ j<k (proj₂ e)
+```
+
+#### The bottom link's term recurs
+
+After Theorem 4.5 the paper observes that what fails without freeness is not
+the recurrence on which Theorem C rests: by Lemma 4.4 the term `t₀` that gives
+`w₀ = A₀ ∨ B₀` from `(x, y, c)` gives it from `(x, y, wₙ)` for every `n`
+(`t₀-recurs`{.AgdaFunction}), since every third generator `wₙ` lies between
+`A₀ ∨ B₀` and `c`, and the rungs at `0` over such a bound are those over `c`
+(`t₀-at`{.AgdaFunction}, by `stable≤`{.AgdaFunction}).
+
+```agda
+-- The join of the first rungs lies below every rung after the first.
+E₀≤A' : ∀ k → E zero ≤ʷ A (suc k)
+E₀≤A' k = ∨≤ (A₀≤A (suc k)) (≤ʷ-trans (B₀≤B k) (B≤A k))
+
+-- The term t₀ gives w₀ from (x, y, w) for any w between A₀ ∨ B₀ and c.
+t₀-at : ∀ w → E zero ≤ʷ w → w ≤ʷ c → (G.A zero ∨̇ G.B zero) [ triple w ] ≈ʷ E zero
+t₀-at w E≤w w≤c = let (eA , eB) = stable≤ x y c w zero E≤w w≤c zero z≤n in ∨̇-cong eA eB
+
+-- The term t₀ = A₀ ∨ B₀ over the generators gives w₀ from every link's generators.
+t₀-recurs : ∀ n → (G.A zero ∨̇ G.B zero) [ StrictlyAscending.links ladder n ] ≈ʷ E zero
+t₀-recurs = interleave-all (λ σ → (G.A zero ∨̇ G.B zero) [ σ ] ≈ʷ E zero)
+                           (λ k → triple (E k)) (λ k → triple (A (suc k)))
+                           (λ k → t₀-at (E k) (∨̇-mono (A₀≤A k) (B₀≤B k)) (∨≤ (A≤w k) (B≤w k)))
+                           (λ k → t₀-at (A (suc k)) (E₀≤A' k) (A≤w (suc k)))
+```
+
+#### Every free lattice on three or more generators
+
+The paper's last clause of Theorem 4.5 is for every free lattice on at least
+three generators.  Three distinct generators of `FL(X)`, given by an injection
+`Fin 3 ↣ X`, freely generate, with no decidable equality on `X`
+(`three-generators-free`{.AgdaFunction} of [Lattices.Free.Countable][]), so
+substitution by them is injective, and it carries the ladder to a strictly
+ascending chain of 3-generated sublattices of `FL(X)`
+(`ladder-into`{.AgdaFunction}, by `strict-⨟`{.AgdaFunction} of
+[DeansProblem.Chain.Condition][]).  Its links are no copies of `FL(3)` either
+(`ladder-into-no-copy`{.AgdaFunction}): substitution keeps the inequality
+`x ∧ y ≤ w`.
+
+The earlier form `ladder-in`{.AgdaFunction} takes a map `f : Fin 3 → X` with a
+map back `g` that undoes it; such an `f` is an injection, and `ladder-in` is
+now a use of `ladder-into`.  Substitution by `ℊ ∘ f` is injective when `g`
+undoes it (`renaming-injective`{.AgdaFunction}), which is the earlier proof.
 
 ```agda
 -- Substitution by ℊ ∘ f is injective when g undoes f.
@@ -580,7 +798,18 @@ renaming-injective f g gf {s} {t} e = ≈ʷ-trans (≈ʷ-sym (back s)) (≈ʷ-tr
   back u = subst₂ _≈ʷ_ ([]-⨟ u (ℊ ∘ f) (ℊ ∘ g)) ([]-ℊ u)
                   ([]-congʳ u (λ i → subst (λ j → ℊ (g (f i)) ≈ʷ ℊ j) (gf i) ≈ʷ-refl))
 
+-- Theorem 4.5 in every free lattice with three distinct generators.
+ladder-into : Fin 3 ↣ X → StrictlyAscending 3 X
+ladder-into ι = strict-⨟ ladder (three-generators ι)
+                         (freelyGenerates→injective (three-generators ι) (three-generators-free ι))
+
+-- No link of the ladder in FL(X) is a copy of FL(3).
+ladder-into-no-copy : (ι : Fin 3 ↣ X) → ∀ n (e : proj₁ (FL (Fin 3)) IsSubalgebraOf proj₁ (FL X))
+                    → ¬ (copy e ≐ ⟨ StrictlyAscending.links (ladder-into ι) n ⟩)
+ladder-into-no-copy ι n = meet-below→no-copy (StrictlyAscending.links (ladder-into ι) n)
+                                             ([]-mono (three-generators ι) (link-meet n))
+
 -- The ladder in any free lattice with three generators that a map back separates.
 ladder-in : (f : Fin 3 → X) (g : X → Fin 3) → (∀ i → g (f i) ≡ i) → StrictlyAscending 3 X
-ladder-in f g gf = strict-⨟ ladder (ℊ ∘ f) (renaming-injective f g gf)
+ladder-in f g gf = ladder-into (mk↣ λ {i} {j} e → trans (sym (gf i)) (trans (cong g e) (gf j)))
 ```

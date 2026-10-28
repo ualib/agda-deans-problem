@@ -61,7 +61,7 @@ open import Relation.Binary.PropositionalEquality  using ( _≡_ ; _≢_ ; refl 
 open import Relation.Nullary                       using ( ¬_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ⋁⁺ ; ⋀⁺ ; ⋁⁺-upper ; ⋁⁺-least ; ⋀⁺-lower
+open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ⋁⁺ ; ⋀⁺ ; ⋁⁺-upper ; ⋁⁺-least ; ⋀⁺-lower
                                                          ; ⋀⁺-greatest ; gen-⋁⁺-prime ; ⋀⁺-gen-below )
 open import Lattices.Free.Generation               using ( FreelyGenerates )
 open import Lattices.Free.Substitution             using ( Sub )
@@ -268,4 +268,29 @@ fix-two-generators θ θ-free {1F} {2F} _   ex ey = fixes-two θ θ-free 0F ex e
 fix-two-generators θ θ-free {2F} {0F} _   ex ey = fixes-two θ θ-free 1F ey ex
 fix-two-generators θ θ-free {2F} {1F} _   ex ey = fixes-two θ θ-free 0F ey ex
 fix-two-generators θ θ-free {2F} {2F} x≢y _  _  = ⊥-elim (x≢y refl)
+```
+
+The two last clauses of the lemma, as the paper on Dean's problem states it
+(Lemma 6.10), follow.  A proper self-embedding of `FL(3)`, one that misses a
+generator, fixes at most one generator (`proper-fixes-one`{.AgdaFunction}):
+fixing two, it would be the identity, and miss nothing.  And a triple
+`(x, y, r)` of `FL(3)` is free only for `r = z`
+(`xyr-free→z`{.AgdaFunction}): the self-embedding `x, y, z ↦ x, y, r`
+(`xyr`{.AgdaFunction}) fixes `x` and `y`, so it is the identity.
+
+```agda
+-- A proper self-embedding of FL(3) fixes at most one generator.
+proper-fixes-one : (θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ θ i))
+                 → {u v : Fin 3} → u ≢ v → θ u ≈ʷ ℊ u → θ v ≈ʷ ℊ v → ⊥
+proper-fixes-one θ θ-free m missed u≢v eu ev = missed m (≈ʷ-sym (fix-two-generators θ θ-free u≢v eu ev m))
+
+-- The triple (x, y, r) of FL(3), as a substitution.
+xyr : LatTerm (Fin 3) → Sub (Fin 3) (Fin 3)
+xyr r 0F = ℊ 0F
+xyr r 1F = ℊ 1F
+xyr r 2F = r
+
+-- A triple (x, y, r) of FL(3) is free only for r = z.
+xyr-free→z : (r : LatTerm (Fin 3)) → FreelyGenerates (xyr r) → r ≈ʷ ℊ 2F
+xyr-free→z r r-free = fixes-two (xyr r) r-free 2F ≈ʷ-refl ≈ʷ-refl 2F
 ```

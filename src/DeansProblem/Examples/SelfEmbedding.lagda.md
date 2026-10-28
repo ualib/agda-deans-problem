@@ -10,6 +10,8 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Examples.SelfEmbedding][] module of the [agda-lattices][] library.
 
+[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+
 In the free lattice `FL(3)` on generators `x`, `y`, `z`, the three elements
 
     x ∨ (y ∧ z),    y ∨ (z ∧ x),    z ∨ (x ∧ y)
@@ -35,6 +37,11 @@ makes Dean's question about ascending chains the interesting one.  By
 [DeansProblem.SelfSimilar][], no injective endomorphism of `FL(3)` turns this
 descending chain around.
 
+Last, the module proves Corollary 7.5 of [the paper][], in which `θ` is
+written `ρ`: `θ` fixes exactly the eleven elements of `T₁₁`
+(`θ-fixed⇔T₁₁`{.AgdaFunction}), so its fixed sublattice contains no free triple
+(`θ-no-fixed-triple`{.AgdaFunction}).
+
 <!--
 ```agda
 {-# OPTIONS --without-K --exact-split --safe #-}
@@ -46,23 +53,29 @@ open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
 open import Data.Fin.Properties                    using ( _≟_ )
 open import Data.List.Base                         using ( allFin )
+open import Data.List.Relation.Unary.All           using ( All ; all? ; lookup )
+open import Data.List.Relation.Unary.Any           using ( Any )
+open import Data.List.Membership.Propositional     using ( find )
 open import Data.List.Membership.Propositional.Properties
                                                    using ( ∈-allFin )
 open import Data.Nat.Base                          using ( ℕ ; suc )
 open import Data.Product                           using ( _,_ ; proj₁ )
+open import Function                               using ( _⇔_ ; mk⇔ )
 open import Relation.Binary.PropositionalEquality  using ( sym ; subst )
 open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using ( from-yes ; from-no )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym )
+open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
+open import DeansProblem.FixedGenerator            using ( T₁₁ ; strict-fixed-in-T₁₁ ; moves→no-fixed-triple )
+open import DeansProblem.Inflationary              using ( Inflationary )
 open import DeansProblem.Chain                     using ( Step ; iter ; iter-injective
                                                          ; freelyGenerates-⨟ )
 open import Lattices.Free.Generation
                                                    using ( FreelyGenerates
                                                          ; freelyGenerates→injective
                                                          ; generator-in-image ; module Decide )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; subst-hom )
+open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-cong ; subst-hom )
 open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
 open import Lattices.Free.Whitman                  using ( _≈ʷ_ ; module Decision )
 open import Setoid.Functions                       using ( IsInjective )
@@ -100,7 +113,7 @@ Corollary 1.6 (`generator-in-image`{.AgdaFunction}) it is not in the sublattice
 
 ```agda
 open Decide (_≟_ {3}) (allFin 3) ∈-allFin (_≟_ {3}) using ( freelyGenerates? )
-open Decision (_≟_ {3}) using ( _≈ʷ?_ )
+open Decision (_≟_ {3}) using ( _≤ʷ?_ ; _≈ʷ?_ )
 
 -- θ freely generates a copy of FL(3).
 θ-free : FreelyGenerates θ
@@ -166,4 +179,46 @@ descending k = record
   ; fresh    = 0F
   ; fresh∉p  = x∉θ
   }
+```
+
+#### Corollary 7.5: the fixed points of θ
+
+`θ`{.AgdaFunction} is strictly inflationary: `x ≤ x ∨ (y ∧ z)`, and
+`x ∨ (y ∧ z) ≠ x` since `y ∧ z ≰ x`, cyclically (`θ-inflationary`{.AgdaFunction},
+`θ-moves`{.AgdaFunction}, six decisions).  So by Proposition 7.3
+(`strict-fixed-in-T₁₁`{.AgdaFunction}) its fixed points lie in `T₁₁`.
+Conversely it fixes each of the eleven (`θ-fixes-T₁₁`{.AgdaFunction}, eleven
+decisions), and so every element equal to one of them.  Since `θ` is proper and
+moves every generator, Theorem E leaves it no fixed free triple
+(`θ-no-fixed-triple`{.AgdaFunction}).
+
+```agda
+-- θ is inflationary.
+θ-inflationary : Inflationary θ
+θ-inflationary 0F = from-yes (x ≤ʷ? θ 0F)
+θ-inflationary 1F = from-yes (y ≤ʷ? θ 1F)
+θ-inflationary 2F = from-yes (z ≤ʷ? θ 2F)
+
+-- And strictly: it moves every generator.
+θ-moves : ∀ g → ¬ (θ g ≈ʷ ℊ g)
+θ-moves 0F = from-no (θ 0F ≈ʷ? x)
+θ-moves 1F = from-no (θ 1F ≈ʷ? y)
+θ-moves 2F = from-no (θ 2F ≈ʷ? z)
+
+-- It fixes each of the eleven.
+θ-fixes-T₁₁ : All (λ t → t [ θ ] ≈ʷ t) T₁₁
+θ-fixes-T₁₁ = from-yes (all? (λ t → t [ θ ] ≈ʷ? t) T₁₁)
+
+-- Corollary 7.5: θ fixes exactly the eleven elements of T₁₁.
+θ-fixed⇔T₁₁ : (w : LatTerm (Fin 3)) → (w [ θ ] ≈ʷ w) ⇔ Any (w ≈ʷ_) T₁₁
+θ-fixed⇔T₁₁ w = mk⇔ (strict-fixed-in-T₁₁ θ θ-free θ-inflationary θ-moves w) fixed
+  where
+  -- An element equal to a fixed point is fixed.
+  fixed : Any (w ≈ʷ_) T₁₁ → w [ θ ] ≈ʷ w
+  fixed p = let (t , t∈ , w≈t) = find p
+            in ≈ʷ-trans ([]-cong θ w≈t) (≈ʷ-trans (lookup θ-fixes-T₁₁ t∈) (≈ʷ-sym w≈t))
+
+-- So the fixed sublattice of θ contains no free triple.
+θ-no-fixed-triple : (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → ¬ (∀ i → τ i [ θ ] ≈ʷ τ i)
+θ-no-fixed-triple τ τ-free τ-fixed = moves→no-fixed-triple θ θ-free 0F x∉θ τ τ-free τ-fixed θ-moves
 ```

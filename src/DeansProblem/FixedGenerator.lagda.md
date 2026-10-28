@@ -69,19 +69,23 @@ open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
 open import Data.Fin.Properties                    using ( _≟_ )
 open import Data.List.Base                         using ( List ; [] ; _∷_ ; map ; allFin )
-open import Data.List.Properties                   using ( map-∘ )
+open import Data.List.Properties                   using ( map-∘ ; map-cong )
 open import Data.List.Membership.Propositional     using ( _∈_ ; find ; lose )
 open import Data.List.Membership.Propositional.Properties
                                                    using ( ∈-allFin ; ∈-map⁺ ; ∈-map⁻ )
 open import Data.List.Relation.Unary.All           using ( All ; [] ; _∷_ ; all? ; lookup ; tabulate )
+open import Data.List.Relation.Unary.AllPairs      using ( AllPairs ; allPairs? )
 open import Data.List.Relation.Unary.Any           using ( Any ; here ; there ; any? )
+open import Data.List.Relation.Unary.Any.Properties
+                                                   using ( map⁻ )
 open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _*_ ; _≤_ ; s≤s )
 open import Data.Nat.Properties                    using ( ≤-refl ; ≤-trans ; _≤?_ ; ≤-pred ; m≤n⇒∃[o]m+o≡n )
 open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
 open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst )
+open import Function                               using ( _⇔_ ; mk⇔ )
+open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst ; subst₂ )
 open import Relation.Nullary                       using ( ¬_ )
-open import Relation.Nullary.Decidable.Core        using ( Dec ; yes ; no ; from-yes )
+open import Relation.Nullary.Decidable.Core        using ( Dec ; yes ; no ; from-yes ; map′ ; ¬? ; _×-dec_ )
 
 import Data.List.Relation.Unary.Any as Any
 
@@ -90,10 +94,13 @@ open import Lattices.Free.Canonical.Algorithm      using ( module Canonicalizati
 open import Lattices.Free.Canonical.Basic
   using  ( CTerm ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; jgen ; jmeet ; CMand ; mgen ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ
          ; ⋁ᴶ≡⋁⁺ ; ⋀ᴹ≡⋀⁺ ; ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ∨̇-cong ; ∧̇-cong ; IsCanonical ; cjoin
-         ; cmeet ; IsCanonicalJ ; cjmeet ; IsCanonicalM ; cmjoin ; ⋁⁺ ; ⋀⁺ )
+         ; cmeet ; IsCanonicalJ ; cjgen ; cjmeet ; IsCanonicalM ; cmgen ; cmjoin ; ⋁⁺ ; ⋀⁺ ; asListJ
+         ; asListM ; joinandsOf ; meetandsOf )
 open import Lattices.Free.Canonical.Joinands       using ( canonicalJoinands ; canonicalMeetands
                                                          ; canonicalJoinands-upper ; canonicalJoinands-least
-                                                         ; canonicalMeetands-lower ; canonicalMeetands-greatest )
+                                                         ; canonicalMeetands-lower ; canonicalMeetands-greatest
+                                                         ; joinands-≈ˡ ; meetands-≈ˡ ; Any-resp-≈ˡ ; ≈ˡ-sym )
+open import Lattices.Free.Canonical.Recognition    using ( module Recognize )
 open import Lattices.Free.Canonical.Uniqueness     using ( gen≉join ; gen≉meet ; antichain-≤ )
 open import DeansProblem.Chain                     using ( iter ; []-iter-suc )
 open import Lattices.Free.Complexity               using ( complexity ; complexity-resp ; complexity-mono ; complexityᴶ
@@ -105,23 +112,29 @@ open import DeansProblem.Fixed                     using ( fixed→image ; child
                                                          ; joinand-periodic ; meetand-periodic ; iter-free
                                                          ; []-iter-* )
 open import Lattices.Free.Duality                  using ( dual ; dual-involutive ; dual-cong ; dual-reflects
-                                                         ; dual-reflects-≈ )
+                                                         ; dual-reflects-≈ ; dual-antitone )
 open import Lattices.Free.Generation               using ( FreelyGenerates ; JoinCondition ; MeetCondition
+                                                         ; _≤⋁_ ; _⋀≤_
                                                          ; freelyGenerates→injective
                                                          ; MeetCondition→JoinConditionᵈ )
-open import DeansProblem.Inflationary              using ( Inflationary ; fixed-joinand-inflationary
-                                                         ; fixed-meetand-inflationary ; meetand-gen-fixed
-                                                         ; fixes-join ; fixes-join-third ; power-fixes→fixes )
+open import DeansProblem.Inflationary              using ( Inflationary ; Deflationary ; fixes-join
+                                                         ; fixes-join-third ; fixes-join-swapped
+                                                         ; iter-two ; power-fixes→fixes ; Node ; root
+                                                         ; joinand ; meetand ; NoGeneratorMeetand ; S-node
+                                                         ; strict-fixed-no-generator-meetand )
 open import DeansProblem.Partition                 using ( other ; other' ; cover₃ )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-⨟ ; []-mono ; []-cong
+open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-⨟ ; []-cong
                                                          ; []-congʳ ; dual-[] )
 open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
 open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl ; ≤ʷ-trans ; ∨≤ ; ≤∧ ; ∧ˡ≤ ; ∧ʳ≤
                                                          ; ℊ≤ℊ ; ℊ≤∨ˡ ; ℊ≤∨ʳ ; ≤∨ˡ ; module Decision )
 
 open Decision (_≟_ {3}) using ( _≈ʷ?_ )
+open Recognize (_≟_ {3}) using ( isCanonical? )
 
 private
+  open Canonicalization (_≟_ {3}) using ( canonical ; canonical-sound ; canonical-isCanonical )
+
   -- An equation of terms, read as an equality in the free lattice.
   ≡→≈ʷ : {s t : LatTerm (Fin 3)} → s ≡ t → s ≈ʷ t
   ≡→≈ʷ {s = s} e = subst (s ≈ʷ_) e ≈ʷ-refl
@@ -221,115 +234,337 @@ T₁₄→T₁₁ ng (there (there (there p)))         = p
 -- Every member of T₁₁ has complexity at most three.
 T₁₁-complexity : All (λ t → κ t ≤ 3) T₁₁
 T₁₁-complexity = from-yes (all? (λ t → κ t ≤? 3) T₁₁)
+
+-- Exactly: 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3.
+T₁₁-complexities : map κ T₁₁ ≡ 1 ∷ 1 ∷ 1 ∷ 1 ∷ 2 ∷ 2 ∷ 2 ∷ 2 ∷ 3 ∷ 3 ∷ 3 ∷ []
+T₁₁-complexities = refl
+
+-- The fourteen are distinct elements of FL(3).
+T₁₄-distinct : AllPairs (λ a b → ¬ (a ≈ʷ b)) T₁₄
+T₁₄-distinct = from-yes (allPairs? (λ a b → ¬? (a ≈ʷ? b)) T₁₄)
+```
+
+#### Proposition 7.2: the fourteen elements are the set S
+
+The set `S` of Section 7.3 of [the paper][] is
+`NoGeneratorMeetand`{.AgdaFunction} of [DeansProblem.Inflationary][]: no node
+of the canonical tree of the element has a generator among the meetands of a
+meet node.  Proposition 7.2 says `S = T₁₄` (`S⇔T₁₄`{.AgdaFunction}), and both
+inclusions follow the paper's proof.
+
+`T₁₄ ⊆ S`.  The fourteen terms, written as canonical terms
+(`T₁₄ᶜ`{.AgdaFunction}, which name them exactly, `T₁₄ᶜ-names`{.AgdaFunction}),
+are canonical and have no generator meetand (`T₁₄ᶜ-canonical`{.AgdaFunction}),
+decided by `isCanonical?`{.AgdaFunction} of
+[Lattices.Free.Canonical.Recognition][] and by `noGenᶜ?`{.AgdaFunction}, which
+decides the property on canonical terms (`NoGenᶜ`{.AgdaDatatype}).  A canonical
+term with the property names an element of `S` (`rep→S`{.AgdaFunction}): by
+Theorem 1.17, in its list form `joinands-≈ˡ`{.AgdaFunction} and
+`meetands-≈ˡ`{.AgdaFunction} of [Lattices.Free.Canonical.Joinands][], the
+canonical joinands and meetands of the element are those of the term up to
+order and equality, so every node of the tree is again named by such a term
+(`rep-node`{.AgdaFunction}), and no such term has a generator among its
+meetands unless it is a generator (`rep-no-gen`{.AgdaFunction}).
+
+`S ⊆ T₁₄`, by induction on complexity (`in-T₁₄`{.AgdaFunction}).  A generator
+is in `T₁₄`.  A canonical join is the join of its joinands, each a generator
+or a meet node of the tree, in `S` (`S-node`{.AgdaFunction}) and of smaller
+complexity, so in `T₁₄`; and `T₁₄` is closed under joins.  A canonical meet in
+`S` has no generator meetand, so its meetands are joins, nodes of the tree in
+`S` of smaller complexity, in `T₁₄` and no generators, so in `T₁₁`; and `T₁₁`
+is closed under meets.
+
+```agda
+-- No generator among the meetands of any meet node, read on a canonical term.
+data NoGenᶜ : CTerm (Fin 3) → Type
+data NoGenᴶ : CJand (Fin 3) → Type
+data NoGenᴹ : CMand (Fin 3) → Type
+
+data NoGenᶜ where
+  ngen   : ∀ {g} → NoGenᶜ (genᶜ g)
+  njoin  : ∀ {h t} → All NoGenᴶ (h ∷ t) → NoGenᶜ (joinᶜ h t)
+  nmeet  : ∀ {h t} → All NoGenᴹ (h ∷ t) → NoGenᶜ (meetᶜ h t)
+
+data NoGenᴶ where
+  njgen   : ∀ {g} → NoGenᴶ (jgen g)
+  njmeet  : ∀ {h t} → All NoGenᴹ (h ∷ t) → NoGenᴶ (jmeet h t)
+
+-- A meetand must be a join.
+data NoGenᴹ where
+  nmjoin  : ∀ {h t} → All NoGenᴶ (h ∷ t) → NoGenᴹ (mjoin h t)
+
+-- The property is decidable, by recursion on subterms.
+noGenᶜ?     : (C : CTerm (Fin 3)) → Dec (NoGenᶜ C)
+noGenᴶ?     : (a : CJand (Fin 3)) → Dec (NoGenᴶ a)
+noGenᴹ?     : (a : CMand (Fin 3)) → Dec (NoGenᴹ a)
+allNoGenᴶ?  : (as : List (CJand (Fin 3))) → Dec (All NoGenᴶ as)
+allNoGenᴹ?  : (as : List (CMand (Fin 3))) → Dec (All NoGenᴹ as)
+
+noGenᶜ? (genᶜ g)     = yes ngen
+noGenᶜ? (joinᶜ h t)  = map′ (λ (p , ps) → njoin (p ∷ ps)) (λ { (njoin (p ∷ ps)) → p , ps })
+                            (noGenᴶ? h ×-dec allNoGenᴶ? t)
+noGenᶜ? (meetᶜ h t)  = map′ (λ (p , ps) → nmeet (p ∷ ps)) (λ { (nmeet (p ∷ ps)) → p , ps })
+                            (noGenᴹ? h ×-dec allNoGenᴹ? t)
+
+noGenᴶ? (jgen g)     = yes njgen
+noGenᴶ? (jmeet h t)  = map′ (λ (p , ps) → njmeet (p ∷ ps)) (λ { (njmeet (p ∷ ps)) → p , ps })
+                            (noGenᴹ? h ×-dec allNoGenᴹ? t)
+
+noGenᴹ? (mgen g)     = no (λ ())
+noGenᴹ? (mjoin h t)  = map′ (λ (p , ps) → nmjoin (p ∷ ps)) (λ { (nmjoin (p ∷ ps)) → p , ps })
+                            (noGenᴶ? h ×-dec allNoGenᴶ? t)
+
+allNoGenᴶ? []        = yes []
+allNoGenᴶ? (a ∷ as)  = map′ (λ (p , ps) → p ∷ ps) (λ { (p ∷ ps) → p , ps }) (noGenᴶ? a ×-dec allNoGenᴶ? as)
+
+allNoGenᴹ? []        = yes []
+allNoGenᴹ? (a ∷ as)  = map′ (λ (p , ps) → p ∷ ps) (λ { (p ∷ ps) → p , ps }) (noGenᴹ? a ×-dec allNoGenᴹ? as)
+
+-- An element named by a canonical term with no generator meetand.
+Rep : LatTerm (Fin 3) → Type
+Rep u = Σ[ D ∈ CTerm (Fin 3) ] IsCanonical D × NoGenᶜ D × ⌊ D ⌋ ≈ʷ u
+
+private
+  -- A member of a list is a member up to equality.
+  ∈→Any≈ : {c : LatTerm (Fin 3)} {cs : List (LatTerm (Fin 3))} → c ∈ cs → Any (c ≈ʷ_) cs
+  ∈→Any≈ = Any.map (λ { refl → ≈ʷ-refl })
+
+  -- A non-generator joinand of such a term is named by such a term.
+  joinand-rep : (D : CTerm (Fin 3)) → IsCanonical D → NoGenᶜ D → {a : CJand (Fin 3)}
+              → a ∈ asListJ (joinandsOf D) → (∀ v → ¬ (⌊ a ⌋ᴶ ≈ʷ ℊ v)) → Rep ⌊ a ⌋ᴶ
+  joinand-rep (genᶜ g)     _  _  (here refl)  ng  = ⊥-elim (ng g ≈ʷ-refl)
+  joinand-rep (joinᶜ h t)  (cjoin _ cs _ _) (njoin ns) a∈ ng = child (lookup cs a∈) (lookup ns a∈) ng
+    where
+    child : {a : CJand (Fin 3)} → IsCanonicalJ a → NoGenᴶ a → (∀ v → ¬ (⌊ a ⌋ᴶ ≈ʷ ℊ v)) → Rep ⌊ a ⌋ᴶ
+    child (cjgen {x = g})  _            ng′  = ⊥-elim (ng′ g ≈ʷ-refl)
+    child (cjmeet ic)      (njmeet ms)  _    = meetᶜ _ _ , ic , nmeet ms , ≈ʷ-refl
+  joinand-rep (meetᶜ h t)  cD nD (here refl)  _   = meetᶜ h t , cD , nD , ≈ʷ-refl
+
+  -- A non-generator meetand of such a term is named by such a term.
+  meetand-rep : (D : CTerm (Fin 3)) → IsCanonical D → NoGenᶜ D → {a : CMand (Fin 3)}
+              → a ∈ asListM (meetandsOf D) → (∀ v → ¬ (⌊ a ⌋ᴹ ≈ʷ ℊ v)) → Rep ⌊ a ⌋ᴹ
+  meetand-rep (genᶜ g)     _  _  (here refl)  ng  = ⊥-elim (ng g ≈ʷ-refl)
+  meetand-rep (joinᶜ h t)  cD nD (here refl)  _   = joinᶜ h t , cD , nD , ≈ʷ-refl
+  meetand-rep (meetᶜ h t)  (cmeet _ cs _ _) (nmeet ns) a∈ _ = child (lookup cs a∈) (lookup ns a∈)
+    where
+    child : {a : CMand (Fin 3)} → IsCanonicalM a → NoGenᴹ a → Rep ⌊ a ⌋ᴹ
+    child cmgen        ()
+    child (cmjoin ic)  (nmjoin js)  = joinᶜ _ _ , ic , njoin js , ≈ʷ-refl
+
+  -- No meetand of such a term is a generator, unless the term is one.
+  gen-meetand : {g : Fin 3} (D : CTerm (Fin 3)) → IsCanonical D → NoGenᶜ D → {a : CMand (Fin 3)}
+              → a ∈ asListM (meetandsOf D) → ℊ g ≈ʷ ⌊ a ⌋ᴹ → (∀ v → ¬ (⌊ D ⌋ ≈ʷ ℊ v)) → ⊥
+  gen-meetand (genᶜ x)     _  _  _            _  ng  = ng x ≈ʷ-refl
+  gen-meetand (joinᶜ h t)  cD _  (here refl)  e  _   = gen≉join cD e
+  gen-meetand {g} (meetᶜ h t) (cmeet _ cs _ _) (nmeet ns) a∈ e _ = child (lookup cs a∈) (lookup ns a∈) e
+    where
+    child : {a : CMand (Fin 3)} → IsCanonicalM a → NoGenᴹ a → ℊ g ≈ʷ ⌊ a ⌋ᴹ → ⊥
+    child cmgen        ()
+    child (cmjoin ic)  _   e′ = gen≉join ic e′
+
+  -- A non-generator canonical joinand of an element named by such a term is named by one.
+  rep-joinand : {u c : LatTerm (Fin 3)} → Rep u → c ∈ CJ u → (∀ v → ¬ (c ≈ʷ ℊ v)) → Rep c
+  rep-joinand {c = c} (D , cD , nD , e) c∈ ng =
+    let (c′ , c′∈ , c≈c′) = find (Any-resp-≈ˡ (≈ˡ-sym (joinands-≈ˡ (_≟_ {3}) D cD e)) (∈→Any≈ c∈))
+        (a , a∈ , c′≡) = ∈-map⁻ ⌊_⌋ᴶ c′∈
+        c≈a : c ≈ʷ ⌊ a ⌋ᴶ
+        c≈a = subst (c ≈ʷ_) c′≡ c≈c′
+        (D′ , cD′ , nD′ , e′) = joinand-rep D cD nD a∈ (λ v a≈v → ng v (≈ʷ-trans c≈a a≈v))
+    in D′ , cD′ , nD′ , ≈ʷ-trans e′ (≈ʷ-sym c≈a)
+
+  -- Likewise for a meetand.
+  rep-meetand : {u c : LatTerm (Fin 3)} → Rep u → c ∈ CM u → (∀ v → ¬ (c ≈ʷ ℊ v)) → Rep c
+  rep-meetand {c = c} (D , cD , nD , e) c∈ ng =
+    let (c′ , c′∈ , c≈c′) = find (Any-resp-≈ˡ (≈ˡ-sym (meetands-≈ˡ (_≟_ {3}) D cD e)) (∈→Any≈ c∈))
+        (a , a∈ , c′≡) = ∈-map⁻ ⌊_⌋ᴹ c′∈
+        c≈a : c ≈ʷ ⌊ a ⌋ᴹ
+        c≈a = subst (c ≈ʷ_) c′≡ c≈c′
+        (D′ , cD′ , nD′ , e′) = meetand-rep D cD nD a∈ (λ v a≈v → ng v (≈ʷ-trans c≈a a≈v))
+    in D′ , cD′ , nD′ , ≈ʷ-trans e′ (≈ʷ-sym c≈a)
+
+-- Every node of the tree of an element named by such a term is named by one.
+rep-node : {w u : LatTerm (Fin 3)} → Rep w → Node w u → Rep u
+rep-node r root                = r
+rep-node r (joinand nd c∈ ng)  = rep-joinand (rep-node r nd) c∈ ng
+rep-node r (meetand nd c∈ ng)  = rep-meetand (rep-node r nd) c∈ ng
+
+-- A non-generator element named by such a term has no generator among its canonical meetands.
+rep-no-gen : {u : LatTerm (Fin 3)} → Rep u → (∀ v → ¬ (u ≈ʷ ℊ v)) → ∀ {g} → ¬ (ℊ g ∈ CM u)
+rep-no-gen (D , cD , nD , e) ng {g} g∈ =
+  let (c′ , c′∈ , g≈c′) = find (Any-resp-≈ˡ (≈ˡ-sym (meetands-≈ˡ (_≟_ {3}) D cD e)) (∈→Any≈ g∈))
+      (a , a∈ , c′≡) = ∈-map⁻ ⌊_⌋ᴹ c′∈
+  in gen-meetand D cD nD a∈ (subst (ℊ g ≈ʷ_) c′≡ g≈c′) (λ v D≈v → ng v (≈ʷ-trans (≈ʷ-sym e) D≈v))
+
+-- So such an element is in S.
+rep→S : {w : LatTerm (Fin 3)} → Rep w → NoGeneratorMeetand w
+rep→S r nd ng = rep-no-gen (rep-node r nd) ng
+```
+
+The fourteen terms as canonical terms, and the inclusion `T₁₄ ⊆ S`.
+
+```agda
+private
+  XY XZ YZ : CMand (Fin 3)
+  XY = mjoin (jgen 0F) (jgen 1F ∷ [])
+  XZ = mjoin (jgen 0F) (jgen 2F ∷ [])
+  YZ = mjoin (jgen 1F) (jgen 2F ∷ [])
+
+-- The fourteen, as canonical terms.
+T₁₄ᶜ : List (CTerm (Fin 3))
+T₁₄ᶜ = genᶜ 0F ∷ genᶜ 1F ∷ genᶜ 2F
+     ∷ joinᶜ (jgen 0F) (jgen 1F ∷ []) ∷ joinᶜ (jgen 0F) (jgen 2F ∷ []) ∷ joinᶜ (jgen 1F) (jgen 2F ∷ [])
+     ∷ joinᶜ (jgen 0F) (jgen 1F ∷ jgen 2F ∷ [])
+     ∷ meetᶜ XY (XZ ∷ []) ∷ meetᶜ XY (YZ ∷ []) ∷ meetᶜ XZ (YZ ∷ []) ∷ meetᶜ XY (XZ ∷ YZ ∷ [])
+     ∷ joinᶜ (jgen 0F) (jmeet XY (XZ ∷ YZ ∷ []) ∷ []) ∷ joinᶜ (jgen 1F) (jmeet XY (XZ ∷ YZ ∷ []) ∷ [])
+     ∷ joinᶜ (jgen 2F) (jmeet XY (XZ ∷ YZ ∷ []) ∷ [])
+     ∷ []
+
+-- They name the fourteen terms.
+T₁₄ᶜ-names : map ⌊_⌋ T₁₄ᶜ ≡ T₁₄
+T₁₄ᶜ-names = refl
+
+-- They are canonical, with no generator meetand.
+T₁₄ᶜ-canonical : All (λ C → IsCanonical C × NoGenᶜ C) T₁₄ᶜ
+T₁₄ᶜ-canonical = from-yes (all? (λ C → isCanonical? C ×-dec noGenᶜ? C) T₁₄ᶜ)
+
+-- T₁₄ ⊆ S, up to equality.
+T₁₄→S : {w : LatTerm (Fin 3)} → Any (w ≈ʷ_) T₁₄ → NoGeneratorMeetand w
+T₁₄→S {w} p =
+  let (C , C∈ , w≈C) = find (map⁻ {f = ⌊_⌋} {xs = T₁₄ᶜ} (subst (Any (w ≈ʷ_)) (sym T₁₄ᶜ-names) p))
+      (cC , nC) = lookup T₁₄ᶜ-canonical C∈
+  in rep→S (C , cC , nC , ≈ʷ-sym w≈C)
+```
+
+The converse, by induction on a bound for the complexity, through the shape of
+the canonical form `C` (`byShapeˢ`{.AgdaFunction}, which carries the equation
+`canonical w ≡ C` so that no `with` is needed).
+
+```agda
+private
+  -- A successor is not below zero.
+  suc≰0 : ∀ {m} → suc m ≤ 0 → ⊥
+  suc≰0 ()
+
+-- S ⊆ T₁₄, by induction on a bound for the complexity.
+in-T₁₄ : (n : ℕ) (w : LatTerm (Fin 3)) → κ w ≤ n → NoGeneratorMeetand w → Any (w ≈ʷ_) T₁₄
+byShapeˢ : (n : ℕ) (w : LatTerm (Fin 3)) (C : CTerm (Fin 3)) → canonical w ≡ C → IsCanonical C
+         → ⌊ C ⌋ ≈ʷ w → κ w ≤ n → NoGeneratorMeetand w → Any (w ≈ʷ_) T₁₄
+
+in-T₁₄ n w b s = byShapeˢ n w (canonical w) refl (canonical-isCanonical w) (canonical-sound w) b s
+
+byShapeˢ n        w (genᶜ g)     eq _  e b s = Any.map (≈ʷ-trans (≈ʷ-sym e)) (gen∈T₁₄ g)
+byShapeˢ zero     w (joinᶜ h t)  eq _  e b s = ⊥-elim (suc≰0 (subst (_≤ 0) (cong depth eq) b))
+byShapeˢ zero     w (meetᶜ h t)  eq _  e b s = ⊥-elim (suc≰0 (subst (_≤ 0) (cong depth eq) b))
+byShapeˢ (suc n)  w (joinᶜ h t)  eq (cjoin _ cs _ _) e b s =
+  Any.map (≈ʷ-trans w≈)
+          (⋁⁺-closed ⌊ h ⌋ᴶ (map ⌊_⌋ᴶ t) (joinand-in h (here refl) (lookup cs (here refl)))
+                     (tabulate λ {m} m∈ →
+                        let (a , a∈ , m≡) = ∈-map⁻ ⌊_⌋ᴶ m∈
+                        in subst (λ u → Any (u ≈ʷ_) T₁₄) (sym m≡) (joinand-in a (there a∈) (lookup cs (there a∈)))))
+  where
+  -- w is the join of its canonical joinands.
+  w≈ : w ≈ʷ ⋁⁺ ⌊ h ⌋ᴶ (map ⌊_⌋ᴶ t)
+  w≈ = subst (w ≈ʷ_) (⋁ᴶ≡⋁⁺ h t) (≈ʷ-sym e)
+
+  -- Each joinand has complexity at most n.
+  children≤ : (a : CJand (Fin 3)) → a ∈ h ∷ t → IsCanonicalJ a → κ ⌊ a ⌋ᴶ ≤ n
+  children≤ a a∈ ic =
+    ≤-trans (subst (_≤ _) (sym (complexityᴶ _≟_ ic)) (depthΣJ-upper a∈))
+            (≤-pred (subst (_≤ suc n) (cong depth eq) b))
+
+  -- The membership of a joinand in the canonical joinands of w.
+  joinand∈ : (a : CJand (Fin 3)) → a ∈ h ∷ t → ⌊ a ⌋ᴶ ∈ CJ w
+  joinand∈ a a∈ = subst (λ D → ⌊ a ⌋ᴶ ∈ map ⌊_⌋ᴶ (asListJ (joinandsOf D))) (sym eq) (∈-map⁺ ⌊_⌋ᴶ a∈)
+
+  -- Each joinand is in T₁₄: a generator, or a meet node of the tree, in S and of smaller complexity.
+  joinand-in : (a : CJand (Fin 3)) → a ∈ h ∷ t → IsCanonicalJ a → Any (⌊ a ⌋ᴶ ≈ʷ_) T₁₄
+  joinand-in (jgen g)       a∈ _            = gen∈T₁₄ g
+  joinand-in (jmeet mh mt)  a∈ (cjmeet ic)  =
+    in-T₁₄ n ⌊ jmeet mh mt ⌋ᴶ (children≤ (jmeet mh mt) a∈ (cjmeet ic))
+           (S-node s (joinand root (joinand∈ (jmeet mh mt) a∈) (λ v e′ → gen≉meet ic (≈ʷ-sym e′))))
+byShapeˢ (suc n)  w (meetᶜ h t)  eq ic@(cmeet _ cs _ _) e b s =
+  T₁₁→T₁₄
+    (Any.map (≈ʷ-trans w≈)
+             (⋀⁺-closed ⌊ h ⌋ᴹ (map ⌊_⌋ᴹ t) (meetand-in h (here refl) (lookup cs (here refl)))
+                        (tabulate λ {m} m∈ →
+                           let (a , a∈ , m≡) = ∈-map⁻ ⌊_⌋ᴹ m∈
+                           in subst (λ u → Any (u ≈ʷ_) T₁₁) (sym m≡) (meetand-in a (there a∈) (lookup cs (there a∈))))))
+  where
+  -- w is the meet of its canonical meetands.
+  w≈ : w ≈ʷ ⋀⁺ ⌊ h ⌋ᴹ (map ⌊_⌋ᴹ t)
+  w≈ = subst (w ≈ʷ_) (⋀ᴹ≡⋀⁺ h t) (≈ʷ-sym e)
+
+  -- Each meetand has complexity at most n.
+  children≤ : (a : CMand (Fin 3)) → a ∈ h ∷ t → IsCanonicalM a → κ ⌊ a ⌋ᴹ ≤ n
+  children≤ a a∈ ic′ =
+    ≤-trans (subst (_≤ _) (sym (complexityᴹ _≟_ ic′)) (depthΣM-upper a∈))
+            (≤-pred (subst (_≤ suc n) (cong depth eq) b))
+
+  -- The membership of a meetand in the canonical meetands of w.
+  meetand∈ : (a : CMand (Fin 3)) → a ∈ h ∷ t → ⌊ a ⌋ᴹ ∈ CM w
+  meetand∈ a a∈ = subst (λ D → ⌊ a ⌋ᴹ ∈ map ⌊_⌋ᴹ (asListM (meetandsOf D))) (sym eq) (∈-map⁺ ⌊_⌋ᴹ a∈)
+
+  -- w is no generator: it is a canonical meet.
+  w-not-gen : ∀ v → ¬ (w ≈ʷ ℊ v)
+  w-not-gen v e′ = gen≉meet ic (≈ʷ-sym (≈ʷ-trans e e′))
+
+  -- Each meetand is a join, a node of the tree in S of smaller complexity, so in T₁₁.
+  meetand-in : (a : CMand (Fin 3)) → a ∈ h ∷ t → IsCanonicalM a → Any (⌊ a ⌋ᴹ ≈ʷ_) T₁₁
+  meetand-in (mgen g)       a∈ _             = ⊥-elim (s root w-not-gen (meetand∈ (mgen g) a∈))
+  meetand-in (mjoin jh jt)  a∈ (cmjoin ic′)  =
+    T₁₄→T₁₁ ng
+      (in-T₁₄ n ⌊ mjoin jh jt ⌋ᴹ (children≤ (mjoin jh jt) a∈ (cmjoin ic′))
+              (S-node s (meetand root (meetand∈ (mjoin jh jt) a∈) ng)))
+    where
+    ng : ∀ v → ¬ (⌊ mjoin jh jt ⌋ᴹ ≈ʷ ℊ v)
+    ng v e′ = gen≉join ic′ (≈ʷ-sym e′)
+
+-- S ⊆ T₁₄.
+S→T₁₄ : (w : LatTerm (Fin 3)) → NoGeneratorMeetand w → Any (w ≈ʷ_) T₁₄
+S→T₁₄ w = in-T₁₄ (κ w) w ≤-refl
+
+-- Proposition 7.2: S = T₁₄, up to equality.
+S⇔T₁₄ : (w : LatTerm (Fin 3)) → NoGeneratorMeetand w ⇔ Any (w ≈ʷ_) T₁₄
+S⇔T₁₄ w = mk⇔ (S→T₁₄ w) T₁₄→S
 ```
 
 #### A strictly inflationary embedding fixes at most eleven elements
 
 Fix an inflationary, freely generating `Ψ` that moves every generator.  No
-fixed point is a generator (`fixed-not-gen`{.AgdaFunction}).  The induction
-runs on a bound for the complexity of the fixed point `w`, through the shape
-of its canonical form `C` (`byShape`{.AgdaFunction}, which carries the
-equation `canonical w ≡ C` so that no `with` is needed): a generator is
-impossible; the joinands of a canonical join are generators, members of
-`T₁₄`, or canonical meets, which are fixed by
-`fixed-joinand-inflationary`{.AgdaFunction}, have smaller complexity, and are
-members of `T₁₁` by induction; so the join is a member of `T₁₄`, and of
-`T₁₁` since it is no generator.  The meetands of a canonical meet are never
-generators, since `meetand-gen-fixed`{.AgdaFunction} would fix one, so they
-are fixed canonical joins and members of `T₁₁` by induction.
+fixed point is a generator (`fixed-not-gen`{.AgdaFunction}).  Proposition 7.3
+(`strict-fixed-in-T₁₁`{.AgdaFunction}) is proved as in [the paper][]: by Lemma
+3, every fixed point is in `S`
+(`strict-fixed-no-generator-meetand`{.AgdaFunction}), so in `T₁₄` by
+Proposition 7.2 (`S→T₁₄`{.AgdaFunction}), and in `T₁₁` since it is no
+generator.  `in-T₁₁`{.AgdaFunction} keeps its bounded form as a use of it.
+`byShape`{.AgdaFunction}, which ran the induction for fixed points before
+Proposition 7.2 was stated, is deprecated: `in-T₁₄`{.AgdaFunction} runs it for
+`S`.
 
 ```agda
 module _ (Ψ : Sub (Fin 3) (Fin 3)) (Ψ-free : FreelyGenerates Ψ) (inf : Inflationary Ψ)
          (moves : ∀ g → ¬ (Ψ g ≈ʷ ℊ g)) where
-  open Canonicalization (_≟_ {3}) using ( canonical ; canonical-sound ; canonical-isCanonical )
-
   -- A fixed point is no generator.
   fixed-not-gen : (w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → ∀ g → ¬ (w ≈ʷ ℊ g)
   fixed-not-gen w fix g e = moves g (≈ʷ-trans (≈ʷ-sym ([]-cong Ψ e)) (≈ʷ-trans fix e))
 
-  private
-    -- A successor is not below zero.
-    suc≰0 : ∀ {m} → suc m ≤ 0 → ⊥
-    suc≰0 ()
+  -- Proposition 7.3: every fixed point is one of the eleven (Lemma 3 and Proposition 7.2).
+  strict-fixed-in-T₁₁ : (w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → Any (w ≈ʷ_) T₁₁
+  strict-fixed-in-T₁₁ w fix =
+    T₁₄→T₁₁ (fixed-not-gen w fix) (S→T₁₄ w (strict-fixed-no-generator-meetand Ψ Ψ-free inf moves w fix))
 
-  -- Every fixed point is a member of T₁₁, by induction on a bound for its complexity.
+  -- The same, under a bound for the complexity.
   in-T₁₁ : (n : ℕ) (w : LatTerm (Fin 3)) → κ w ≤ n → w [ Ψ ] ≈ʷ w → Any (w ≈ʷ_) T₁₁
+  in-T₁₁ n w b fix = strict-fixed-in-T₁₁ w fix
+
+  -- Deprecated: the shape of the canonical form is no longer needed.
   byShape : (n : ℕ) (w : LatTerm (Fin 3)) (C : CTerm (Fin 3)) → canonical w ≡ C → IsCanonical C
           → ⌊ C ⌋ ≈ʷ w → κ w ≤ n → w [ Ψ ] ≈ʷ w → Any (w ≈ʷ_) T₁₁
+  byShape n w C _ _ _ b fix = in-T₁₁ n w b fix
+  {-# WARNING_ON_USAGE byShape
+  "byShape is deprecated; use in-T₁₁, or in-T₁₄ for the induction on S (Proposition 7.2)." #-}
 
-  in-T₁₁ n w b fix = byShape n w (canonical w) refl (canonical-isCanonical w) (canonical-sound w) b fix
-
-  byShape n        w (genᶜ g)     eq _                    e b fix = ⊥-elim (fixed-not-gen w fix g (≈ʷ-sym e))
-  byShape zero     w (joinᶜ h t)  eq _                    e b fix = ⊥-elim (suc≰0 (subst (_≤ 0) (cong depth eq) b))
-  byShape zero     w (meetᶜ h t)  eq _                    e b fix = ⊥-elim (suc≰0 (subst (_≤ 0) (cong depth eq) b))
-  byShape (suc n)  w (joinᶜ h t)  eq (cjoin _ cs _ _)     e b fix =
-    T₁₄→T₁₁ (fixed-not-gen w fix)
-      (Any.map (≈ʷ-trans w≈)
-               (⋁⁺-closed ⌊ h ⌋ᴶ (map ⌊_⌋ᴶ t) (joinand-in h (here refl) (lookup cs (here refl)))
-                          (tabulate λ {m} m∈ →
-                             let (a , a∈ , m≡) = ∈-map⁻ ⌊_⌋ᴶ m∈
-                             in subst (λ u → Any (u ≈ʷ_) T₁₄) (sym m≡)
-                                      (joinand-in a (there a∈) (lookup cs (there a∈))))))
-    where
-    -- w is the join of its canonical joinands.
-    w≈ : w ≈ʷ ⋁⁺ ⌊ h ⌋ᴶ (map ⌊_⌋ᴶ t)
-    w≈ = subst (w ≈ʷ_) (⋁ᴶ≡⋁⁺ h t) (≈ʷ-sym e)
-
-    -- The depth of the join is at most n + 1, so each joinand has complexity at most n.
-    children≤ : (a : CJand (Fin 3)) → a ∈ h ∷ t → IsCanonicalJ a → κ ⌊ a ⌋ᴶ ≤ n
-    children≤ a a∈ ic =
-      ≤-trans (subst (_≤ _) (sym (complexityᴶ _≟_ ic)) (depthΣJ-upper a∈))
-              (≤-pred (subst (_≤ suc n) (cong depth eq) b))
-
-    -- Each joinand is a member of T₁₄: a generator, or a fixed meet of smaller complexity.
-    joinand-in : (a : CJand (Fin 3)) → a ∈ h ∷ t → IsCanonicalJ a → Any (⌊ a ⌋ᴶ ≈ʷ_) T₁₄
-    joinand-in (jgen g)       a∈ _            = gen∈T₁₄ g
-    joinand-in (jmeet mh mt)  a∈ (cjmeet ic)  =
-      T₁₁→T₁₄ (in-T₁₁ n ⌊ jmeet mh mt ⌋ᴶ (children≤ (jmeet mh mt) a∈ (cjmeet ic))
-                       (fixed-joinand-inflationary Ψ Ψ-free inf w fix
-                          (subst (λ D → ⌊ jmeet mh mt ⌋ᴶ ∈ map ⌊_⌋ᴶ (proj₁ (joinandsOfC D) ∷ proj₂ (joinandsOfC D)))
-                                 (sym eq) (∈-map⁺ ⌊_⌋ᴶ a∈))
-                          (λ v e′ → gen≉meet ic (≈ʷ-sym e′))))
-      where
-      joinandsOfC : CTerm (Fin 3) → CJand (Fin 3) × List (CJand (Fin 3))
-      joinandsOfC = Lattices.Free.Canonical.Basic.joinandsOf
-  byShape (suc n)  w (meetᶜ h t)  eq (cmeet _ cs _ _)     e b fix =
-    Any.map (≈ʷ-trans w≈)
-            (⋀⁺-closed ⌊ h ⌋ᴹ (map ⌊_⌋ᴹ t) (meetand-in h (here refl) (lookup cs (here refl)))
-                       (tabulate λ {m} m∈ →
-                          let (a , a∈ , m≡) = ∈-map⁻ ⌊_⌋ᴹ m∈
-                          in subst (λ u → Any (u ≈ʷ_) T₁₁) (sym m≡)
-                                   (meetand-in a (there a∈) (lookup cs (there a∈)))))
-    where
-    w≈ : w ≈ʷ ⋀⁺ ⌊ h ⌋ᴹ (map ⌊_⌋ᴹ t)
-    w≈ = subst (w ≈ʷ_) (⋀ᴹ≡⋀⁺ h t) (≈ʷ-sym e)
-
-    children≤ : (a : CMand (Fin 3)) → a ∈ h ∷ t → IsCanonicalM a → κ ⌊ a ⌋ᴹ ≤ n
-    children≤ a a∈ ic =
-      ≤-trans (subst (_≤ _) (sym (complexityᴹ _≟_ ic)) (depthΣM-upper a∈))
-              (≤-pred (subst (_≤ suc n) (cong depth eq) b))
-
-    -- The membership of a meetand in the canonical meetands of w.
-    meetand∈ : (a : CMand (Fin 3)) → a ∈ h ∷ t → ⌊ a ⌋ᴹ ∈ CM w
-    meetand∈ a a∈ =
-      subst (λ D → ⌊ a ⌋ᴹ ∈ map ⌊_⌋ᴹ (proj₁ (meetandsOfC D) ∷ proj₂ (meetandsOfC D))) (sym eq) (∈-map⁺ ⌊_⌋ᴹ a∈)
-      where
-      meetandsOfC : CTerm (Fin 3) → CMand (Fin 3) × List (CMand (Fin 3))
-      meetandsOfC = Lattices.Free.Canonical.Basic.meetandsOf
-
-    -- Each meetand is a fixed join of smaller complexity, a member of T₁₁; a generator meetand would be fixed.
-    meetand-in : (a : CMand (Fin 3)) → a ∈ h ∷ t → IsCanonicalM a → Any (⌊ a ⌋ᴹ ≈ʷ_) T₁₁
-    meetand-in (mgen g)       a∈ _            =
-      ⊥-elim (moves g (meetand-gen-fixed Ψ Ψ-free inf w fix (meetand∈ (mgen g) a∈)))
-    meetand-in (mjoin jh jt)  a∈ (cmjoin ic)  =
-      in-T₁₁ n ⌊ mjoin jh jt ⌋ᴹ (children≤ (mjoin jh jt) a∈ (cmjoin ic))
-             (fixed-meetand-inflationary Ψ Ψ-free inf w fix (meetand∈ (mjoin jh jt) a∈)
-                                         (λ v e′ → gen≉join ic (≈ʷ-sym e′)))
-
-  -- So every fixed point is one of the eleven, and has complexity at most three.
-  strict-fixed-in-T₁₁ : (w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → Any (w ≈ʷ_) T₁₁
-  strict-fixed-in-T₁₁ w fix = in-T₁₁ (κ w) w ≤-refl fix
-
+  -- Every fixed point has complexity at most three.
   strict-fixed-complexity : (w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → κ w ≤ 3
   strict-fixed-complexity w fix =
     let (t , t∈ , e) = find (strict-fixed-in-T₁₁ w fix)
@@ -430,8 +665,8 @@ Fix a proper self-embedding `Θ` with a fixed free triple `τ`.  The element
 named in the triple by a term of complexity four is fixed and has complexity
 at least four (`u₄`{.AgdaFunction}).  Suppose a positive power `Ψ` of `Θ`
 fixes `x′ ∨ y′`, the join of the two generators other than `z′`.  By
-`fixes-join`{.AgdaFunction}, `Ψ` or `Ψ²` is inflationary; call it `Φ`, again a
-positive power of `Θ`.  Either `Φ` fixes a generator, decided by Whitman's
+`fixes-join`{.AgdaFunction} and `fixes-join-swapped`{.AgdaFunction}, `Ψ` or
+`Ψ²` is inflationary; call it `Φ`, again a positive power of `Θ`.  Either `Φ` fixes a generator, decided by Whitman's
 procedure, and then so does `Θ` (`power-fixes→fixes`{.AgdaFunction}); or `Φ`
 moves every generator, and then its fixed point `u₄` has complexity at most
 three, which it has not (`join-case`{.AgdaFunction}).
@@ -521,14 +756,12 @@ module JoinCase (Θ : Sub (Fin 3) (Fin 3)) (Θ-free : FreelyGenerates Θ) (m : F
     z′≤ : ℊ z′ ≤ʷ Ψ z′
     z′≤ = fixes-join-third Ψ Ψ-free z′ fixj
 
-    -- Straight: Ψ is inflationary.  Swapped: Ψ² is.
+    -- Straight: Ψ is inflationary.  Swapped: Ψ² is, by the last clause of Lemma 1.
     finish : (ℊ x′ ≤ʷ Ψ x′ × ℊ y′ ≤ʷ Ψ y′) ⊎ (ℊ x′ ≤ʷ Ψ y′ × ℊ y′ ≤ʷ Ψ x′) → Σ[ E ∈ ℕ ] Inflationary (iter Θ (suc E))
     finish (inj₁ (px , py)) = e , inflationary-of Ψ z′ px py z′≤
     finish (inj₂ (px , py)) =
-      e + (suc e + 0) , inflationary-of (iter Θ (suc (e + (suc e + 0)))) z′
-        (subst (ℊ x′ ≤ʷ_) (sym (square e x′)) (≤ʷ-trans px ([]-mono Ψ py)))
-        (subst (ℊ y′ ≤ʷ_) (sym (square e y′)) (≤ʷ-trans py ([]-mono Ψ px)))
-        (subst (ℊ z′ ≤ʷ_) (sym (square e z′)) (≤ʷ-trans z′≤ ([]-mono Ψ z′≤)))
+      e + (suc e + 0) , λ v → subst (ℊ v ≤ʷ_) (trans (iter-two Ψ Ψ-free v) (sym (square e v)))
+                                    (fixes-join-swapped Ψ Ψ-free z′ fixj px py v)
 
   -- And so a generator fixed by Θ.
   join-case : (z′ : Fin 3) (e : ℕ)
@@ -543,9 +776,14 @@ The dual of a substitution dualizes every image (`dualˢ`{.AgdaFunction}); it
 freely generates when the original does (`dual-free`{.AgdaFunction}), misses
 the same generators (`dual-misses`{.AgdaFunction}), fixes the dual of each
 fixed point (`dual-fixed`{.AgdaFunction}), and its iterates are the duals of
-the iterates (`dual-iter`{.AgdaFunction}).  So a power fixing a meet of two
-generators is, for the dual embedding, a power fixing their join, and a
-generator fixed by the dual embedding is fixed by the original.
+the iterates (`dual-iter`{.AgdaFunction}).  The first and the third are
+equivalences (`dual-free⁻¹`{.AgdaFunction}, `dual-fixed⁻¹`{.AgdaFunction}),
+since the dual is an involution, and the dual is inflationary exactly when the
+original is deflationary (`dual-inflationary`{.AgdaFunction}, with its dual
+`dual-deflationary`{.AgdaFunction}): these are the duality facts of Section 7.1
+of [the paper][].  So a power fixing a meet of two generators is, for the dual
+embedding, a power fixing their join, and a generator fixed by the dual
+embedding is fixed by the original.
 
 ```agda
 -- The dual of a substitution.
@@ -587,6 +825,33 @@ dual-iter t σ (suc k)  =
         (trans (dual-iter (t [ σ ]) σ k)
                (trans (cong (_[ iter (dualˢ σ) k ]) (dual-[] t σ))
                       (sym ([]-iter-suc (dual t) (dualˢ σ) k))))
+
+private
+  -- Free generation depends only on the values of the family.
+  free-resp : (σ σ′ : Sub (Fin 3) (Fin 3)) → (∀ v → σ v ≡ σ′ v) → FreelyGenerates σ → FreelyGenerates σ′
+  free-resp σ σ′ eq (jc , mc) =
+      (λ {i} {js} p → jc (subst₂ _≤⋁_ (sym (eq i)) (sym (map-cong eq js)) p))
+    , (λ {i} {js} p → mc (subst₂ _⋀≤_ (sym (map-cong eq js)) (sym (eq i)) p))
+
+-- A family freely generates exactly when its dual does: the converse of dual-free.
+dual-free⁻¹ : (σ : Sub (Fin 3) (Fin 3)) → FreelyGenerates (dualˢ σ) → FreelyGenerates σ
+dual-free⁻¹ σ fd = free-resp (dualˢ (dualˢ σ)) σ (λ v → dual-involutive (σ v)) (dual-free (dualˢ σ) fd)
+
+-- The dual fixes the dual of an element only when the original fixes the element: the converse of dual-fixed.
+dual-fixed⁻¹ : (σ : Sub (Fin 3) (Fin 3)) (t : LatTerm (Fin 3)) → dual t [ dualˢ σ ] ≈ʷ dual t → t [ σ ] ≈ʷ t
+dual-fixed⁻¹ σ t fix = dual-reflects-≈ {s = t [ σ ]} {t = t} (subst (_≈ʷ dual t) (sym (dual-[] t σ)) fix)
+
+-- The dual is inflationary exactly when the original is deflationary.
+dual-inflationary : (σ : Sub (Fin 3) (Fin 3)) → Inflationary (dualˢ σ) ⇔ Deflationary σ
+dual-inflationary σ =
+  mk⇔ (λ inf v → subst (_≤ʷ ℊ v) (dual-involutive (σ v)) (dual-antitone (inf v)))
+      (λ def v → dual-antitone (def v))
+
+-- And deflationary exactly when the original is inflationary.
+dual-deflationary : (σ : Sub (Fin 3) (Fin 3)) → Deflationary (dualˢ σ) ⇔ Inflationary σ
+dual-deflationary σ =
+  mk⇔ (λ def v → subst (ℊ v ≤ʷ_) (dual-involutive (σ v)) (dual-antitone (def v)))
+      (λ inf v → dual-antitone (inf v))
 ```
 
 The theorem assembles the steps: the descent from `u₄` reaches an element
@@ -595,7 +860,13 @@ meetand `v` of `u` of complexity one, fixed by a further power; `v` is, up to
 equality, one of the generators (impossible, by its complexity), the top or
 the bottom (impossible, by `top-not-child`{.AgdaFunction} and
 `bot-not-child`{.AgdaFunction}), a join of two generators (the join case), or
-a meet of two generators (the join case for the dual embedding).
+a meet of two generators (the join case for the dual embedding).  Proposition
+7.4 of [the paper][] is `inflationary-fixing-power`{.AgdaFunction}: the
+inflationary power of `inflationary-power`{.AgdaFunction} fixes the triple, or
+the dual triple, since every power of `Θ` fixes what `Θ` fixes
+(`fixed→image`{.AgdaFunction}).  And a proper self-embedding that moves every
+generator fixes no free triple (`moves→no-fixed-triple`{.AgdaFunction}), the
+remark after Corollary 7.5.
 
 ```agda
 module _ (Θ : Sub (Fin 3) (Fin 3)) (Θ-free : FreelyGenerates Θ) (m : Fin 3) (m∉ : ∀ i → ¬ (ℊ m ≈ʷ Θ i))
@@ -698,4 +969,23 @@ module _ (Θ : Sub (Fin 3) (Fin 3)) (Θ-free : FreelyGenerates Θ) (m : Fin 3) (
   -- Every proper self-embedding of FL(3) with a fixed free triple fixes a generator.
   fixes-generator : Σ[ g ∈ Fin 3 ] Θ g ≈ʷ ℊ g
   fixes-generator = [ (λ (E , infΦ) → conclude E infΦ) , (λ (E , infΦ) → back (Dual.conclude E infΦ)) ]′ inflationary-power
+
+  -- So one that moves every generator fixes no free triple.
+  moves→no-fixed-triple : (∀ g → ¬ (Θ g ≈ʷ ℊ g)) → ⊥
+  moves→no-fixed-triple moves = let (g , fixg) = fixes-generator in moves g fixg
+
+  -- Proposition 7.4, both halves: an inflationary positive power of Θ fixing the triple, or of Θᵈ fixing the dual triple.
+  InflationaryFixingPower : Type
+  InflationaryFixingPower =
+      (Σ[ E ∈ ℕ ] Inflationary (iter Θ (suc E)) × (∀ i → τ i [ iter Θ (suc E) ] ≈ʷ τ i))
+    ⊎ (Σ[ E ∈ ℕ ] Inflationary (iter Θᵈ (suc E)) × (∀ i → dualˢ τ i [ iter Θᵈ (suc E) ] ≈ʷ dualˢ τ i))
+
+  inflationary-fixing-power : InflationaryFixingPower
+  inflationary-fixing-power =
+    [ (λ (E , inf) → inj₁ (E , inf , λ i → fixed→image Θ Θ-inj (τ i) (τ-fixed i) (suc E)))
+    , (λ (E , inf) → inj₂ (E , inf , λ i → fixed→image Θᵈ Θᵈ-inj (dual (τ i)) (dual-fixed Θ (τ i) (τ-fixed i)) (suc E))) ]′
+      inflationary-power
+    where
+    Θ-inj = freelyGenerates→injective Θ Θ-free
+    Θᵈ-inj = freelyGenerates→injective Θᵈ (dual-free Θ Θ-free)
 ```

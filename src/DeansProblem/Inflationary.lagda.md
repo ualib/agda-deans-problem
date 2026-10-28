@@ -35,7 +35,9 @@ coherent chain of length three ([DeansProblem.Coherent.Finite][]).
    fixing a join or meet of two generators (the descent never ends at the top
    or bottom element), so every self-embedding with a fixed copy of `FL(3)`
    has, up to permutation and duality, a power that is inflationary with
-   `x ≤ Θ x ≤ x ∨ y`, `y ≤ Θ y ≤ x ∨ y` and `z ≤ Θ z`.
+   `x ≤ Θ x ≤ x ∨ y`, `y ≤ Θ y ≤ x ∨ y` and `z ≤ Θ z`.  The last clause of
+   Lemma 1 of [the paper][], that in the swapped case `Θ²` is inflationary, is
+   `fixes-join-swapped`{.AgdaFunction}.
 +  **A fixed generator of a power is fixed**
    (`power-fixes→fixes`{.AgdaFunction}).  If `Θᵉ⁺¹ g = g` for a proper `Θ`
    then `Θ g = g`: by Corollary 1.6 the element `Θᵉ g` is a generator `g′`
@@ -52,10 +54,16 @@ coherent chain of length three ([DeansProblem.Coherent.Finite][]).
    A fixed canonical meet with a generator meetand `g` has `Θ g ≤ g`, by
    Whitman's rule for a meet below a generator, so `Θ g = g`
    (`meetand-gen-fixed`{.AgdaFunction}); hence a proper inflationary
-   self-embedding of `FL(3)` fixes at most one generator, and no fixed point of
-   one that fixes `z` has a meet node with `x` or `y` as a meetand.  If `Θ`
-   moves every generator, no fixed point lies below a generator
-   (`strict-fixed-not-below`{.AgdaFunction}).
+   self-embedding of `FL(3)` fixes no meet of two generators
+   (`fixes-no-meet`{.AgdaFunction}), and no fixed point of one that fixes `z`
+   has a meet node with `x` or `y` as a meetand
+   (`fixes-z-no-meetand`{.AgdaFunction}), the remark after Lemma 3 of
+   [the paper][].  If `Θ` moves every generator, no fixed point lies below a
+   generator (`strict-fixed-not-below`{.AgdaFunction}), and every fixed point
+   lies in the set `S` of Section 7.3, the elements whose canonical trees have
+   no generator among the meetands of a meet node
+   (`NoGeneratorMeetand`{.AgdaFunction},
+   `strict-fixed-no-generator-meetand`{.AgdaFunction}).
 +  **Inflation transfers through a fixed element**
    (`inflation-transfer`{.AgdaFunction}).  Let `Φ` fix the generator `z` and an
    element `a` with `x ≤ a` and `y ≰ a`.  Then `x ≤ Φ x`.  The proof reads the
@@ -102,7 +110,7 @@ open import Data.Product                           using ( _×_ ; _,_ ; proj₁ 
 open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
 open import Function                               using ( _∘_ )
 open import Level                                  using ( Level )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; _≢_ ; refl ; sym ; subst )
+open import Relation.Binary.PropositionalEquality  using ( _≡_ ; _≢_ ; refl ; sym ; trans ; subst )
 open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using ( Dec ; yes ; no )
 
@@ -213,6 +221,10 @@ inflationary-term : {Φ : Sub X X} → Inflationary Φ → (t : LatTerm X) → t
 inflationary-term inf (ℊ v)    = inf v
 inflationary-term inf (s ∨̇ t)  = ∨≤ (≤∨ˡ (inflationary-term inf s)) (≤∨ʳ (inflationary-term inf t))
 inflationary-term inf (s ∧̇ t)  = ≤∧ (∧ˡ≤ (inflationary-term inf s)) (∧ʳ≤ (inflationary-term inf t))
+
+-- A substitution is deflationary when every generator lies above its image.
+Deflationary : Sub X X → Type _
+Deflationary Φ = ∀ v → Φ v ≤ʷ ℊ v
 ```
 
 #### The fixed points of an inflationary self-embedding
@@ -231,12 +243,39 @@ the meetands and lies below `ℊ g`, so some image `m [ Φ ]` lies below `ℊ g`
 (Whitman's rule for a meet below a generator), `m ≤ m [ Φ ] ≤ ℊ g` makes `m`
 the meetand `ℊ g` by the antichain, and `Φ g ≤ ℊ g`.
 
+A node of the tree of a node of `w` is a node of the tree of `w`
+(`node-trans`{.AgdaFunction}), so the property below passes from an element to
+the nodes of its tree (`S-node`{.AgdaFunction}).  The set `S` of Section 7.3 of [the paper][] is
+the set of elements whose canonical trees have no generator among the meetands
+of any meet node (`NoGeneratorMeetand`{.AgdaFunction}).  It is stated over all
+non-generator nodes: a node that is a join has itself as its only canonical
+meetand, so a generator meetand of a non-generator node marks a meet node.  A
+strictly inflationary embedding fixes only elements of `S`
+(`strict-fixed-no-generator-meetand`{.AgdaFunction}), the first step of the
+proof of Proposition 7.3: every node of a fixed point is fixed, and a generator
+meetand of a fixed node would be fixed.
+
 ```agda
 -- The nodes of the canonical tree of w reached through non-generator canonical joinands and meetands.
 data Node {n : ℕ} (w : LatTerm (Fin n)) : LatTerm (Fin n) → Type where
   root     : Node w w
   joinand  : ∀ {u c} → Node w u → c ∈ canonicalJoinands (_≟_ {n}) u → (∀ v → ¬ (c ≈ʷ ℊ v)) → Node w c
   meetand  : ∀ {u c} → Node w u → c ∈ canonicalMeetands (_≟_ {n}) u → (∀ v → ¬ (c ≈ʷ ℊ v)) → Node w c
+
+-- A node of the tree of a node is a node of the tree.
+node-trans : {n : ℕ} {w u c : LatTerm (Fin n)} → Node w u → Node u c → Node w c
+node-trans nd root                 = nd
+node-trans nd (joinand nd′ c∈ ng)  = joinand (node-trans nd nd′) c∈ ng
+node-trans nd (meetand nd′ c∈ ng)  = meetand (node-trans nd nd′) c∈ ng
+
+-- The set S: no non-generator node of the canonical tree of w has a generator among its canonical meetands.
+NoGeneratorMeetand : {n : ℕ} → LatTerm (Fin n) → Type
+NoGeneratorMeetand {n} w =
+  ∀ {u} → Node w u → (∀ v → ¬ (u ≈ʷ ℊ v)) → ∀ {g} → ¬ (ℊ g ∈ canonicalMeetands (_≟_ {n}) u)
+
+-- S passes to the nodes of the tree.
+S-node : {n : ℕ} {w c : LatTerm (Fin n)} → NoGeneratorMeetand w → Node w c → NoGeneratorMeetand c
+S-node s nd nd′ = s (node-trans nd nd′)
 
 module _ {n : ℕ} (Φ : Sub (Fin n) (Fin n)) (Φ-free : FreelyGenerates Φ) (inf : Inflationary Φ) where
   private
@@ -295,6 +334,12 @@ module _ {n : ℕ} (Φ : Sub (Fin n) (Fin n)) (Φ-free : FreelyGenerates Φ) (in
     -- Φ v ≤ g is impossible: v ≤ Φ v ≤ g makes v the generator g, and then Φ g ≤ g.
     none : ∀ v → Φ v ≤ʷ ℊ g → ⊥
     none v p = strict g (subst (λ u → Φ u ≤ʷ ℊ g) (ℊ≤ℊ-inv (≤ʷ-trans (inf v) p)) p)
+
+  -- If Φ fixes no generator, each of its fixed points is in S.
+  strict-fixed-no-generator-meetand : (∀ v → ¬ (Φ v ≈ʷ ℊ v)) → (w : LatTerm (Fin n)) → w [ Φ ] ≈ʷ w
+                                    → NoGeneratorMeetand w
+  strict-fixed-no-generator-meetand moves w fix nd _ {g} g∈ =
+    moves g (meetand-gen-fixed _ (node-fixed w fix nd) g∈)
 ```
 
 #### A fixed join of two generators, and a fixed generator of a power
@@ -306,7 +351,11 @@ Fix a freely generating `Φ : Sub (Fin 3) (Fin 3)`, a generator `z`, and write
 `Φ y ≤ x ∨ y ≤ Φ x`, hence `y ≤ x` since an embedding reflects the order
 (`fixes-join`{.AgdaFunction}).  And `z ≤ Φ z` (`fixes-join-third`{.AgdaFunction}):
 otherwise `Φ z ≤ x ∨ y` by the partition at `z`, so `Φ (x ∨ y ∨ z) ≤ Φ (x ∨ y)`
-and `z ≤ x ∨ y`.
+and `z ≤ x ∨ y`.  In the swapped case `Φ²` is inflationary
+(`fixes-join-swapped`{.AgdaFunction}), the last clause of Lemma 1:
+`x ≤ Φ y ≤ Φ (Φ x)` and `y ≤ Φ x ≤ Φ (Φ y)` by monotonicity, and
+`z ≤ Φ z ≤ Φ (Φ z)`.  Here `Φ²` is the iterate `iter Φ 2`, which applies `Φ`
+twice (`iter-two`{.AgdaFunction}).
 
 ```agda
 module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) where
@@ -363,6 +412,28 @@ module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) where
         (ℊ≤∨-inv (proj₂ (∨≤-inv (injective→reflects Φ
           {s = (ℊ (other z) ∨̇ ℊ (other' z)) ∨̇ ℊ z} {t = ℊ (other z) ∨̇ ℊ (other' z)} Φ-inj
           (∨≤ ≤ʷ-refl (≤ʷ-trans p (proj₂ e)))))))
+
+  -- The second iterate applies Φ twice.
+  iter-two : ∀ v → iter Φ 2 v ≡ Φ v [ Φ ]
+  iter-two v = trans ([]-iter-suc (Φ v) Φ 0) ([]-ℊ (Φ v [ Φ ]))
+
+  -- Lemma 1, its last clause: in the swapped case Φ² is inflationary.
+  fixes-join-swapped : (z : Fin 3) → Φ (other z) ∨̇ Φ (other' z) ≈ʷ ℊ (other z) ∨̇ ℊ (other' z)
+                     → ℊ (other z) ≤ʷ Φ (other' z) → ℊ (other' z) ≤ʷ Φ (other z) → Inflationary (iter Φ 2)
+  fixes-join-swapped z e px py v = subst (ℊ v ≤ʷ_) (sym (iter-two v)) twice
+    where
+    pz : ℊ z ≤ʷ Φ z
+    pz = fixes-join-third z e
+
+    -- x ≤ Φ y ≤ Φ (Φ x), y ≤ Φ x ≤ Φ (Φ y), and z ≤ Φ z ≤ Φ (Φ z).
+    others : v ∈ other z ∷ other' z ∷ [] → ℊ v ≤ʷ Φ v [ Φ ]
+    others (here p)          = subst (λ u → ℊ u ≤ʷ Φ u [ Φ ]) (sym p) (≤ʷ-trans px ([]-mono Φ py))
+    others (there (here p))  = subst (λ u → ℊ u ≤ʷ Φ u [ Φ ]) (sym p) (≤ʷ-trans py ([]-mono Φ px))
+    others (there (there ()))
+
+    twice : ℊ v ≤ʷ Φ v [ Φ ]
+    twice = [ (λ v≡z → subst (λ u → ℊ u ≤ʷ Φ u [ Φ ]) (sym v≡z) (≤ʷ-trans pz ([]-mono Φ pz))) , others ]′
+              (cover₃ z v)
 ```
 
 A positive power `Φᵉ⁺¹` of a proper `Φ` that fixes a generator `g` has `Φ g = g`
@@ -435,6 +506,56 @@ only at `y`; then `a` is satisfied by `v ↦ y ≤ v`, which says `y ≤ a`.
         , [ (λ v≡h → ℊ≤ℊ (sym v≡h))
           , (λ v≡k → ⊥-elim (g≢k (ℊ≤ℊ-inv (≤ʷ-trans (subst (λ u → ℊ g ≤ʷ Φ u) v≡k p) (proj₁ fixk))))) ]′ ]′
         (cover v)
+```
+
+#### The remark after Lemma 3
+
+Let `Φ` be a proper inflationary self-embedding of `FL(3)`, missing the
+generator `m`.  It fixes no meet `g ∧ h` of two generators
+(`fixes-no-meet`{.AgdaFunction}): the canonical meetands of `g ∧ h` are `g` and
+`h`, so Lemma 3(b) (`meetand-gen-fixed`{.AgdaFunction}) would fix both, and a
+self-embedding fixing two generators is the identity
+(`fix-two-generators`{.AgdaFunction}), which misses nothing.  If `Φ` fixes `z`,
+no node of the canonical tree of a fixed point has a generator other than `z`
+among its canonical meetands (`fixes-z-no-meetand`{.AgdaFunction}): Lemma 3(a)
+(`node-fixed`{.AgdaFunction}) fixes the node, Lemma 3(b) the generator, and
+with `z` that is two.
+
+```agda
+module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) (inf : Inflationary Φ)
+         (m : Fin 3) (m∉ : ∀ i → ¬ (ℊ m ≈ʷ Φ i)) where
+  private
+    -- A proper Φ is not the identity.
+    not-identity : ¬ (∀ v → Φ v ≈ʷ ℊ v)
+    not-identity id = m∉ m (≈ʷ-sym (id m))
+
+    -- The two generators of a meet of two distinct generators are its canonical meetands.
+    meetands-of-meet : (g h : Fin 3) → g ≢ h
+                     → ℊ g ∈ canonicalMeetands (_≟_ {3}) (ℊ g ∧̇ ℊ h) × ℊ h ∈ canonicalMeetands (_≟_ {3}) (ℊ g ∧̇ ℊ h)
+    meetands-of-meet 0F 0F g≢h  = ⊥-elim (g≢h refl)
+    meetands-of-meet 0F 1F _    = here refl , there (here refl)
+    meetands-of-meet 0F 2F _    = here refl , there (here refl)
+    meetands-of-meet 1F 0F _    = here refl , there (here refl)
+    meetands-of-meet 1F 1F g≢h  = ⊥-elim (g≢h refl)
+    meetands-of-meet 1F 2F _    = here refl , there (here refl)
+    meetands-of-meet 2F 0F _    = here refl , there (here refl)
+    meetands-of-meet 2F 1F _    = here refl , there (here refl)
+    meetands-of-meet 2F 2F g≢h  = ⊥-elim (g≢h refl)
+
+  -- A proper inflationary self-embedding of FL(3) fixes no meet of two generators.
+  fixes-no-meet : {g h : Fin 3} → g ≢ h → ¬ ((ℊ g ∧̇ ℊ h) [ Φ ] ≈ʷ ℊ g ∧̇ ℊ h)
+  fixes-no-meet {g} {h} g≢h fix =
+    let (g∈ , h∈) = meetands-of-meet g h g≢h
+    in not-identity (fix-two-generators Φ Φ-free g≢h (meetand-gen-fixed Φ Φ-free inf _ fix g∈)
+                                                      (meetand-gen-fixed Φ Φ-free inf _ fix h∈))
+
+  -- If it fixes z, no node of the canonical tree of a fixed point has x or y among its canonical meetands.
+  fixes-z-no-meetand : (z : Fin 3) → Φ z ≈ʷ ℊ z → (w : LatTerm (Fin 3)) → w [ Φ ] ≈ʷ w
+                     → {u : LatTerm (Fin 3)} → Node w u → {g : Fin 3} → g ≢ z
+                     → ¬ (ℊ g ∈ canonicalMeetands (_≟_ {3}) u)
+  fixes-z-no-meetand z fixz w fix nd g≢z g∈ =
+    not-identity (fix-two-generators Φ Φ-free g≢z
+                   (meetand-gen-fixed Φ Φ-free inf _ (node-fixed Φ Φ-free inf w fix nd) g∈) fixz)
 ```
 
 #### Rigidity for a class

@@ -83,10 +83,22 @@ on their own.
 +  [DeansProblem.AlmostProof][]: Freese's almost-proof that no chain exists:
    Lemma 2 in `FL(X)`, the boxes a recurring truncation pattern pins the
    generators into, the theorem that no step has both triples in a strongly
-   irredundant box, and that hypothesis, the gap, as a decidable predicate.
+   irredundant box, and that hypothesis, the gap, as a decidable predicate;
++  [DeansProblem.AlmostProof.Links][]: the last clause of Theorem 9.2, that
+   two links of a strictly ascending chain of 3-generated sublattices, or of
+   a chain, never lie in one strongly irredundant box;
++  [DeansProblem.Truncation.Pattern][]: labeled patterns as a type, the
+   pattern of a truncation, a complete finite list of the patterns on a fixed
+   tree, the box of a pattern, and the point box of a generator inside a link
+   read as `FL(3)`;
++  [DeansProblem.Chain.Powers][]: the steps of a chain are never the powers of
+   one map, by the bound on the transitions from the bottom;
++  [DeansProblem.Chain.TwoGenerated][]: two elements generate at most four, so
+   the chain condition for 2-generated sublattices holds.
 
 Freese's Lemma 2 itself, which holds in any lattice, is
-[DeansProblem.Irredundant][].
+[DeansProblem.Irredundant][], and the ladder of Section 4 in any lattice
+(Lemma 4.4) is [DeansProblem.Ladder][]; both are imported on their own.
 
 The worked examples are as follows.  [DeansProblem.Examples.FreeseStep][]
 verifies Freese's example, the step `⟨a, b, c⟩ ⊊ ⟨a′, b′, c′⟩` of his notes;
@@ -100,7 +112,9 @@ link of any chain; [DeansProblem.Examples.Rigidity][] proves the rigidity of two
 self-embeddings by Theorem F; [DeansProblem.Examples.FreeseEquations][] shows
 that Freese's equations have no injective solution; and
 [DeansProblem.Examples.ChainCondition][] builds an infinite strictly ascending
-chain of 3-generated sublattices of `FL(3)`, so that the chain condition fails.
+chain of 3-generated sublattices of `FL(3)`, none of them a copy of `FL(3)`, so
+that the chain condition fails; and [DeansProblem.Examples.FreeseGap][] proves
+that the generator `a₁` of Freese's box lies outside his link.
 
 ```agda
 {-# OPTIONS --without-K --exact-split --safe #-}
@@ -108,9 +122,12 @@ chain of 3-generated sublattices of `FL(3)`, so that the chain condition fails.
 module DeansProblem where
 
 open import DeansProblem.AlmostProof        public
+open import DeansProblem.AlmostProof.Links  public
 open import DeansProblem.Chain              public
 open import DeansProblem.Chain.Copies       public
 open import DeansProblem.Chain.Condition    public
+open import DeansProblem.Chain.Powers       public
+open import DeansProblem.Chain.TwoGenerated public
 open import DeansProblem.Coherent           public
 open import DeansProblem.Coherent.Finite    public
 open import DeansProblem.Fixed              public
@@ -122,4 +139,5 @@ open import DeansProblem.Partition          public
 open import DeansProblem.SelfSimilar        public
 open import DeansProblem.Shape              public
 open import DeansProblem.Truncation         public
+open import DeansProblem.Truncation.Pattern public
 ```

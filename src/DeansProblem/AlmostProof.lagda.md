@@ -58,7 +58,8 @@ pieces in Agda and the gap between them as a predicate, as follows.
     (`box-agree`{.AgdaFunction}).  A step has a fresh index, whose upper member
     is not in the lower sublattice, so no step has both its triples in a box
     irredundant at its fresh index (`no-step-in-box`{.AgdaFunction}), and in a
-    chain at most one link lies in a strongly irredundant box.
+    chain at most one link lies in a strongly irredundant box
+    (`at-most-one-link`{.AgdaFunction} of [DeansProblem.AlmostProof.Links][]).
 
 **The gap** is the hypothesis of the third piece, `StronglyIrredundant`{.AgdaFunction}
 for the box of the recurring pattern: nothing in the first two pieces provides
@@ -71,11 +72,13 @@ irredundant (`irredundantAt-narrow`{.AgdaFunction}), so a cheap wide box can
 certify a narrow one.  [DeansProblem.Examples.FreeseBox][] decides it on Freese's
 own step.
 
-The second piece stays in prose.  The pigeonhole on the terms is that of
-Theorem C of [the paper][], Section 6, whose finite forms
+The second piece stays in prose, apart from its finiteness.  The pigeonhole on
+the terms is that of Theorem C of [the paper][], Section 6, whose finite forms
 [DeansProblem.Coherent][] and [DeansProblem.Coherent.Finite][] prove; the
-pigeonhole on node maps and labels is a further finite choice of the same kind.
-The theorems here are stated for an arbitrary box, so no type of patterns is
+pigeonhole on node maps and labels is a further finite choice of the same kind,
+over the labelled patterns on the fixed trees of the base, which
+[DeansProblem.Truncation.Pattern][] makes a type and lists completely.  The
+theorems here are stated for an arbitrary box, so no type of patterns is
 needed to state or use them.
 
 <!--
@@ -213,7 +216,7 @@ A step `⟨σ⟩ ⊊ ⟨τ⟩` ([DeansProblem.Chain][]) has a fresh index `f`, w
 box irredundant at `f`, `box-agree`{.AgdaFunction} would give `σ f = τ f`, which
 is in `⟨σ⟩` (`no-step-in-box`{.AgdaFunction}).  So a strongly irredundant box
 holds the two triples of no step (`no-step-in-irredundant-box`{.AgdaFunction}),
-and at most one link of any chain.
+and at most one link of any chain ([DeansProblem.AlmostProof.Links][]).
 
 ```agda
   -- No step has both triples in a box irredundant at its fresh index.
@@ -277,12 +280,14 @@ latest link `⟨τ⟩ ≅ FL(3)`, on the pair `(θ, M)` of Theorem C of [the pap
 (Section 6; `θ` the transition from an earlier link, `M` the copy of the base
 it fixes), the trees of the base are those of its terms in `FL(3)`, and the
 cut children of the identity link are the generators of `FL(3)` themselves.
-A generator `x` that
-occurs in those trees both as a joinand and as a meetand gets the one-point
-interval `[x, x]`, and for such an `x` the condition that the two links share a
-labelled pattern already says `θ(x) = x`, with no use of Lemma 2.  The ambient
-cut children (Freese's `a₁` below `a'`, which lies outside `⟨a', b', c'⟩` by
-Corollary 1.6) are what make a box wider than a point, and they are visible only
-in the ambient lattice, whose trees stay fixed along the chain.  So the gap is a
-property of a recurring labelled pattern in the ambient lattice, as Freese
-stated it; the pair `(θ, M)` carries the terms of the pattern and not its box.
+A generator `x` that occurs in those trees both as a joinand and as a meetand
+gets the one-point interval `[x, x]`, and for such an `x` the condition that
+the two links share a labelled pattern already says `θ(x) = x`, with no use of
+Lemma 2 (`point-box-in-link`{.AgdaFunction} of
+[DeansProblem.Truncation.Pattern][]).  The ambient cut children (Freese's `a₁`
+below `a'`, which lies outside `⟨a', b', c'⟩` by Corollary 1.6,
+`a₁∉⟨a',b',c'⟩`{.AgdaFunction} of [DeansProblem.Examples.FreeseGap][]) are
+what make a box wider than a point, and they are visible only in the ambient
+lattice, whose trees stay fixed along the chain.  So the gap is a property of a
+recurring labelled pattern in the ambient lattice, as Freese stated it; the
+pair `(θ, M)` carries the terms of the pattern and not its box.

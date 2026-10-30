@@ -88,7 +88,7 @@ module proves and how, with the paper's numbering.  The code comes in blocks
 fenced as `agda`, with prose between them: each block is introduced by the
 paragraph above it.  The pragma, the module line and the imports go in a
 first block wrapped in an HTML comment (`<!--` and `-->` around the fenced
-block), so that the rendered page opens with the mathematics; 32 of the 34
+block), so that the rendered page opens with the mathematics; 34 of the 36
 modules do this.  `src/DeansProblem/Partition.lagda.md` is a short module to
 copy the layout from.
 
@@ -180,8 +180,8 @@ A heavy module carries `check-cost: heavy` in its front matter, says in its
 prose what it costs and why, and is imported by no barrel: the barrel
 `DeansProblem` links to it in its prose instead, as it does for the worked
 examples.  No module is heavy at present: measured on 2026-10-30, the largest,
-`DeansProblem.Examples.FreeseStep.Complexity`, took 2.5 s of a total of
-16.3 s.  `DeansProblem.Examples.FreeseStep` and
+`DeansProblem.Examples.FreeseStep.Complexity`, took 2.3 s of a total of
+14.9 s.  `DeansProblem.Examples.FreeseStep` and
 `DeansProblem.Examples.FreeseStep.Complexity` say in their prose how they
 were brought under the limit.  No script checks the marker; the review does.
 

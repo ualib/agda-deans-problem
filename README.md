@@ -144,6 +144,8 @@ equality on the generators).
 | Theorem B; finitely many elements of bounded complexity; the pigeonhole for tuples, infinite and finite | `complexity-mono`, `bounded-complete`, `pigeonhole-≈`, `pigeonhole-≈ⁿ`, `finite-pigeonhole-≈ⁿ` | `Lattices.Free.Complexity` |
 | steps and chains; a self-similar step gives a chain | `Step`, `Chain`, `selfSimilar→chain` | `DeansProblem.Chain` |
 | chains of sublattices isomorphic to `FL(3)`, as embeddings whose images ascend strictly; equivalent to the record of a chain | `CopyChain`, `copyChain→chain`, `chain→copyChain` | `DeansProblem.Chain.Copies` |
+| Proposition 4.2: the union of a chain is the direct limit of its self-embeddings `θₖ` of Definition 4.1, and embeds in `FL(X)`; proper self-embeddings of `FL(3)` whose direct limit embeds in `FL(X)` give a chain | `Proposition-4·2`, `proposition-4·2`, `copy-θ`, `copy-θ-not-onto`, `copyUnion≅copyLimit`, `copyLimit-embedding`, `limit→copyChain` | `DeansProblem.Chain.Limit` |
+| Section 1.1(i): an embedding carries a chain of copies to a chain of copies; a chain in one free lattice, over generators with decidable equality, gives one in `FL(3)` and in every `FL(X)` with three distinct generators, and `FL(3)` is the only case | `embed-copyChain`, `renumber`, `copyChain→FL₃`, `FL₃→copyChain`, `reduction`, `copyChain⇔FL₃` | `DeansProblem.Chain.Reduction` |
 | Theorem A for a free sublattice; Corollary A1 | `self-similar-onto`, `no-self-similar-step` | `DeansProblem.SelfSimilar` |
 | Theorem A; Corollary A3; the chain condition for 3-generated sublattices, which contains Theorem H | `generated-onto`, `no-onto-later`, `StrictlyAscending`, `ChainCondition`, `chainCondition→no-copy-chain` | `DeansProblem.Chain.Condition` |
 | the ladder: its rungs, and an infinite strictly ascending chain of 3-generated sublattices of `FL(3)` | `stable`, `A-strict`, `inv-A`, `ladder`, `chain-condition-fails`, `ladder-in` | `DeansProblem.Examples.ChainCondition` |
@@ -176,9 +178,12 @@ Every module of this repository is under `src/DeansProblem/`, with the barrel
 
 +  **Chains**.  `DeansProblem.Chain` (steps and chains of free triples),
    `DeansProblem.Chain.Copies` (chains of sublattices isomorphic to `FL(3)`,
-   the paper's definition, proved equivalent to the record of a chain) and
-   `DeansProblem.Chain.Condition` (Theorem A for a finitely generated
-   sublattice, and the chain condition for `n`-generated sublattices).
+   the paper's definition, proved equivalent to the record of a chain),
+   `DeansProblem.Chain.Limit` (Proposition 4.2, a chain and the direct limit
+   of its self-embeddings), `DeansProblem.Chain.Reduction` (the reduction of
+   Section 1.1 to `FL(3)`) and `DeansProblem.Chain.Condition` (Theorem A for
+   a finitely generated sublattice, and the chain condition for
+   `n`-generated sublattices).
 +  **Toward Theorem H**.  `DeansProblem.SelfSimilar` (Theorem A for a free
    sublattice), `DeansProblem.Coherent` and `DeansProblem.Coherent.Finite`
    (transitions and coherent chains, Theorem C), `DeansProblem.Partition`

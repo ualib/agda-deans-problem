@@ -25,7 +25,7 @@
 #   +  every module under src/, and the library modules of
 #      TABLE_LIBRARY_MODULES (below), generated and gitignored, so that one
 #      run of Agda checks the whole development and every module the
-#      README's table names;
+#      README's tables name;
 #   +  a PHONY target, always regenerated, so that adding or removing a module
 #      is picked up without anyone having to remember; `find` rather than
 #      `git ls-tree`, so that untracked files in the working tree are included.
@@ -45,10 +45,11 @@ AGDA      ?= agda
 # procedure while they are checked.
 RTS_OPTS  := +RTS -M6G -A128M -RTS
 AGDA_OPTS ?=
-# The modules of the pinned agda-lattices that the README's table of the
-# paper's statements names and no module under src/ imports.  The aggregator
-# imports them too, so that `make check` checks every module the table names.
-TABLE_LIBRARY_MODULES := Lattices.Free.Canonical Lattices.Free.Semidistributive
+# The modules of the pinned agda-lattices that the README's tables of the
+# paper's results and claims name and no module under src/ imports.  The
+# aggregator imports them too, so that `make check` checks every module the
+# tables name.
+TABLE_LIBRARY_MODULES := Lattices.Free.Membership Lattices.Free.Small
 
 .DEFAULT_GOAL := help
 

@@ -19,11 +19,12 @@ it follows, the commands that check it, and the review it gets.
    does with it, belongs in [agda-lattices][], and reaches this repository
    only through a release of that library that the flake pins (see "A change
    that needs the library", below).
-+  **The map**.  The README's table, [The paper's statements and their
-   names][table], maps each statement of the paper to its names in Agda and
-   its module.  Read it first: what you want to prove may be there, under the
-   paper's numbering.  A new statement joins the table (see "The README",
-   below).
++  **The map**.  The README's tables, under [The paper's results and their
+   names][table], map each result of the paper to its statement in Agda and
+   its module, and the checked claims of its definitions, remarks,
+   computations and sections to their names.  Read them first: what you want
+   to prove may be there, under the paper's numbering.  A new statement joins
+   the tables (see "The README", below).
 +  **An issue first**.  For anything more than a correction, open an issue
    that names the statement, by the paper's numbering, and the module it
    would go in, before writing the proof.  It lets the authors say whether
@@ -41,17 +42,21 @@ From a clone, the following checks the whole development:
 
 It runs `make safety` (below), regenerates the aggregator
 `src/EverythingDeansProblem.agda`, which imports every module under `src/`,
-and type-checks it under a heap limit of 6 GiB.  It exits 0 when every module
-checks; there is no separate test step, since type-checking is the test.  On
-2026-10-30 it ended as follows:
+type-checks it under a heap limit of 6 GiB, and then runs
+`scripts/check-paper.sh` (`make paper-check`), which checks the README's
+tables against the development (see "The README", below).  It exits 0 when
+every module checks and the tables agree; there is no separate test step,
+since type-checking is the test.  On 2026-10-30 it ended as follows:
 
     target: safety
     bash scripts/check-safety.sh src
-    safety: 34 modules, each with the pragma and no postulate or unsafe pragma
+    safety: 38 modules, each with the pragma and no postulate or unsafe pragma
     target: EverythingDeansProblem.agda
-      wrote src/EverythingDeansProblem.agda (36 modules, 2 of them the library's)
+      wrote src/EverythingDeansProblem.agda (40 modules, 2 of them the library's)
     target: check
     agda +RTS -M6G -A128M -RTS  src/EverythingDeansProblem.agda
+    AGDA=agda bash scripts/check-paper.sh
+    check-paper: 48 results agree with DeansProblem.Paper; 196 names resolve in 40 modules
 
 The aggregator is generated, and found by `find`, so a new module is checked
 without any list to edit.  The cases of the safety check run with the
@@ -88,7 +93,7 @@ module proves and how, with the paper's numbering.  The code comes in blocks
 fenced as `agda`, with prose between them: each block is introduced by the
 paragraph above it.  The pragma, the module line and the imports go in a
 first block wrapped in an HTML comment (`<!--` and `-->` around the fenced
-block), so that the rendered page opens with the mathematics; 34 of the 36
+block), so that the rendered page opens with the mathematics; 35 of the 38
 modules do this.  `src/DeansProblem/Partition.lagda.md` is a short module to
 copy the layout from.
 
@@ -180,15 +185,23 @@ A heavy module carries `check-cost: heavy` in its front matter, says in its
 prose what it costs and why, and is imported by no barrel: the barrel
 `DeansProblem` links to it in its prose instead, as it does for the worked
 examples.  No module is heavy at present: measured on 2026-10-30, the largest,
-`DeansProblem.Examples.FreeseStep.Complexity`, took 2.3 s of a total of
-14.9 s.  `DeansProblem.Examples.FreeseStep` and
+`DeansProblem.Examples.FreeseStep.Complexity`, took 2.4 s of a total of
+17.0 s.  `DeansProblem.Examples.FreeseStep` and
 `DeansProblem.Examples.FreeseStep.Complexity` say in their prose how they
 were brought under the limit.  No script checks the marker; the review does.
 
 ### The README
 
-A new statement adds its row to the README's [table][], with the statement by
-the paper's numbering, its names, and its module.  A new module joins the
+A result of the paper is one definition, whose type is its statement, with
+one proof, defined in the module that proves it and named by the README's
+convention (`Theorem-4·5` and `theorem-4·5`); it has one row in the README's
+table of results and one re-export in `DeansProblem.Paper`, both in the
+paper's order.  A checked claim of a definition, a remark, a computation or a
+section's prose adds its row to the README's other [tables][table], with the
+claim by the paper's numbering, its names, and its module.  `make check` ends
+with `scripts/check-paper.sh`, which fails unless the table of results and
+`DeansProblem.Paper` list the same results in the same order, and unless every
+name of the tables resolves in its module.  A new module joins the
 README's list of the modules, and the barrel `DeansProblem` and its guide to
 the submodules, unless it is heavy or, like the worked examples, meant to be
 imported on its own.  If a row names a module of agda-lattices that no module
@@ -235,7 +248,7 @@ and the review is done.  The review reads the following:
    the names kept;
 +  for a statement that assumes a chain, the import closure;
 +  the cost, for a module that may be heavy;
-+  the README's table and list of modules.
++  the README's tables and list of modules.
 
 Expect to iterate.  Questions are welcome in the issue or in the pull request.
 
@@ -250,4 +263,4 @@ same terms, unless you state otherwise.
 [checking]: README.md#checking-it
 [cost]: README.md#the-cost
 [emacs]: https://github.com/ualib/agda-algebras/blob/master/CONTRIBUTING.md#emacs-with-several-checkouts
-[table]: README.md#the-papers-statements-and-their-names
+[table]: README.md#the-papers-results-and-their-names

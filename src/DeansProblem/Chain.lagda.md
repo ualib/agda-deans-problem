@@ -42,9 +42,10 @@ the images `Lₖ = e(ιₖ(FL(3)))` are isomorphic to `FL(3)` and ascend; and th
 containment `Lₖ ⊆ Lₖ₊₁` is proper, because an element of `FL(3)` outside the
 image of `θₖ` is sent by the injective `e ∘ ιₖ₊₁` outside `Lₖ`.  So Dean's problem
 is a question about sequences of self-embeddings of `FL(3)`, with the ambient
-free lattice entering only through the limit.  Neither direction is formalized:
-direct limits are not part of this library, and the records below speak of the
-chain inside `FL(X)` directly.
+free lattice entering only through the limit.  Both directions are
+Proposition 4.2 of [the paper][], proved in [DeansProblem.Chain.Limit][] from
+the direct limits of agda-lattices; the records below speak of the chain
+inside `FL(X)` directly.
 
 **Steps**.  A step `⟨σ⟩ ⊊ ⟨τ⟩` (`Step`{.AgdaRecord}) is two families `σ` and `τ`
 of three elements of `FL(X)`, each freely generating a copy of `FL(3)`

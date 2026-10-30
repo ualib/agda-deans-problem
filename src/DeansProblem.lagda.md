@@ -34,6 +34,11 @@ on their own.
 +  [DeansProblem.Chain.Copies][]: chains of copies of `FL(3)` as the problem
    states them, sequences of embeddings `FL(3) ≤ FL(X)` whose images ascend
    strictly, proved equivalent to the record of a chain;
++  [DeansProblem.Chain.Limit][]: Proposition 4.2, a chain and the direct
+   limit of its self-embeddings: the union of a chain is the direct limit of
+   the self-embeddings `θₖ` of `FL(3)` that it gives, and embeds in `FL(X)`;
+   conversely, proper self-embeddings of `FL(3)` whose direct limit embeds in
+   `FL(X)` give a chain;
 +  [DeansProblem.SelfSimilar][]: no step is self-similar, since an injective
    endomorphism that maps a free sublattice of finite rank onto a superset of
    it maps it onto itself;
@@ -136,6 +141,7 @@ open import DeansProblem.AlmostProof.Links  public
 open import DeansProblem.Chain              public
 open import DeansProblem.Chain.Copies       public
 open import DeansProblem.Chain.Condition    public
+open import DeansProblem.Chain.Limit        public
 open import DeansProblem.Chain.Powers       public
 open import DeansProblem.Chain.TwoGenerated public
 open import DeansProblem.Coherent           public

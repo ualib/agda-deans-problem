@@ -7,7 +7,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Agda 2.9.0, pre-release](https://img.shields.io/badge/Agda-2.9.0_pre--release-purple.svg)](https://github.com/agda/agda/commit/da66a8c75f11d10699a6b38b261efdf244b66f2a)
 [![stdlib 2.3, patched for Agda 2.9.0](https://img.shields.io/badge/stdlib-2.3_patched-orange.svg)](https://github.com/formalverification/agda-stdlib/releases/tag/v2.3-agda-2.9.0)
-[![agda-lattices, pinned at bea91e54](https://img.shields.io/badge/agda--lattices-bea91e54-teal.svg)](https://github.com/ualib/agda-lattices/tree/bea91e546637d5907dd577d2b987650e9924e87f)
+[![agda-lattices, pinned at v0.2.0](https://img.shields.io/badge/agda--lattices-v0.2.0-teal.svg)](https://github.com/ualib/agda-lattices/releases/tag/v0.2.0)
 
 The formal development, in [Agda][], of the paper
 
@@ -66,10 +66,10 @@ alone.
 
 `flake.lock` pins every input, as follows:
 
-+  [agda-lattices][] at commit [`bea91e54`][lattices-pin] of its main branch,
-   pinned in `flake.nix` itself as well;
++  [agda-lattices][] at its release [`v0.2.0`][lattices-pin], commit
+   `41fb55e4` of its main branch, pinned in `flake.nix` itself by the tag;
 +  the [Agda Universal Algebra Library][agda-algebras] at commit
-   [`922d138b`][algebras-pin] of its master branch, the commit agda-lattices
+   [`b4d0ab6c`][algebras-pin] of its master branch, the commit agda-lattices
    is checked against, since the flake follows that library's own input;
 +  Agda 2.9.0, a pre-release built from [agda/agda][] at commit
    [`da66a8c7`][agda-pin], and the [Agda standard library][agda-stdlib] 2.3
@@ -144,6 +144,8 @@ equality on the generators).
 | Theorem B; finitely many elements of bounded complexity; the pigeonhole for tuples, infinite and finite | `complexity-mono`, `bounded-complete`, `pigeonhole-≈`, `pigeonhole-≈ⁿ`, `finite-pigeonhole-≈ⁿ` | `Lattices.Free.Complexity` |
 | steps and chains; a self-similar step gives a chain | `Step`, `Chain`, `selfSimilar→chain` | `DeansProblem.Chain` |
 | chains of sublattices isomorphic to `FL(3)`, as embeddings whose images ascend strictly; equivalent to the record of a chain | `CopyChain`, `copyChain→chain`, `chain→copyChain` | `DeansProblem.Chain.Copies` |
+| Proposition 4.2: the union of a chain is the direct limit of its self-embeddings `θₖ` of Definition 4.1, and embeds in `FL(X)`; proper self-embeddings of `FL(3)` whose direct limit embeds in `FL(X)` give a chain | `Proposition-4·2`, `proposition-4·2`, `copy-θ`, `copy-θ-not-onto`, `copyUnion≅copyLimit`, `copyLimit-embedding`, `limit→copyChain` | `DeansProblem.Chain.Limit` |
+| Section 1.1(i): an embedding carries a chain of copies to a chain of copies; a chain in one free lattice, over generators with decidable equality, gives one in `FL(3)` and in every `FL(X)` with three distinct generators, and `FL(3)` is the only case | `embed-copyChain`, `renumber`, `copyChain→FL₃`, `FL₃→copyChain`, `reduction`, `copyChain⇔FL₃` | `DeansProblem.Chain.Reduction` |
 | Theorem A for a free sublattice; Corollary A1 | `self-similar-onto`, `no-self-similar-step` | `DeansProblem.SelfSimilar` |
 | Theorem A; Corollary A3; the chain condition for 3-generated sublattices, which contains Theorem H | `generated-onto`, `no-onto-later`, `StrictlyAscending`, `ChainCondition`, `chainCondition→no-copy-chain` | `DeansProblem.Chain.Condition` |
 | the ladder: its rungs, and an infinite strictly ascending chain of 3-generated sublattices of `FL(3)` | `stable`, `A-strict`, `inv-A`, `ladder`, `chain-condition-fails`, `ladder-in` | `DeansProblem.Examples.ChainCondition` |
@@ -176,9 +178,12 @@ Every module of this repository is under `src/DeansProblem/`, with the barrel
 
 +  **Chains**.  `DeansProblem.Chain` (steps and chains of free triples),
    `DeansProblem.Chain.Copies` (chains of sublattices isomorphic to `FL(3)`,
-   the paper's definition, proved equivalent to the record of a chain) and
-   `DeansProblem.Chain.Condition` (Theorem A for a finitely generated
-   sublattice, and the chain condition for `n`-generated sublattices).
+   the paper's definition, proved equivalent to the record of a chain),
+   `DeansProblem.Chain.Limit` (Proposition 4.2, a chain and the direct limit
+   of its self-embeddings), `DeansProblem.Chain.Reduction` (the reduction of
+   Section 1.1 to `FL(3)`) and `DeansProblem.Chain.Condition` (Theorem A for
+   a finitely generated sublattice, and the chain condition for
+   `n`-generated sublattices).
 +  **Toward Theorem H**.  `DeansProblem.SelfSimilar` (Theorem A for a free
    sublattice), `DeansProblem.Coherent` and `DeansProblem.Coherent.Finite`
    (transitions and coherent chains, Theorem C), `DeansProblem.Partition`
@@ -245,8 +250,8 @@ statement and proof.
 [agda-algebras]: https://github.com/ualib/agda-algebras
 [agda-lattices]: https://github.com/ualib/agda-lattices
 [agda-native-air]: https://github.com/formalverification/agda-native-air
-[algebras-pin]: https://github.com/ualib/agda-algebras/tree/922d138b22c6d0ab6db5245b1760a4c2595d7525
-[lattices-pin]: https://github.com/ualib/agda-lattices/tree/bea91e546637d5907dd577d2b987650e9924e87f
+[algebras-pin]: https://github.com/ualib/agda-algebras/tree/b4d0ab6cd9a6e32f28857bd5014bbacaa284bb35
+[lattices-pin]: https://github.com/ualib/agda-lattices/releases/tag/v0.2.0
 [agda/agda]: https://github.com/agda/agda
 [agda-pin]: https://github.com/agda/agda/tree/da66a8c75f11d10699a6b38b261efdf244b66f2a
 [agda-stdlib]: https://github.com/agda/agda-stdlib

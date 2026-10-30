@@ -61,11 +61,11 @@ one is `M ⊊ θ(FL(3))`, where `θ` expresses `Θ` in itself by `fixes`, and so
 generator is none of the `Θ i`, because otherwise `θ` would fix every
 generator and be onto (`Θ-misses`{.AgdaFunction}).
 
-**The coherent form**, which stays in prose.  For a fixed `j` the transitions
-`θ_{j,k}`, `k > j`, take finitely many values, by the same bound with `gens j`
-in place of `gens 0`; so some value is taken on an infinite set of `k`.  A
-diagonal argument (choose `k₀ = 0`, an infinite set `S₀` of indices on which
-`θ_{0,k}` is constant, `k₁ = min S₀`, an infinite `S₁ ⊆ S₀` above `k₁` on
+**The coherent form**, from the infinite pigeonhole principle.  For a fixed `j`
+the transitions `θ_{j,k}`, `k > j`, take finitely many values, by the same bound
+with `gens j` in place of `gens 0`; so some value is taken on an infinite set of
+`k`.  A diagonal argument (choose `k₀ = 0`, an infinite set `S₀` of indices on
+which `θ_{0,k}` is constant, `k₁ = min S₀`, an infinite `S₁ ⊆ S₀` above `k₁` on
 which `θ_{k₁,k}` is constant, and so on) passes to a subchain on which
 `θ_{kᵢ,kⱼ} = Θᵢ` depends only on `i`, with `Θⱼ ∘ Θᵢ = Θᵢ` for `i < j`.  The
 images `Mᵢ = Θᵢ(FL(3))` then form a strictly ascending chain of copies of
@@ -73,8 +73,9 @@ images `Mᵢ = Θᵢ(FL(3))` then form a strictly ascending chain of copies of
 earlier `Mᵢ` pointwise; and conversely such a sequence is a chain for Dean's
 problem.  So Dean's problem has a positive answer if and only if a coherent
 chain exists, and the one-step theorem here is its first link.  This is the
-coherent form of Theorem C of [the paper][], Section 6, which gives the
-argument in full.
+coherent form of Theorem C of [the paper][], Section 6, which gives the argument
+in full; [DeansProblem.Coherent.Infinite][] proves it, and the equivalence, from
+the infinite pigeonhole principle taken as a hypothesis.
 
 <!--
 ```agda

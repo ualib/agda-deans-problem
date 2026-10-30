@@ -61,8 +61,9 @@ module states the finite form as a record
    infinitely often; but the number of recurrences that a given `j` needs
    depends on the complexity of the `j`-th link, which no bound fixes in
    advance, so the step is not a finite pigeonhole and the hypothesis stays
-   explicit here.  Section 6 of [the paper][] gives the classical argument in
-   prose.
+   explicit here.  [DeansProblem.Coherent.Infinite][] derives it from the
+   infinite pigeonhole principle, itself taken as a hypothesis
+   (`some-link-recurs`{.AgdaFunction}), as Section 6 of [the paper][] argues.
 
 <!--
 ```agda

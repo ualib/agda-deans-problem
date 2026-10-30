@@ -104,9 +104,16 @@ Agda configuration takes part.
    equality contains no infinite strictly ascending chain of sublattices
    isomorphic to `FL(3)`.  Its proof uses finite searches and induction on a
    natural number, and no classical principle.
-+  The paper says which of its statements are checked and in what form; two
-   stay in prose there, the coherent form of its Theorem C and the clause of
-   its ladder theorem that no link of the chain is a copy of `FL(3)`.
++  The paper says which of its statements are checked and in what form.
+   Three of them rest on the infinite pigeonhole principle, which is
+   classically true and which Agda's constructive logic does not prove, since
+   it decides LPO: the coherent form of its Theorem C, its Corollary 6.4 and
+   the recurrence of its Remark 5.1.  They are checked with the principle as
+   a hypothesis, the record `InfinitePigeonhole` of `DeansProblem.Pigeonhole`,
+   which each of them takes as an explicit argument and names in its type,
+   never as a postulate; their converse directions take none, and neither
+   does the proof of Theorem H.  The clause of its ladder theorem that no
+   link of the chain is a copy of `FL(3)` stays in prose there.
 
 ## The paper's statements and their names
 
@@ -141,6 +148,8 @@ equality on the generators).
 | Corollary A4 (both directions); the descent of a fixed point | `image→periodic`, `periodic→image`, `joinand-periodic`, `descent` | `DeansProblem.Fixed` |
 | Theorem D; nothing but the identity fixes the image of `θ₁` | `fixed-triple`, `coherent₂`, `rigid`, `no-extension` | `DeansProblem.Examples.FixedTriple` |
 | coherent chains of length `n` and their images; Theorem C (four links, and length three); an infinite coherent chain has unbounded complexity | `Coherent`, `step`, `coherent₂→fixed`, `four-links→coherent₃`, `Recurs`, `chain→coherent₃`, `Coherentω`, `coherentω-unbounded` | `DeansProblem.Coherent.Finite` |
+| the infinite pigeonhole principle, as a hypothesis; it decides LPO; a sequence of covered tuples is constant along a selection | `InfinitePigeonhole`, `pigeonhole→LPO`, `constant-along` | `DeansProblem.Pigeonhole` |
+| from the principle: the recurrence of Remark 5.1; Theorem C (length three) without its hypothesis; Theorem C (coherent form); Corollary 6.4; with none: a subsequence of a chain is a chain, and the converse of the coherent form | `BottomRecurrence`, `bottom-recurrence`, `some-link-recurs`, `pigeonhole→coherent₃`, `CoherentForm`, `coherent-form`, `PositiveAnswer`, `positive⇔coherentω`, `subchain`, `coherentω→chain`, `coherentω→copyChain` | `DeansProblem.Coherent.Infinite` |
 | Lemmas 1 to 4; Theorem F | `fixes-join`, `fixes-join-third`, `power-fixes→fixes`, `node-fixed`, `meetand-gen-fixed`, `strict-fixed-not-below`, `inflation-transfer`, `rigid-class` | `DeansProblem.Inflationary` |
 | the fourteen elements and the eleven fixed points; the descent with the parent; an inflationary power; Theorem E | `T₁₄-∨`, `T₁₁-∧`, `strict-fixed-in-T₁₁`, `descent-pair`, `inflationary-power`, `fixes-generator` | `DeansProblem.FixedGenerator` |
 | Corollary E1: the unique fixed generator, the inflationary member, its three fixed joins and two bounds | `Shape`, `InflationaryShape`, `shape` | `DeansProblem.Shape` |

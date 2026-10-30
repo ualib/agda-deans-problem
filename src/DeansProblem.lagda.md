@@ -45,6 +45,16 @@ on their own.
    four-link criterion that reads one of length three off a chain, the
    extraction under a recurrence hypothesis, and the theorem that an infinite
    coherent chain has unbounded complexity;
++  [DeansProblem.Pigeonhole][]: the infinite pigeonhole principle as a
+   record, taken as an explicit hypothesis and never postulated, the proof
+   that it decides LPO, and its form for the transitions of a chain: a
+   sequence of tuples covered by a finite list is constant along a selection;
++  [DeansProblem.Coherent.Infinite][]: from the principle, the recurrence of
+   Remark 5.1, the length-three form of Theorem C without its hypothesis, the
+   coherent form of Theorem C and Corollary 6.4 (Dean's problem has a positive
+   answer if and only if an infinite coherent chain exists); with no
+   hypothesis, subsequences of a chain, and the converse: an infinite coherent
+   chain is a chain inside `FL(3)`;
 +  [DeansProblem.Inflationary][]: inflationary self-embeddings of `FL(3)`,
    what a fixed join of two generators and a fixed generator of a power force,
    the transfer of inflation through a fixed element, and rigidity for a class
@@ -130,12 +140,14 @@ open import DeansProblem.Chain.Powers       public
 open import DeansProblem.Chain.TwoGenerated public
 open import DeansProblem.Coherent           public
 open import DeansProblem.Coherent.Finite    public
+open import DeansProblem.Coherent.Infinite  public
 open import DeansProblem.Fixed              public
 open import DeansProblem.FixedGenerator     public
 open import DeansProblem.Inflationary       public
 open import DeansProblem.LengthThree        public
 open import DeansProblem.NoChain            public
 open import DeansProblem.Partition          public
+open import DeansProblem.Pigeonhole         public
 open import DeansProblem.SelfSimilar        public
 open import DeansProblem.Shape              public
 open import DeansProblem.Truncation         public

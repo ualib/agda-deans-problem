@@ -39,6 +39,11 @@ on their own.
    the self-embeddings `θₖ` of `FL(3)` that it gives, and embeds in `FL(X)`;
    conversely, proper self-embeddings of `FL(3)` whose direct limit embeds in
    `FL(X)` give a chain;
++  [DeansProblem.Chain.Reduction][]: the reduction of Section 1.1 to `FL(3)`:
+   an embedding carries a chain of copies to a chain of copies, a chain over
+   generators with decidable equality renumbers to one in `FL(ℕ)`, and so a
+   chain in one free lattice gives one in `FL(3)` and in every `FL(X)` with
+   three distinct generators;
 +  [DeansProblem.SelfSimilar][]: no step is self-similar, since an injective
    endomorphism that maps a free sublattice of finite rank onto a superset of
    it maps it onto itself;
@@ -143,6 +148,7 @@ open import DeansProblem.Chain.Copies       public
 open import DeansProblem.Chain.Condition    public
 open import DeansProblem.Chain.Limit        public
 open import DeansProblem.Chain.Powers       public
+open import DeansProblem.Chain.Reduction    public
 open import DeansProblem.Chain.TwoGenerated public
 open import DeansProblem.Coherent           public
 open import DeansProblem.Coherent.Finite    public

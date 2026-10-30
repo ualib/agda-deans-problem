@@ -2,6 +2,13 @@
 
 # agda-deans-problem
 
+[![check](https://github.com/ualib/agda-deans-problem/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/ualib/agda-deans-problem/actions/workflows/check.yml)
+[![ci](https://github.com/ualib/agda-deans-problem/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ualib/agda-deans-problem/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Agda 2.9.0, pre-release](https://img.shields.io/badge/Agda-2.9.0_pre--release-purple.svg)](https://github.com/agda/agda/commit/da66a8c75f11d10699a6b38b261efdf244b66f2a)
+[![stdlib 2.3, patched for Agda 2.9.0](https://img.shields.io/badge/stdlib-2.3_patched-orange.svg)](https://github.com/formalverification/agda-stdlib/releases/tag/v2.3-agda-2.9.0)
+[![agda-lattices, pinned at bea91e54](https://img.shields.io/badge/agda--lattices-bea91e54-teal.svg)](https://github.com/ualib/agda-lattices/tree/bea91e546637d5907dd577d2b987650e9924e87f)
+
 The formal development, in [Agda][], of the paper
 
 > William DeMeo and Ralph Freese, *No free lattice contains an infinite
@@ -207,6 +214,12 @@ The development was first written together with the general modules that
 now form agda-lattices, and moved into the namespace `DeansProblem` in October
 2026, when those were published as a library of their own.  One module, `DeansProblem.Examples.FreeseStep` (Freese's example),
 was first written in the [Agda Universal Algebra Library][agda-algebras].
+
+## Contributing
+
+Contributions are welcome.  [`CONTRIBUTING.md`](CONTRIBUTING.md) says how a
+module joins the development, the conventions it follows, the commands that
+check it, and how a pull request is reviewed.
 
 ## License and citation
 

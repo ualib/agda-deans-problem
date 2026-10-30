@@ -22,8 +22,8 @@
 #     Agda 2.9 a using clause naming what a module does not export is a
 #     warning (ModuleDoesntExport), and Agda exits 0, so the check reads
 #     Agda's output for warnings, not its exit status.  A control probe
-#     that names what no module exports must draw such a warning first, so
-#     that the check is seen to see one.
+#     that names what DeansProblem.Ladder does not export must draw such a
+#     warning first, so that the check is seen to see one.
 #
 # It runs agda, the dev shell's wrapper, which names this repository's
 # library; run it after the development is type-checked (make check does),
@@ -136,10 +136,12 @@ run() {
   fi
 }
 
-printf 'DeansProblem.Paper\tDeansProblem.Paper\nno-such-name-in-the-development\tDeansProblem.Paper\n' |
+# The control names what a small module does not export, so that it costs
+# the loading of that module alone.
+printf 'Lemma-4·4\tDeansProblem.Ladder\nno-such-name-in-the-development\tDeansProblem.Ladder\n' |
   probe Control
 if run Control > /dev/null; then
-  echo "check-paper: the control probe, which names what DeansProblem.Paper does not export, drew no warning"
+  echo "check-paper: the control probe, which names what DeansProblem.Ladder does not export, drew no warning"
   fail=1
 fi
 

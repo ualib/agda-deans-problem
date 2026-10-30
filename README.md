@@ -7,7 +7,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Agda 2.9.0, pre-release](https://img.shields.io/badge/Agda-2.9.0_pre--release-purple.svg)](https://github.com/agda/agda/commit/da66a8c75f11d10699a6b38b261efdf244b66f2a)
 [![stdlib 2.3, patched for Agda 2.9.0](https://img.shields.io/badge/stdlib-2.3_patched-orange.svg)](https://github.com/formalverification/agda-stdlib/releases/tag/v2.3-agda-2.9.0)
-[![agda-lattices, pinned at bea91e54](https://img.shields.io/badge/agda--lattices-bea91e54-teal.svg)](https://github.com/ualib/agda-lattices/tree/bea91e546637d5907dd577d2b987650e9924e87f)
+[![agda-lattices, pinned at v0.2.0](https://img.shields.io/badge/agda--lattices-v0.2.0-teal.svg)](https://github.com/ualib/agda-lattices/releases/tag/v0.2.0)
 
 The formal development, in [Agda][], of the paper
 
@@ -66,10 +66,10 @@ alone.
 
 `flake.lock` pins every input, as follows:
 
-+  [agda-lattices][] at commit [`bea91e54`][lattices-pin] of its main branch,
-   pinned in `flake.nix` itself as well;
++  [agda-lattices][] at its release [`v0.2.0`][lattices-pin], commit
+   `41fb55e4` of its main branch, pinned in `flake.nix` itself by the tag;
 +  the [Agda Universal Algebra Library][agda-algebras] at commit
-   [`922d138b`][algebras-pin] of its master branch, the commit agda-lattices
+   [`b4d0ab6c`][algebras-pin] of its master branch, the commit agda-lattices
    is checked against, since the flake follows that library's own input;
 +  Agda 2.9.0, a pre-release built from [agda/agda][] at commit
    [`da66a8c7`][agda-pin], and the [Agda standard library][agda-stdlib] 2.3
@@ -245,8 +245,8 @@ statement and proof.
 [agda-algebras]: https://github.com/ualib/agda-algebras
 [agda-lattices]: https://github.com/ualib/agda-lattices
 [agda-native-air]: https://github.com/formalverification/agda-native-air
-[algebras-pin]: https://github.com/ualib/agda-algebras/tree/922d138b22c6d0ab6db5245b1760a4c2595d7525
-[lattices-pin]: https://github.com/ualib/agda-lattices/tree/bea91e546637d5907dd577d2b987650e9924e87f
+[algebras-pin]: https://github.com/ualib/agda-algebras/tree/b4d0ab6cd9a6e32f28857bd5014bbacaa284bb35
+[lattices-pin]: https://github.com/ualib/agda-lattices/releases/tag/v0.2.0
 [agda/agda]: https://github.com/agda/agda
 [agda-pin]: https://github.com/agda/agda/tree/da66a8c75f11d10699a6b38b261efdf244b66f2a
 [agda-stdlib]: https://github.com/agda/agda-stdlib

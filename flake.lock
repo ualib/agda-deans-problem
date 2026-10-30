@@ -27,17 +27,17 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1792014348,
-        "narHash": "sha256-N7Wd/sj8pL0PA1dT2rLmsWDYa4W4oDJ7d/q1HRiXHL0=",
+        "lastModified": 1792871332,
+        "narHash": "sha256-UWmJixVpkmw+LuN3DjUpMWFYz0sM82Q52LcJd0wPQSE=",
         "owner": "ualib",
         "repo": "agda-algebras",
-        "rev": "922d138b22c6d0ab6db5245b1760a4c2595d7525",
+        "rev": "b4d0ab6cd9a6e32f28857bd5014bbacaa284bb35",
         "type": "github"
       },
       "original": {
         "owner": "ualib",
         "repo": "agda-algebras",
-        "rev": "922d138b22c6d0ab6db5245b1760a4c2595d7525",
+        "rev": "b4d0ab6cd9a6e32f28857bd5014bbacaa284bb35",
         "type": "github"
       }
     },
@@ -51,17 +51,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1792817215,
-        "narHash": "sha256-aIVP9E17LRfuUOCfAgwsY1r3r8PO66C3Wux5STbbMMQ=",
+        "lastModified": 1793389525,
+        "narHash": "sha256-AoUCWzWE5j2yIdaI54jPpR+OKGNkQRnIdFxpreXisxc=",
         "owner": "ualib",
         "repo": "agda-lattices",
-        "rev": "bea91e546637d5907dd577d2b987650e9924e87f",
+        "rev": "41fb55e47d55c215dc991392349bab7f0aea4a08",
         "type": "github"
       },
       "original": {
         "owner": "ualib",
+        "ref": "v0.2.0",
         "repo": "agda-lattices",
-        "rev": "bea91e546637d5907dd577d2b987650e9924e87f",
         "type": "github"
       }
     },

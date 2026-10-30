@@ -10,11 +10,11 @@
 # Pinning:
 #
 #   +  agda-lattices, the general lattice library this development builds on,
-#      is a flake input, pinned in its URL and by flake.lock at commit
-#      bea91e54 of its main branch.  That one pin freezes every module the
-#      development imports from it.
+#      is a flake input, pinned in its URL at its release v0.2.0 and by
+#      flake.lock at that tag's commit 41fb55e4.  That one pin freezes every
+#      module the development imports from it.
 #   +  agda-algebras follows agda-lattices' own input, so it is the commit
-#      that library is checked against (922d138b of agda-algebras' master).
+#      that library is checked against (b4d0ab6c of agda-algebras' master).
 #   +  The Agda is the one agda-algebras exports (`packages.<system>.default`):
 #      a pre-release Agda 2.9.0 built from agda/agda by Agda's own flake, with
 #      the standard library 2.3 patched to check under it.  Neither comes from
@@ -48,7 +48,7 @@
   description = "agda-deans-problem: the formal development of the paper on Dean's problem, in Agda";
 
   inputs = {
-    agda-lattices.url = "github:ualib/agda-lattices/bea91e546637d5907dd577d2b987650e9924e87f";
+    agda-lattices.url = "github:ualib/agda-lattices/v0.2.0";
     agda-algebras.follows = "agda-lattices/agda-algebras";
     nixpkgs.follows = "agda-lattices/agda-algebras/nixpkgs";
   };

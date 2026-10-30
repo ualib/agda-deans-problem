@@ -87,7 +87,7 @@ open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Nat.Base                          using ( ℕ ; suc )
 open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Function                               using ( Func )
+open import Function                               using ( Func ; _∘_ )
 open import Level                                  using ( Level ; 0ℓ )
 open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Unary                         using ( _⊆_ ; _≐_ ; ⋃ )
@@ -142,20 +142,21 @@ module _ {X : Type χ} (c : CopyChain X) where
 
   -- Each copy lies in the next.
   copy-⊆ : (k : ℕ) → copy (φ k) ⊆ copy (φ (suc k))
-  copy-⊆ k = proj₁ (ascends k)
+  copy-⊆ k = ascends k .proj₁
 
   -- Definition 4.1's θₖ = φₖ₊₁⁻¹ ∘ φₖ, a self-embedding of FL(3).
-  copy-θ : (k : ℕ) → hom (proj₁ (FL (Fin 3))) (proj₁ (FL (Fin 3)))
+  copy-θ : (k : ℕ) → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁)
   copy-θ = step FL₃ (FL X) φ copy-⊆
 
   -- φₖ₊₁ ∘ θₖ = φₖ.
-  copy-θ-commutes : (k : ℕ) (a : LatTerm (Fin 3)) → copy-map c (suc k) (proj₁ (copy-θ k) ⟨$⟩ a) ≈ʷ copy-map c k a
+  copy-θ-commutes : (k : ℕ) (a : LatTerm (Fin 3))
+    → copy-map c (suc k) (copy-θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a
   copy-θ-commutes = step-commutes FL₃ (FL X) φ copy-⊆
 
   -- Any homomorphisms with that property agree with these at every element.
-  copy-θ-unique : (θ : (k : ℕ) → hom (proj₁ (FL (Fin 3))) (proj₁ (FL (Fin 3))))
-    → ((k : ℕ) (a : LatTerm (Fin 3)) → copy-map c (suc k) (proj₁ (θ k) ⟨$⟩ a) ≈ʷ copy-map c k a)
-    → (k : ℕ) (a : LatTerm (Fin 3)) → proj₁ (θ k) ⟨$⟩ a ≈ʷ proj₁ (copy-θ k) ⟨$⟩ a
+  copy-θ-unique : (θ : (k : ℕ) → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁))
+    → (∀ k a → copy-map c (suc k) (proj₁ (θ k) ⟨$⟩ a) ≈ʷ copy-map c k a)
+    → ∀ k a → θ k .proj₁ ⟨$⟩ a ≈ʷ copy-θ k .proj₁ ⟨$⟩ a
   copy-θ-unique θ commutes k a =
     proj₂ (φ (suc k)) (≈ʷ-trans (commutes k a) (≈ʷ-sym (copy-θ-commutes k a)))
 
@@ -168,14 +169,16 @@ None is onto: if every `b` were `θₖ(a)`, the next copy would lie in this one.
 
 ```agda
   -- No θₖ is onto.
-  copy-θ-not-onto : (k : ℕ) → ¬ IsSurjective (proj₁ (copy-θ k))
-  copy-θ-not-onto k onto = proj₂ (ascends k) ⊇
+  copy-θ-not-onto : (k : ℕ) → ¬ IsSurjective (copy-θ k .proj₁)
+  copy-θ-not-onto k onto = ascends k .proj₂ ⊇
     where
     -- Every element of the next copy is one of this copy.
     ⊇ : copy (φ (suc k)) ⊆ copy (φ k)
     ⊇ (b , e) with onto {b}
-    ... | eq a b≈θa = a , ≈ʷ-trans (≈ʷ-sym (copy-θ-commutes k a))
-                            (≈ʷ-trans (cong (proj₁ (proj₁ (φ (suc k)))) (≈ʷ-sym b≈θa)) e)
+    ... | eq a b≈θa = a , ≈ʷ-trans  (≈ʷ-sym (copy-θ-commutes k a))
+                                    (≈ʷ-trans  (cong (φ (suc k) .proj₁ .proj₁)
+                                                     (≈ʷ-sym b≈θa))
+                                               e)
 ```
 
 #### Proposition 4.2(a)
@@ -193,11 +196,11 @@ both limits, at a cost of ten seconds.
 
 ```agda
   -- The embeddings of the chain as homomorphisms, and their injectivity.
-  copy-hom : (k : ℕ) → hom (proj₁ (FL (Fin 3))) (proj₁ (FL X))
-  copy-hom k = proj₁ (φ k)
+  copy-hom : (k : ℕ) → hom (FL (Fin 3) .proj₁) (FL X .proj₁)
+  copy-hom = proj₁ ∘ φ
 
-  copy-injective : (k : ℕ) → IsInjective (proj₁ (copy-hom k))
-  copy-injective k = proj₂ (φ k)
+  copy-injective : (k : ℕ) → IsInjective (copy-hom k .proj₁)
+  copy-injective = proj₂ ∘ φ
 
   -- The union of the chain, a sublattice of FL(X).
   copyUnion : Lattice χ χ
@@ -208,16 +211,17 @@ both limits, at a cost of ten seconds.
   copyLimit = DirectLimit FL₃ copy-θ
 
   -- The limit embeds in FL(X).
-  copyLimit-embedding : proj₁ copyLimit ≤ proj₁ (FL X)
-  copyLimit-embedding = limit-extend-embedding FL₃ copy-θ (FL X) copy-hom copy-θ-commutes copy-injective
+  copyLimit-embedding : copyLimit .proj₁ ≤ FL X .proj₁
+  copyLimit-embedding =
+    limit-extend-embedding FL₃ copy-θ (FL X) copy-hom copy-θ-commutes copy-injective
 
   -- The embedding sends ιₖ(a) to φₖ(a).
   copyLimit-ι : (k : ℕ) (a : LatTerm (Fin 3))
-    → proj₁ (proj₁ copyLimit-embedding) ⟨$⟩ (proj₁ (ι∞ FL₃ copy-θ k) ⟨$⟩ a) ≈ʷ copy-map c k a
+    → copyLimit-embedding .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ copy-θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a
   copyLimit-ι k a = ≈ʷ-refl
 
   -- Its image is the union of the copies.
-  copyLimit-range : IsInRange (proj₁ (proj₁ copyLimit-embedding)) ≐ ⋃ ℕ (λ k → copy (φ k))
+  copyLimit-range : IsInRange (copyLimit-embedding .proj₁ .proj₁) ≐ ⋃ ℕ (copy ∘ φ)
   copyLimit-range = (λ ((k , a) , e) → k , a , e) , (λ (k , a , e) → (k , a) , e)
 
   -- The union of the chain is the direct limit of the θₖ.
@@ -232,21 +236,22 @@ Fix self-embeddings `θ k` of `FL(3)`, injective and not onto, and an embedding
 `e ∘ ιₖ`.
 
 ```agda
-module _ {X : Type χ} (θ : (k : ℕ) → hom (proj₁ (FL (Fin 3))) (proj₁ (FL (Fin 3))))
-         (proper : (k : ℕ) → IsInjective (proj₁ (θ k)) × ¬ IsSurjective (proj₁ (θ k)))
-         (e : proj₁ (DirectLimit FL₃ θ) ≤ proj₁ (FL X)) where
+module _ {X : Type χ} (θ : (k : ℕ) → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁))
+         (proper : (k : ℕ) → IsInjective (θ k .proj₁) × ¬ IsSurjective (θ k .proj₁))
+         (e : DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁) where
 
   -- Each θₖ is injective.
   limit-θ-injective : (k : ℕ) → IsInjective (proj₁ (θ k))
-  limit-θ-injective k = proj₁ (proper k)
+  limit-θ-injective = proj₁ ∘ proper
 
   -- The k-th embedding: e after the canonical map ιₖ.
-  limit-φ : ℕ → proj₁ (FL (Fin 3)) ≤ proj₁ (FL X)
+  limit-φ : ℕ → FL (Fin 3) .proj₁ ≤ FL X .proj₁
   limit-φ k = ≤-trans (ι∞-embedding FL₃ θ limit-θ-injective k) e
 
   -- Each copy lies in the next, since ιₖ = ιₖ₊₁ ∘ θₖ.
   limit-⊆ : (k : ℕ) → copy (limit-φ k) ⊆ copy (limit-φ (suc k))
-  limit-⊆ k (a , y≈) = proj₁ (θ k) ⟨$⟩ a , ≈ʷ-trans (cong (proj₁ (proj₁ e)) (ι∞-cocone FL₃ θ k a)) y≈
+  limit-⊆ k (a , y≈) = θ k .proj₁ ⟨$⟩ a , ≈ʷ-trans ( cong  (e .proj₁ .proj₁)
+                                                           (ι∞-cocone FL₃ θ k a) ) y≈
 ```
 
 If the next copy lay in this one, every `w` would be in the image of `θₖ`.
@@ -254,10 +259,10 @@ If the next copy lay in this one, every `w` would be in the image of `θₖ`.
 ```agda
   -- The next copy does not lie in this one, since θₖ is not onto.
   limit-⊉ : (k : ℕ) → ¬ (copy (limit-φ (suc k)) ⊆ copy (limit-φ k))
-  limit-⊉ k ⊇ = proj₂ (proper k) onto
+  limit-⊉ k ⊇ = proper k .proj₂ onto
     where
     -- Every w is θₖ(u) for some u.
-    onto : IsSurjective (proj₁ (θ k))
+    onto : IsSurjective (θ k .proj₁)
     onto {w} = let (u , eu) = ⊇ (w , ≈ʷ-refl) in
       IsInRange→IsInImage (ι∞-range-step FL₃ θ limit-θ-injective k (u , proj₂ e eu))
 
@@ -270,7 +275,7 @@ If the next copy lay in this one, every `w` would be in the image of `θₖ`.
 
   -- Its k-th embedding is e ∘ ιₖ.
   limit→copyChain-φ : (k : ℕ) (a : LatTerm (Fin 3))
-    → copy-map limit→copyChain k a ≈ʷ proj₁ (proj₁ e) ⟨$⟩ (proj₁ (ι∞ FL₃ θ k) ⟨$⟩ a)
+    → copy-map limit→copyChain k a ≈ʷ e .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ θ k .proj₁ ⟨$⟩ a)
   limit→copyChain-φ k a = ≈ʷ-refl
 ```
 
@@ -285,21 +290,23 @@ check of a record normalizes the types of its fields, which here unfolds the
 construction of the limit, at a cost of two seconds.
 
 ```agda
--- Proposition 4.2: (a) the union of a chain is the direct limit of the θₖ, and it embeds in FL(X);
--- (b) proper self-embeddings whose limit embeds in FL(X) by e give a chain, the images e(ιₖ(FL(3))).
+-- Proposition 4.2:
+--   (a) the union of a chain is the direct limit of the θₖ, and it embeds in FL(X);
+--   (b) proper self-embeddings whose limit embeds in FL(X) by e give a chain,
+--       the images e(ιₖ(FL(3))).
 Proposition-4·2 : Setω
 Proposition-4·2 = ∀ {χ} {X : Type χ}
   → ((c : CopyChain X)
-     → Σ[ θ ∈ ((k : ℕ) → hom (proj₁ (FL (Fin 3))) (proj₁ (FL (Fin 3)))) ]
-         ((k : ℕ) (a : LatTerm (Fin 3)) → copy-map c (suc k) (proj₁ (θ k) ⟨$⟩ a) ≈ʷ copy-map c k a)
-       × (proj₁ (copyUnion c) ≅ proj₁ (DirectLimit FL₃ θ))
-       × Σ[ e ∈ proj₁ (DirectLimit FL₃ θ) ≤ proj₁ (FL X) ]
-           ((k : ℕ) (a : LatTerm (Fin 3)) → proj₁ (proj₁ e) ⟨$⟩ (proj₁ (ι∞ FL₃ θ k) ⟨$⟩ a) ≈ʷ copy-map c k a))
-  × ((θ : (k : ℕ) → hom (proj₁ (FL (Fin 3))) (proj₁ (FL (Fin 3))))
-     → ((k : ℕ) → IsInjective (proj₁ (θ k)) × ¬ IsSurjective (proj₁ (θ k)))
-     → (e : proj₁ (DirectLimit FL₃ θ) ≤ proj₁ (FL X))
+     → Σ[ θ ∈ (∀ k → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁)) ]
+         (∀ k a → copy-map c (suc k) (θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a)
+       × (copyUnion c .proj₁ ≅ DirectLimit FL₃ θ .proj₁)
+       × Σ[ e ∈ DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁ ]
+           (∀ k a → e .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a))
+  × ((θ : ∀ k → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁))
+     → (∀ k → IsInjective (θ k .proj₁) × ¬ IsSurjective (θ k .proj₁))
+     → (e : DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁)
      → Σ[ c ∈ CopyChain X ]
-         ((k : ℕ) (a : LatTerm (Fin 3)) → copy-map c k a ≈ʷ proj₁ (proj₁ e) ⟨$⟩ (proj₁ (ι∞ FL₃ θ k) ⟨$⟩ a)))
+         (∀ k a → copy-map c k a ≈ʷ e .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ θ k .proj₁ ⟨$⟩ a)))
 
 -- The proof of Proposition 4.2.
 proposition-4·2 : Proposition-4·2

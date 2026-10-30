@@ -92,7 +92,7 @@ open import Data.List.Membership.Propositional.Properties
 open import Data.List.Relation.Unary.Any           using ( here ; tail )
 open import Data.Nat.Base                          using ( ℕ ; zero ; suc )
 open import Data.Product                           using ( _,_ ; proj₁ ; proj₂ )
-open import Function                               using ( Func ; _⇔_ ; mk⇔ ; _↣_ )
+open import Function                               using ( Func ; _⇔_ ; mk⇔ ; _↣_ ; _∘_ )
 open import Level                                  using ( Level )
 open import Relation.Binary.Definitions            using ( DecidableEquality )
 open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; cong₂ )
@@ -140,21 +140,21 @@ Fix an embedding `h` of `FL(Y)` in `FL(Z)` and a chain of copies in `FL(Y)`.
 The `k`-th embedding of the new chain is `h ∘ φ k`.
 
 ```agda
-module _ {Y : Type υ} (h : proj₁ (FL Y) ≤ proj₁ (FL Z)) (c : CopyChain Y) where
+module _ {Y : Type υ} (h : FL Y .proj₁ ≤ FL Z .proj₁) (c : CopyChain Y) where
   open CopyChain c
 
   -- The k-th embedding, followed by h.
-  embed-φ : ℕ → proj₁ (FL (Fin 3)) ≤ proj₁ (FL Z)
+  embed-φ : ℕ → FL (Fin 3) .proj₁ ≤ FL Z .proj₁
   embed-φ k = ≤-trans (φ k) h
 
   -- Each copy lies in the next: h carries the containment.
   embed-⊆ : (k : ℕ) → copy (embed-φ k) ⊆ copy (embed-φ (suc k))
-  embed-⊆ k (a , ez) = let (b , eb) = proj₁ (ascends k) (a , ≈ʷ-refl) in
-    b , ≈ʷ-trans (func-cong (proj₁ (proj₁ h)) eb) ez
+  embed-⊆ k (a , ez) = let (b , eb) = ascends k .proj₁ (a , ≈ʷ-refl) in
+    b , ≈ʷ-trans (func-cong (h .proj₁ .proj₁)  eb) ez
 
   -- The next copy does not lie in this one, since h is injective.
-  embed-⊉ : (k : ℕ) → ¬ (copy (embed-φ (suc k)) ⊆ copy (embed-φ k))
-  embed-⊉ k ⊇ = proj₂ (ascends k) λ (b , ey) → let (a , ea) = ⊇ (b , ≈ʷ-refl) in
+  embed-⊉ : (k : ℕ) → ¬ copy (embed-φ (suc k)) ⊆ copy (embed-φ k)
+  embed-⊉ k ⊇ = ascends k .proj₂ λ (b , ey) → let (a , ea) = ⊇ (b , ≈ʷ-refl) in
     a , ≈ʷ-trans (proj₂ h ea) ey
 
   -- The chain of copies in FL(Z).
@@ -214,10 +214,10 @@ triple are those of its three members (`triple-generators`{.AgdaFunction}).
   []-agree : {Y : Type υ} (t : LatTerm Y) {σ τ : Sub Y Z}
     → (∀ {y} → y ∈ generators t → σ y ≡ τ y) → t [ σ ] ≡ t [ τ ]
   []-agree (ℊ y)    e = e (here refl)
-  []-agree (s ∧̇ t)  e = cong₂ _∧̇_ ([]-agree s (λ p → e (∈-++⁺ˡ p)))
-                                  ([]-agree t (λ p → e (∈-++⁺ʳ (generators s) p)))
-  []-agree (s ∨̇ t)  e = cong₂ _∨̇_ ([]-agree s (λ p → e (∈-++⁺ˡ p)))
-                                  ([]-agree t (λ p → e (∈-++⁺ʳ (generators s) p)))
+  []-agree (s ∧̇ t)  e = cong₂ _∧̇_ ([]-agree s (e ∘ ∈-++⁺ˡ))
+                                  ([]-agree t (e ∘ (∈-++⁺ʳ (generators s))))
+  []-agree (s ∨̇ t)  e = cong₂ _∨̇_ ([]-agree s (e ∘ ∈-++⁺ˡ))
+                                  ([]-agree t (e ∘ (∈-++⁺ʳ (generators s))))
 
   -- The generators of a triple, member by member, with repetitions.
   triple-generators : {Y : Type υ} → Sub (Fin 3) Y → List Y
@@ -264,7 +264,7 @@ module Renumber {Y : Type υ} (_≟ʸ_ : DecidableEquality Y) (c : Chain Y) wher
 
   -- A generator of Y: the first of link 0's first member.
   y₀ : Y
-  y₀ = proj₁ (generators-∷ (gens zero 0F))
+  y₀ = generators-∷ (gens zero 0F) .proj₁
 
   -- Link k's generator for each number: the list read there.
   name : ℕ → ℕ → Y
@@ -326,7 +326,7 @@ renamed triple freely generates.
 
 ```agda
   -- Substitution by a renamed triple is injective.
-  gens′-injective : (k : ℕ) → IsInjective (proj₁ (subst-hom (gens′ k)))
+  gens′-injective : (k : ℕ) → IsInjective (subst-hom (gens′ k) .proj₁)
   gens′-injective k {s} {t} e = freelyGenerates→injective (gens k) (gens-free k) (begin
     s [ gens k ]                  ≡⟨ []-agree s (λ {i} _ → rename-unrename k i) ⟨
     s [ gens′ k ⨟ unrename k ]    ≡⟨ []-⨟ s (gens′ k) (unrename k) ⟩
@@ -368,7 +368,7 @@ copyChain→FL₃ : {Y : Type υ} → DecidableEquality Y → CopyChain Y → Co
 copyChain→FL₃ _≟ʸ_ c = embed-copyChain countable-embedding (copyChain→ℕ _≟ʸ_ c)
 
 -- Three distinct generators of X embed FL(3) in FL(X) (FJN Corollaries 1.5 and 1.13).
-three-embedding : Fin 3 ↣ X → proj₁ (FL (Fin 3)) ≤ proj₁ (FL X)
+three-embedding : Fin 3 ↣ X → FL (Fin 3) .proj₁ ≤ FL X .proj₁
 three-embedding x = freelyGenerates→≤ (three-generators x) (three-generators-free x)
 
 -- A chain of copies in FL(3) gives one in FL(X) when X has three distinct elements.

@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### At most one link in a strongly irredundant box: Theorem 9.2's last clause
 
-This is the [DeansProblem.AlmostProof.Links][] module of the [agda-lattices][] library.
+This is the [DeansProblem.AlmostProof.Links][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -163,3 +163,11 @@ theorem-9·2 lo hi =
   , (λ s → no-step-in-box s)
   , (λ c → at-most-one-linkᶜ c)
 ```
+
+--------------------------------------
+
+[DeansProblem.AlmostProof.Links]: DeansProblem.AlmostProof.Links.html
+[DeansProblem.AlmostProof]: DeansProblem.AlmostProof.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Condition]: DeansProblem.Chain.Condition.html
+[DeansProblem.Examples.ChainCondition]: DeansProblem.Examples.ChainCondition.html

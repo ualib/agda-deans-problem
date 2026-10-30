@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Fixed points of a self-embedding of a free lattice
 
-This is the [DeansProblem.Fixed][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Fixed][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -554,3 +554,12 @@ lemma-6·11 n θ θ-free w fix =
                    , (λ v∈ → meetand-periodic (iter θ (suc e)) θᵉ-free u fixu v∈ (positive-not-gen v 0 κv)) ]′ v∈
     in  e , u , fixu , κu , v , v∈ , κv , periodic
 ```
+
+--------------------------------------
+
+[DeansProblem.Fixed]: DeansProblem.Fixed.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.FixedGenerator]: DeansProblem.FixedGenerator.html
+[Lattices.Free.Canonical.Joinands]: Lattices.Free.Canonical.Joinands.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html
+[Lattices.Free.Embedding]: Lattices.Free.Embedding.html

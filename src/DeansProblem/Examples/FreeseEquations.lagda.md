@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Worked example: the equations for a self-similar Freese step
 
-This is the [DeansProblem.Examples.FreeseEquations][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FreeseEquations][] module of this repository.
 
 Freese's step toward Dean's problem ([DeansProblem.Examples.FreeseStep][]) is a
 proper containment `⟨a, b, c⟩ ⊊ ⟨a', b', c'⟩` of two copies of `FL(3)` in the
@@ -206,3 +206,10 @@ corollary-A2 : Corollary-A2
 corollary-A2 Φ Φ-free ea eb ec =
   no-FreeseΦ Φ (record { Φ-free = Φ-free ; a↦a' = ea ; b↦b' = eb ; c↦c' = ec })
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.FreeseEquations]: DeansProblem.Examples.FreeseEquations.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html

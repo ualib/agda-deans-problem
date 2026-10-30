@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Two generators: the chain condition is trivial
 
-This is the [DeansProblem.Chain.TwoGenerated][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Chain.TwoGenerated][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -187,3 +187,7 @@ four values that generate it.
   chainCondition₂ : ChainCondition 2 X
   chainCondition₂ c = no-chain₂ c
 ```
+
+--------------------------------------
+
+[DeansProblem.Chain.TwoGenerated]: DeansProblem.Chain.TwoGenerated.html

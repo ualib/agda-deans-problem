@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Coherent chains and the fixed-sublattice question
 
-This is the [DeansProblem.Coherent][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Coherent][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -498,3 +498,10 @@ theorem-C-one-step _≟ˣ_ c = transition-repeats _≟ˣ_ c , second
     proper zero     H′ = ⊥-elim (misses 0 (e + 0) (fresh (e + 0 + 0)) (H′ (fresh (e + 0 + 0))))
     proper (suc j′) H′ = fresh (j′ + 0) , outside (transition c 0 (suc j′)) (fresh (j′ + 0)) (misses 0 j′)
 ```
+
+--------------------------------------
+
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Coherent.Infinite]: DeansProblem.Coherent.Infinite.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html

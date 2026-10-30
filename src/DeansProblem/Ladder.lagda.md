@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The ladder in any lattice: Lemma 4.4
 
-This is the [DeansProblem.Ladder][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Ladder][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -260,3 +260,8 @@ lemma-4·4 𝑳 a b w =
   , (λ v → stable 𝑳 a b w v)
   where open Rungs 𝑳 a b w using ( A≤w ; B≤w ; A-mono ; B-mono ; B≤A ; A≤B )
 ```
+
+--------------------------------------
+
+[DeansProblem.Ladder]: DeansProblem.Ladder.html
+[DeansProblem.Examples.ChainCondition]: DeansProblem.Examples.ChainCondition.html

@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Coherent chains of finite length
 
-This is the [DeansProblem.Coherent.Finite][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Coherent.Finite][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -676,3 +676,12 @@ theorem-C-length-three _≟ˣ_ c j H = chain→coherent₃ _≟ˣ_ c j R
     in  suc (m + o) , s≤s (m≤m+n m o)
       , λ v → subst (λ k → transition c 0 k v ≈ʷ transition c 0 j v) (sym l≡) (e v)
 ```
+
+--------------------------------------
+
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.Coherent.Infinite]: DeansProblem.Coherent.Infinite.html
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042

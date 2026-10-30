@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Worked example: a proper self-embedding of FL(3) fixing a copy of FL(3)
 
-This is the [DeansProblem.Examples.FixedTriple][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FixedTriple][] module of this repository.
 
 The fixed-sublattice question of [DeansProblem.Coherent][] asks whether `FL(3)`
 has an injective endomorphism `θ` that is not onto and whose fixed sublattice
@@ -348,3 +348,11 @@ proposition-6·9 =
     fix i = ≈ʷ-trans ([]-cong Θ₂ (≈ʷ-sym (Θ₁≈θ₁ i)))
                      (≈ʷ-trans (coherent (s≤s (s≤s z≤n)) i) (Θ₁≈θ₁ i))
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.FixedTriple]: DeansProblem.Examples.FixedTriple.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Examples.SelfEmbedding]: DeansProblem.Examples.SelfEmbedding.html
+[DeansProblem.Partition]: DeansProblem.Partition.html

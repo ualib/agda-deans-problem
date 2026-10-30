@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The complexities of Freese's step
 
-This is the [DeansProblem.Examples.FreeseStep.Complexity][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FreeseStep.Complexity][] module of this repository.
 
 In Freese's step ([DeansProblem.Examples.FreeseStep][]) the new generators
 `a'`, `b'`, `c'` are not subterms of the old ones `a`, `b`, `c`; they are
@@ -126,3 +126,13 @@ a'≤a = ≤ʷ-trans ∧̇-lowerˡ ∧̇-lowerˡ
 ā₁≤a' : ā₁ ≤ʷ a'
 ā₁≤a' = ≤∧ (≤∧ ∨̇-upperˡ relation-1ᵇ) relation-2ᶜ
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.FreeseStep.Complexity]: DeansProblem.Examples.FreeseStep.Complexity.html
+[DeansProblem.Examples.FreeseBox]: DeansProblem.Examples.FreeseBox.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[Lattices.Free.Canonical.Algorithm]: Lattices.Free.Canonical.Algorithm.html
+[Lattices.Free.Canonical.Joinands]: Lattices.Free.Canonical.Joinands.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html
+[Lattices.Free.Whitman.Polynomial]: Lattices.Free.Whitman.Polynomial.html

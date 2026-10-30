@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### A self-embedding of FL(3) with a fixed free triple fixes a generator
 
-This is the [DeansProblem.FixedGenerator][] module of the [agda-lattices][] library.
+This is the [DeansProblem.FixedGenerator][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -1047,3 +1047,13 @@ Theorem-E =  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3) �
 theorem-E : Theorem-E
 theorem-E = fixes-generator
 ```
+
+--------------------------------------
+
+[DeansProblem.FixedGenerator]: DeansProblem.FixedGenerator.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Fixed]: DeansProblem.Fixed.html
+[DeansProblem.Inflationary]: DeansProblem.Inflationary.html
+[Lattices.Free.Canonical.Joinands]: Lattices.Free.Canonical.Joinands.html
+[Lattices.Free.Canonical.Recognition]: Lattices.Free.Canonical.Recognition.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html

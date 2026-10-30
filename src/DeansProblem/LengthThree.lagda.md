@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### No coherent chain of length three
 
-This is the [DeansProblem.LengthThree][] module of the [agda-lattices][] library.
+This is the [DeansProblem.LengthThree][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -406,3 +406,12 @@ Theorem-G = ¬ Coherent 3
 theorem-G : Theorem-G
 theorem-G = no-coherent₃
 ```
+
+--------------------------------------
+
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.FixedGenerator]: DeansProblem.FixedGenerator.html
+[DeansProblem.Inflationary]: DeansProblem.Inflationary.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042

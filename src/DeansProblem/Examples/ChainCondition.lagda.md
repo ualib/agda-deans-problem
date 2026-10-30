@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The chain condition fails: a ladder in FL(3)
 
-This is the [DeansProblem.Examples.ChainCondition][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.ChainCondition][] module of this repository.
 
 [DeansProblem.Chain.Condition][] asks whether every ascending chain of
 3-generated sublattices of a free lattice stabilizes, the lattice analogue of
@@ -848,3 +848,12 @@ theorem-4·5 = record
   ; part-2 = ladder-into
   }
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.ChainCondition]: DeansProblem.Examples.ChainCondition.html
+[DeansProblem.Chain.Condition]: DeansProblem.Chain.Condition.html
+[DeansProblem.Ladder]: DeansProblem.Ladder.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html
+[Lattices.Free.Countable]: Lattices.Free.Countable.html

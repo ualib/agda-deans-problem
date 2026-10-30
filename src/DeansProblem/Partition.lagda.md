@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The partition of a free lattice at a generator
 
-This is the [DeansProblem.Partition][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Partition][] module of this repository.
 
 Fix a generator `z` of a free lattice `FL(X)` on finitely many generators, and
 let `⋁others` be the join of the other generators.  Every element `w` of `FL(X)`
@@ -327,3 +327,8 @@ lemma-6·10 = record
   ; part-4 = xyr-free→z
   }
 ```
+
+--------------------------------------
+
+[DeansProblem.Partition]: DeansProblem.Partition.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html

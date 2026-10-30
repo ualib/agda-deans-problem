@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### A chain condition for finitely generated sublattices of a free lattice
 
-This is the [DeansProblem.Chain.Condition][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Chain.Condition][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -989,3 +989,15 @@ Corollary-A3 =  ∀ {χ} {X : Type χ} → DecidableEquality X → (c : Strictly
 corollary-A3 : Corollary-A3
 corollary-A3 = no-image-laterᶠ
 ```
+
+--------------------------------------
+
+[DeansProblem.Chain.Condition]: DeansProblem.Chain.Condition.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Copies]: DeansProblem.Chain.Copies.html
+[DeansProblem.Chain.Powers]: DeansProblem.Chain.Powers.html
+[DeansProblem.Chain.TwoGenerated]: DeansProblem.Chain.TwoGenerated.html
+[DeansProblem.Examples.ChainCondition]: DeansProblem.Examples.ChainCondition.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html

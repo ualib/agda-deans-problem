@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Chains of free sublattices
 
-This is the [DeansProblem.Chain][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Chain][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -329,3 +329,14 @@ Proposition-4·3 =  ∀ {χ} {X : Type χ} (s : Step X) (Φ : Sub X X) → Freel
 proposition-4·3 : Proposition-4·3
 proposition-4·3 s Φ Φ-free Φσ≈τ = selfSimilar→chain s Φ Φ-free Φσ≈τ , λ k i → refl
 ```
+
+--------------------------------------
+
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Condition]: DeansProblem.Chain.Condition.html
+[DeansProblem.Chain.Limit]: DeansProblem.Chain.Limit.html
+[DeansProblem.Examples.ChainCondition]: DeansProblem.Examples.ChainCondition.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html
+[Lattices.Free.Generation]: Lattices.Free.Generation.html
+[Lattices.Free.Substitution]: Lattices.Free.Substitution.html

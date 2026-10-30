@@ -336,4 +336,4 @@ lemma-2·9 _≟_ enum complete =
 [DeansProblem.Preliminaries]: DeansProblem.Preliminaries.html
 [Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042
 [agda-lattices]: https://github.com/ualib/agda-lattices
-[Lattices.Free.FJN]: https://github.com/ualib/agda-lattices/blob/v0.2.0/src/Lattices/Free/FJN.lagda.md
+[Lattices.Free.FJN]: Lattices.Free.FJN.html

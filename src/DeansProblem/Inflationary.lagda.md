@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Inflationary self-embeddings of FL(3), and rigidity for a class
 
-This is the [DeansProblem.Inflationary][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Inflationary][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -742,3 +742,13 @@ theorem-F z Θ₁ _ fixz₁ x≤a y≰a y≤b x≰b Φ Φ-free fix =
   fixz : Φ z ≈ʷ ℊ z
   fixz = ≈ʷ-trans ([]-cong Φ (≈ʷ-sym fixz₁)) (≈ʷ-trans (fix z) fixz₁)
 ```
+
+--------------------------------------
+
+[DeansProblem.Inflationary]: DeansProblem.Inflationary.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Examples.Rigidity]: DeansProblem.Examples.Rigidity.html
+[DeansProblem.Fixed]: DeansProblem.Fixed.html
+[DeansProblem.Partition]: DeansProblem.Partition.html
+[DeansProblem.Shape]: DeansProblem.Shape.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042

@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### No infinite ascending chain of copies of FL(3)
 
-This is the [DeansProblem.NoChain][] module of the [agda-lattices][] library.
+This is the [DeansProblem.NoChain][] module of this repository.
 
 Theorem H says that no free lattice contains an infinite strictly ascending
 chain of copies of `FL(3)`.  Here the ambient generators have decidable
@@ -348,3 +348,11 @@ Theorem-H = ∀ {χ} {X : Type χ} → DecidableEquality X → CopyChain X → �
 theorem-H : Theorem-H
 theorem-H = no-copy-chain
 ```
+
+--------------------------------------
+
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Copies]: DeansProblem.Chain.Copies.html
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[Setoid.Subalgebras.Basic]: Setoid.Subalgebras.Basic.html

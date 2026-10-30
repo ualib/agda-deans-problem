@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Dean's problem
 
-This is the [DeansProblem][] module of the [agda-lattices][] library.
+This is the [DeansProblem][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -173,3 +173,43 @@ open import DeansProblem.Shape              public
 open import DeansProblem.Truncation         public
 open import DeansProblem.Truncation.Pattern public
 ```
+
+--------------------------------------
+
+[DeansProblem]: DeansProblem.html
+[DeansProblem.AlmostProof]: DeansProblem.AlmostProof.html
+[DeansProblem.AlmostProof.Links]: DeansProblem.AlmostProof.Links.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Condition]: DeansProblem.Chain.Condition.html
+[DeansProblem.Chain.Copies]: DeansProblem.Chain.Copies.html
+[DeansProblem.Chain.Limit]: DeansProblem.Chain.Limit.html
+[DeansProblem.Chain.Powers]: DeansProblem.Chain.Powers.html
+[DeansProblem.Chain.Reduction]: DeansProblem.Chain.Reduction.html
+[DeansProblem.Chain.TwoGenerated]: DeansProblem.Chain.TwoGenerated.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Coherent.Infinite]: DeansProblem.Coherent.Infinite.html
+[DeansProblem.Examples.ChainCondition]: DeansProblem.Examples.ChainCondition.html
+[DeansProblem.Examples.FixedTriple]: DeansProblem.Examples.FixedTriple.html
+[DeansProblem.Examples.FreeseBox]: DeansProblem.Examples.FreeseBox.html
+[DeansProblem.Examples.FreeseEquations]: DeansProblem.Examples.FreeseEquations.html
+[DeansProblem.Examples.FreeseGap]: DeansProblem.Examples.FreeseGap.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[DeansProblem.Examples.Rigidity]: DeansProblem.Examples.Rigidity.html
+[DeansProblem.Examples.SelfEmbedding]: DeansProblem.Examples.SelfEmbedding.html
+[DeansProblem.Fixed]: DeansProblem.Fixed.html
+[DeansProblem.FixedGenerator]: DeansProblem.FixedGenerator.html
+[DeansProblem.Inflationary]: DeansProblem.Inflationary.html
+[DeansProblem.Irredundant]: DeansProblem.Irredundant.html
+[DeansProblem.Ladder]: DeansProblem.Ladder.html
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[DeansProblem.Paper]: DeansProblem.Paper.html
+[DeansProblem.Partition]: DeansProblem.Partition.html
+[DeansProblem.Pigeonhole]: DeansProblem.Pigeonhole.html
+[DeansProblem.Preliminaries]: DeansProblem.Preliminaries.html
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html
+[DeansProblem.Shape]: DeansProblem.Shape.html
+[DeansProblem.Truncation]: DeansProblem.Truncation.html
+[DeansProblem.Truncation.Pattern]: DeansProblem.Truncation.Pattern.html
+[Lattices.Free]: Lattices.Free.html

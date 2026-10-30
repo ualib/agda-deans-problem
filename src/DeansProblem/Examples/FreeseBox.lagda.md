@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Worked example: Freese's step, its box, and its terms
 
-This is the [DeansProblem.Examples.FreeseBox][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FreeseBox][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -627,3 +627,12 @@ no-step-with-freese-terms s eσ eτ =
     (freese-terms-in-box (Step.σ s) (freelyGenerates→injective (Step.σ s) (Step.σ-free s)) eσ)
     (freese-terms-in-box (Step.τ s) (freelyGenerates→injective (Step.τ s) (Step.τ-free s)) eτ)
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.FreeseBox]: DeansProblem.Examples.FreeseBox.html
+[DeansProblem.AlmostProof]: DeansProblem.AlmostProof.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[DeansProblem.Truncation]: DeansProblem.Truncation.html
+[Lattices.Free.Canonical.Recognition]: Lattices.Free.Canonical.Recognition.html

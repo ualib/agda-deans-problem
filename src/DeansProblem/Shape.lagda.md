@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The shape of a self-embedding with a fixed free triple
 
-This is the [DeansProblem.Shape][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Shape][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -450,3 +450,9 @@ Corollary-E1 =  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3
 corollary-E1 : Corollary-E1
 corollary-E1 = shape
 ```
+
+--------------------------------------
+
+[DeansProblem.Shape]: DeansProblem.Shape.html
+[DeansProblem.FixedGenerator]: DeansProblem.FixedGenerator.html
+[DeansProblem.Partition]: DeansProblem.Partition.html

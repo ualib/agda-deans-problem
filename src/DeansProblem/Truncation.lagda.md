@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Truncation: the term in the new generators truncates the canonical form
 
-This is the [DeansProblem.Truncation][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Truncation][] module of this repository.
 
 Let `τ` be a family of elements of `FL(Y)`, indexed by `I`, that freely
 generates a copy of `FL(I)`: the homomorphism `FL(I) → FL(Y)` that `τ` induces is
@@ -490,3 +490,10 @@ theorem-9·1 : Theorem-9·1
 theorem-9·1 τ inj p C D icC eC icD eD =
   truncation τ inj C D icC icD (≈ʷ-trans ([]-cong τ eC) (≈ʷ-sym eD))
 ```
+
+--------------------------------------
+
+[DeansProblem.Truncation]: DeansProblem.Truncation.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042
+[Lattices.Free.Canonical.Joinands]: Lattices.Free.Canonical.Joinands.html
+[Lattices.Free.Embedding]: Lattices.Free.Embedding.html

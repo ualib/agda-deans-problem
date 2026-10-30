@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The infinite pigeonhole principle, as an explicit hypothesis
 
-This is the [DeansProblem.Pigeonhole][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Pigeonhole][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -199,3 +199,9 @@ constant-along P L n u cov =
   code : ℕ → Fin (length L ^ n)
   code k = tuple-code L n (u k) (cov k)
 ```
+
+--------------------------------------
+
+[DeansProblem.Pigeonhole]: DeansProblem.Pigeonhole.html
+[DeansProblem.Coherent.Infinite]: DeansProblem.Coherent.Infinite.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html

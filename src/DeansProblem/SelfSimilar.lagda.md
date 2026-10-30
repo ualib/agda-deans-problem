@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### No step toward Dean's problem is self-similar
 
-This is the [DeansProblem.SelfSimilar][] module of the [agda-lattices][] library.
+This is the [DeansProblem.SelfSimilar][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -247,3 +247,12 @@ Corollary-A1 =  ∀ {χ} {X : Type χ} → DecidableEquality X → (s : Step X)
 corollary-A1 : Corollary-A1
 corollary-A1 = no-self-similar-step
 ```
+
+--------------------------------------
+
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Examples.FreeseEquations]: DeansProblem.Examples.FreeseEquations.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html

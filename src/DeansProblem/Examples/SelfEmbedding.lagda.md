@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Worked example: Freese's step seen from inside
 
-This is the [DeansProblem.Examples.SelfEmbedding][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.SelfEmbedding][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -238,3 +238,10 @@ Corollary-7·5 = (w : LatTerm (Fin 3)) → (w [ θ ] ≈ʷ w) ⇔ Any (w ≈ʷ_)
 corollary-7·5 : Corollary-7·5
 corollary-7·5 = θ-fixed⇔T₁₁
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.SelfEmbedding]: DeansProblem.Examples.SelfEmbedding.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html

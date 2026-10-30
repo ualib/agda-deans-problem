@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Infinite coherent chains, from the infinite pigeonhole principle
 
-This is the [DeansProblem.Coherent.Infinite][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Coherent.Infinite][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -568,3 +568,13 @@ Corollary-6·4 =  InfinitePigeonhole
 corollary-6·4 : Corollary-6·4
 corollary-6·4 = positive⇔coherentω
 ```
+
+--------------------------------------
+
+[DeansProblem.Coherent.Infinite]: DeansProblem.Coherent.Infinite.html
+[DeansProblem.Chain.Copies]: DeansProblem.Chain.Copies.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[DeansProblem.Pigeonhole]: DeansProblem.Pigeonhole.html

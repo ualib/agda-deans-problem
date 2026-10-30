@@ -60,7 +60,7 @@ proofs are the paper's arguments.
 
 module DeansProblem.Coherent.Infinite where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Fin.Base                          using ( Fin )
@@ -80,7 +80,7 @@ open import Data.Sum.Base                          using ( [_,_]′ )
 open import Function                               using ( _⇔_ ; mk⇔ )
 open import Level                                  using ( Level ; 0ℓ ) renaming ( suc to lsuc )
 open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; sym ; trans ; cong ; subst ; subst₂ )
+open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst ; subst₂ )
 open import Relation.Nullary                       using ( ¬_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
@@ -519,4 +519,52 @@ coherentω→positive C = Fin 3 , _≟_ , coherentω→copyChain C
 -- Corollary 6.4: Dean's problem has a positive answer if and only if an infinite coherent chain exists.
 positive⇔coherentω : InfinitePigeonhole → PositiveAnswer ⇔ Coherentω
 positive⇔coherentω P = mk⇔ (positive→coherentω P) coherentω→positive
+```
+
+**Theorem C (coherent form)** of [the paper][], as one statement.  Its first
+part: after passing to a subsequence of a chain, the transition `θ_{j,k}`
+depends only on `j`, there being proper self-embeddings `Θ₀, Θ₁, …` with
+`θ_{j,k} = Θⱼ` for all `k > j`, which form an infinite coherent chain
+(`CoherentForm`{.AgdaRecord}: the selection `select`, the chain
+`coherent-chain`, and `depends`).  Its second: the images `Mⱼ = Θⱼ(FL(3))` of
+any infinite coherent chain form a chain inside `FL(3)`, whose `j`-th triple is
+`Θⱼ`.  The first part takes the infinite pigeonhole principle
+(`InfinitePigeonhole`{.AgdaRecord}) and decidable equality on the generators
+as hypotheses; the second takes neither.
+
+```agda
+-- Theorem C (coherent form): a subsequence of a chain whose transitions form an infinite
+-- coherent chain, from the principle; and the images of an infinite coherent chain form a chain.
+record Theorem-C-coherent : Setω where
+  field
+    part-1 : ∀ {χ} {X : Type χ} → DecidableEquality X → (c : Chain X) → InfinitePigeonhole
+             → CoherentForm c
+    part-2 : (C : Coherentω) → Σ[ c ∈ Chain (Fin 3) ] (∀ k i → Chain.gens c k i ≡ Coherentω.Θ C k i)
+
+-- The proof of Theorem C (coherent form).
+theorem-C-coherent : Theorem-C-coherent
+theorem-C-coherent = record
+  { part-1 = coherent-form
+  ; part-2 = λ C → coherentω→chain C , λ k i → refl
+  }
+```
+
+**Corollary 6.4** of [the paper][], as one statement: Dean's problem has a
+positive answer, some free lattice containing a chain of copies of `FL(3)`,
+if and only if an infinite coherent chain exists.  The forward direction takes
+the infinite pigeonhole principle, through the coherent form of Theorem C, and
+decidable equality on the free lattice's generators, which a positive answer
+here includes; the reverse direction gives `FL(3)`, whose generators have it,
+and takes no hypothesis (`coherentω→positive`{.AgdaFunction}).
+
+```agda
+-- Corollary 6.4: from the principle, Dean's problem has a positive answer if and only if an
+-- infinite coherent chain exists.
+Corollary-6·4 : Type (lsuc 0ℓ)
+Corollary-6·4 =  InfinitePigeonhole
+                 → (Σ[ X ∈ Type ] DecidableEquality X × CopyChain X) ⇔ Coherentω
+
+-- The proof of Corollary 6.4.
+corollary-6·4 : Corollary-6·4
+corollary-6·4 = positive⇔coherentω
 ```

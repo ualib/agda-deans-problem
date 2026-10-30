@@ -43,7 +43,7 @@ one of the facts about the fixed-sublattice question of
 
 module DeansProblem.Partition where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Empty                             using ( ⊥ ; ⊥-elim )
@@ -293,4 +293,37 @@ xyr r 2F = r
 -- A triple (x, y, r) of FL(3) is free only for r = z.
 xyr-free→z : (r : LatTerm (Fin 3)) → FreelyGenerates (xyr r) → r ≈ʷ ℊ 2F
 xyr-free→z r r-free = fixes-two (xyr r) r-free 2F ≈ʷ-refl ≈ʷ-refl 2F
+```
+
+**Lemma 6.10** of the paper on Dean's problem, as one statement.  Its first
+part: for `X` finite with at least two elements, given as a generator `z` and
+the list `g ∷ gs` of the others, a self-embedding `θ` of `FL(X)` that fixes
+every generator but `z` fixes `z` too.  Its other parts are the lemma's
+consequences in `FL(3)`: a self-embedding that fixes two distinct generators is
+the identity; a proper one, missing a generator `m`, fixes at most one; and a
+triple `(x, y, r)` is free only for `r = z`.
+
+```agda
+-- Lemma 6.10: fixing every generator but z, a self-embedding fixes z; in FL(3), fixing two is
+-- the identity, a proper one fixes at most one, and (x, y, r) is free only for r = z.
+record Lemma-6·10 : Setω where
+  field
+    part-1 : ∀ {χ} {X : Type χ} (z g : X) (gs : List X)
+             → (∀ v → v ≡ z ⊎ v ∈ g ∷ gs) → ¬ (z ∈ g ∷ gs)
+             → (θ : Sub X X) → FreelyGenerates θ → (∀ {v} → v ∈ g ∷ gs → θ v ≈ʷ ℊ v)
+             → θ z ≈ʷ ℊ z
+    part-2 : (θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates θ → {x y : Fin 3} → x ≢ y
+             → θ x ≈ʷ ℊ x → θ y ≈ʷ ℊ y → ∀ v → θ v ≈ʷ ℊ v
+    part-3 : (θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ θ i))
+             → {u v : Fin 3} → u ≢ v → θ u ≈ʷ ℊ u → θ v ≈ʷ ℊ v → ⊥
+    part-4 : (r : LatTerm (Fin 3)) → FreelyGenerates (xyr r) → r ≈ʷ ℊ 2F
+
+-- The proof of Lemma 6.10.
+lemma-6·10 : Lemma-6·10
+lemma-6·10 = record
+  { part-1 = λ z g gs cover z∉ θ θ-free fix → Partition.fixes-last z g gs cover z∉ θ θ-free fix
+  ; part-2 = fix-two-generators
+  ; part-3 = proper-fixes-one
+  ; part-4 = xyr-free→z
+  }
 ```

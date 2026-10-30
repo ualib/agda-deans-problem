@@ -108,7 +108,7 @@ open import Lattices.Free.Complexity               using ( complexity ; complexi
                                                          ; module Bounded )
 open import Lattices.Free.Embedding                using ( canonicalJoinands-antichain
                                                          ; canonicalMeetands-antichain )
-open import DeansProblem.Fixed                     using ( fixed→image ; child-of-complexity ; positive-not-gen
+open import DeansProblem.Fixed                     using ( fixed→image ; positive-not-gen ; descent-parent
                                                          ; joinand-periodic ; meetand-periodic ; iter-free
                                                          ; []-iter-* )
 open import Lattices.Free.Duality                  using ( dual ; dual-involutive ; dual-cong ; dual-reflects
@@ -573,14 +573,16 @@ module _ (Ψ : Sub (Fin 3) (Fin 3)) (Ψ-free : FreelyGenerates Ψ) (inf : Inflat
 
 #### The descent, with the parent of its last step
 
-The descent of [DeansProblem.Fixed][] is repeated here with one more
-output: from a fixed point of complexity `m + 2` it reaches an element `u` of
-complexity two fixed by a positive power, and a canonical joinand or meetand
-`v` of `u` of complexity one, fixed by a further power
-(`descent-pair`{.AgdaFunction}).  Every element lies below `x ∨ y ∨ z` and
-above `x ∧ y ∧ z` (`≤-top`{.AgdaFunction}, `bot-≤`{.AgdaFunction}), and
-neither is a canonical joinand or meetand of an element of complexity two
-(`top-not-child`{.AgdaFunction}, `bot-not-child`{.AgdaFunction}).
+The descent of [DeansProblem.Fixed][], with one more output: from a fixed
+point of complexity `m + 2` it reaches an element `u` of complexity two fixed
+by a positive power, and a canonical joinand or meetand `v` of `u` of
+complexity one, fixed by a further power (`descent-pair`{.AgdaFunction}).  It
+is the case `n = 3` of `descent-parent`{.AgdaFunction} of
+[DeansProblem.Fixed][], which holds in `FL(n)`.  Every element lies below
+`x ∨ y ∨ z` and above `x ∧ y ∧ z` (`≤-top`{.AgdaFunction},
+`bot-≤`{.AgdaFunction}), and neither is a canonical joinand or meetand of an
+element of complexity two (`top-not-child`{.AgdaFunction},
+`bot-not-child`{.AgdaFunction}).
 
 ```agda
 -- The descent, keeping the parent of the last step.
@@ -588,31 +590,7 @@ descent-pair : (m : ℕ) (θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates θ
              → (w : LatTerm (Fin 3)) → w [ θ ] ≈ʷ w → κ w ≡ suc (suc m)
              → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin 3) ] Σ[ v ∈ LatTerm (Fin 3) ]
                  u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
-descent-pair zero     θ θ-free w fix e =
-  pack (child-of-complexity w 1 e)
-  where
-  -- The fixed point itself is the parent, and its child of complexity one the element.
-  pack : (Σ[ c ∈ LatTerm (Fin 3) ] c ∈ CJ w × κ c ≡ 1) ⊎ (Σ[ c ∈ LatTerm (Fin 3) ] c ∈ CM w × κ c ≡ 1)
-       → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin 3) ] Σ[ v ∈ LatTerm (Fin 3) ]
-           u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
-  pack (inj₁ (c , c∈ , κc)) = 0 , w , c , fixed→image θ (freelyGenerates→injective θ θ-free) w fix 1 , e , inj₁ c∈ , κc
-  pack (inj₂ (c , c∈ , κc)) = 0 , w , c , fixed→image θ (freelyGenerates→injective θ θ-free) w fix 1 , e , inj₂ c∈ , κc
-descent-pair (suc m)  θ θ-free w fix e = step (child-of-complexity w (suc (suc m)) e)
-  where
-  -- Recurse on the child, under the power that fixes it.
-  recurse : (c : LatTerm (Fin 3)) → κ c ≡ suc (suc m) → Σ[ d ∈ ℕ ] c [ iter θ (suc d) ] ≈ʷ c
-          → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin 3) ] Σ[ v ∈ LatTerm (Fin 3) ]
-              u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
-  recurse c κc (d₁ , per) =
-    let (d₂ , u , v , fixu , κu , v∈ , κv) =
-          descent-pair m (iter θ (suc d₁)) (iter-free θ θ-free (suc d₁)) c per κc
-    in d₁ + d₂ * suc d₁ , u , v , ≈ʷ-trans (≡→≈ʷ (sym ([]-iter-* u θ (suc d₁) (suc d₂)))) fixu , κu , v∈ , κv
-
-  step : (Σ[ c ∈ LatTerm (Fin 3) ] c ∈ CJ w × κ c ≡ suc (suc m)) ⊎ (Σ[ c ∈ LatTerm (Fin 3) ] c ∈ CM w × κ c ≡ suc (suc m))
-       → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin 3) ] Σ[ v ∈ LatTerm (Fin 3) ]
-           u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
-  step (inj₁ (c , c∈ , κc)) = recurse c κc (joinand-periodic θ θ-free w fix c∈ (positive-not-gen c (suc m) κc))
-  step (inj₂ (c , c∈ , κc)) = recurse c κc (meetand-periodic θ θ-free w fix c∈ (positive-not-gen c (suc m) κc))
+descent-pair = descent-parent
 
 -- Every element lies below x ∨ y ∨ z and above x ∧ y ∧ z.
 ≤-top : (t : LatTerm (Fin 3)) → t ≤ʷ top

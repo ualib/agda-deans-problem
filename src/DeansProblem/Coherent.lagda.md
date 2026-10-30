@@ -83,16 +83,17 @@ the infinite pigeonhole principle taken as a hypothesis.
 
 module DeansProblem.Coherent where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Empty                             using ( ⊥-elim )
 open import Data.Fin.Base                          using ( Fin ; zero ; suc )
 open import Data.Fin.Properties                    using ( _≟_ ; any? ; all? ; ¬∀⟶∃¬ )
-open import Data.List.Base                         using ( allFin )
+open import Data.List.Base                         using ( allFin ; length )
+open import Data.List.Relation.Unary.Any           using ( Any )
 open import Data.List.Membership.Propositional.Properties
                                                    using ( ∈-allFin )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _≤_ ; _<_ ; _⊔_ )
+open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _^_ ; _≤_ ; _<_ ; _⊔_ )
 open import Data.Nat.Properties                    using ( ≤-trans ; ≤-reflexive ; +-comm ; +-identityʳ
                                                          ; m≤m⊔n ; m≤n⊔m ; m≤n⇒∃[o]m+o≡n )
 open import Data.Product                           using ( Σ-syntax ; ∃ ; _×_ ; _,_ ; proj₁ ; proj₂ )
@@ -109,7 +110,7 @@ open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sy
 open import DeansProblem.Chain                     using ( Step ; Chain )
 open import Lattices.Free.Complexity               using ( complexity ; complexity-resp
                                                          ; complexity-mono ; module Bounded
-                                                         ; pigeonhole-≈ⁿ )
+                                                         ; pigeonhole-≈ⁿ ; tuple-code ; tuple-code-sound )
 open import Lattices.Free.Generation               using ( FreelyGenerates
                                                          ; freelyGenerates→injective
                                                          ; injective→freelyGenerates
@@ -244,6 +245,54 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
          (λ k i → bounded-complete C (transition c 0 k i) (≤-trans (transition-bound k i) (C-bound i)))
 ```
 
+**Lemma 6.1** of [the paper][], as one statement: for every link `j`, every
+`k ≥ j` and every generator `g`, `cx(θ_{j,k}(g)) ≤ cx(φⱼ(g))`, and so the
+transitions `θ_{j,k}`, `k ≥ j`, take only finitely many values.  The
+transition `θ_{j,k}` with `k = e + j` is `transition c j e`, and `φⱼ(g)` is the
+`g`-th member of link `j`.  "Finitely many values" is said by a code: a map from
+the offsets `e` to a finite set `Fin N` such that two offsets with one code
+give equal transitions, so that the transitions take at most `N` values.  The
+code of a transition is the position, in the library's list `bounded B` of
+the elements of complexity at most `B` (Lemma 2.9), of a member equal to each
+of its three values (`tuple-code`{.AgdaFunction}).  The hypothesis beyond the
+paper's is decidable equality on the generators, which complexity needs.
+
+```agda
+-- Lemma 6.1: the transitions from a link are bounded in complexity by its members, and take
+-- finitely many values.
+Lemma-6·1 : Setω
+Lemma-6·1 =  ∀ {χ} {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) (j : ℕ)
+             → (∀ e i → complexity (_≟_ {3}) (transition c j e i) ≤ complexity _≟ˣ_ (Chain.gens c j i))
+             × Σ[ N ∈ ℕ ] Σ[ code ∈ (ℕ → Fin N) ]
+                 (∀ e e′ → code e ≡ code e′ → ∀ i → transition c j e i ≈ʷ transition c j e′ i)
+
+-- The proof of Lemma 6.1.
+lemma-6·1 : Lemma-6·1
+lemma-6·1 _≟ˣ_ c j =
+  transition-bound′ _≟ˣ_ c j , length (bounded B) ^ 3 , code , sound
+  where
+  open Chain c
+  open Bounded (_≟_ {3}) (allFin 3) ∈-allFin using ( bounded ; bounded-complete )
+
+  -- A common bound for the complexities of link j's members.
+  B : ℕ
+  B = proj₁ (bound 3 (λ i → complexity _≟ˣ_ (gens j i)))
+
+  -- Every value of every transition from j is equal to a member of the list.
+  covered : ∀ e i → Any (transition c j e i ≈ʷ_) (bounded B)
+  covered e i = bounded-complete B (transition c j e i)
+                  (≤-trans (transition-bound′ _≟ˣ_ c j e i)
+                           (proj₂ (bound 3 (λ i → complexity _≟ˣ_ (gens j i))) i))
+
+  -- The code of the transition over e steps.
+  code : ℕ → Fin (length (bounded B) ^ 3)
+  code e = tuple-code (bounded B) 3 (transition c j e) (covered e)
+
+  -- Equal codes, equal transitions.
+  sound : ∀ e e′ → code e ≡ code e′ → ∀ i → transition c j e i ≈ʷ transition c j e′ i
+  sound e e′ = tuple-code-sound (bounded B) 3 (transition c j e) (transition c j e′) (covered e) (covered e′)
+```
+
 #### The fixed-sublattice configuration
 
 A `FixedSublattice`{.AgdaRecord} is a proper self-embedding `θ` of `FL(3)` and
@@ -366,4 +415,86 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
                                 (trans (cong (λ m → transition c 0 m i) k≡) (transition-⨟ c j (suc o) i))
                                 (≈ʷ-sym (e i))
       }
+```
+
+**Theorem C (one step)** of [the paper][], as one statement.  Its first
+sentence: there are `j < k` with `θ_{0,j} = θ_{0,k}`.  Its second, for any
+such `j` and `k`, here `k = (e + 1) + j`: the self-embedding `θ_{j,k}`
+(`transition c j (suc e)`) is proper, missing a generator, and it fixes
+pointwise the sublattice `M = θ_{0,j}(FL(3))`, which is isomorphic to `FL(3)`,
+since `θ_{0,j}` freely generates, and proper, since some generator is not in
+it.  `chain→fixed-sublattice`{.AgdaFunction} gives this configuration as a
+record that does not say which transitions it is made of; the statement says
+it.  The hypothesis beyond the paper's is decidable equality on the
+generators, which the first sentence needs; the second needs none.
+
+```agda
+-- Theorem C (one step): two transitions from the bottom coincide, and when θ_{0,j} = θ_{0,k}
+-- with j < k, θ_{j,k} is a proper self-embedding fixing the proper copy θ_{0,j}(FL(3)) pointwise.
+Theorem-C-one-step : Setω
+Theorem-C-one-step =
+  ∀ {χ} {X : Type χ} → DecidableEquality X → (c : Chain X)
+  → (Σ[ j ∈ ℕ ] Σ[ k ∈ ℕ ] j < k × (∀ i → transition c 0 j i ≈ʷ transition c 0 k i))
+  × (∀ j e → (∀ i → transition c 0 j i ≈ʷ transition c 0 (suc e + j) i)
+     →  (FreelyGenerates (transition c j (suc e))
+         × Σ[ g ∈ Fin 3 ] (∀ i → ¬ (ℊ g ≈ʷ transition c j (suc e) i)))
+      × (∀ t → t [ transition c 0 j ] [ transition c j (suc e) ] ≈ʷ t [ transition c 0 j ])
+      × FreelyGenerates (transition c 0 j)
+      × Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g)))
+
+-- The proof of Theorem C (one step).
+theorem-C-one-step : Theorem-C-one-step
+theorem-C-one-step _≟ˣ_ c = transition-repeats _≟ˣ_ c , second
+  where
+  open Chain c
+
+  -- The transition from a over e steps freely generates, as a first factor of gens a.
+  free : ∀ a e → FreelyGenerates (transition c a e)
+  free a e =
+    injective→freelyGenerates _
+      (first-factor-injective (transition c a e) (gens (e + a)) (gens a) (gens≈transition c a e)
+                              (freelyGenerates→injective (gens a) (gens-free a)))
+
+  -- The transition from a over e + 1 steps misses the fresh generator of its last step.
+  misses : ∀ a e i → ¬ (ℊ (fresh (e + a)) ≈ʷ transition c a (suc e) i)
+  misses a e i p =
+    let (i' , p') = generator-in-image (terms (e + a)) (transition c a e i) p
+    in fresh∉ (e + a) i' p'
+
+  -- No generator that a family misses is the value of a term at it.
+  outside : (σ : Sub (Fin 3) (Fin 3)) (g : Fin 3) → (∀ i → ¬ (ℊ g ≈ʷ σ i))
+          → ∀ t → ¬ (t [ σ ] ≈ʷ ℊ g)
+  outside σ g g∉ t p = let (i , q) = generator-in-image σ t (≈ʷ-sym p) in g∉ i q
+
+  -- The second sentence.
+  second : ∀ j e → (∀ i → transition c 0 j i ≈ʷ transition c 0 (suc e + j) i)
+         →  (FreelyGenerates (transition c j (suc e))
+             × Σ[ g ∈ Fin 3 ] (∀ i → ¬ (ℊ g ≈ʷ transition c j (suc e) i)))
+          × (∀ t → t [ transition c 0 j ] [ transition c j (suc e) ] ≈ʷ t [ transition c 0 j ])
+          × FreelyGenerates (transition c 0 j)
+          × Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g))
+  second j e H =
+      (free j (suc e) , fresh (e + j) , misses j e)
+    , FixedSublattice.fixes-⟨Θ⟩ F
+    , free 0 j
+    , proper j H
+    where
+    -- The configuration, as a record.
+    F : FixedSublattice
+    F = record
+      { θ         = transition c j (suc e)
+      ; θ-free    = free j (suc e)
+      ; missed    = fresh (e + j)
+      ; missed∉θ  = misses j e
+      ; Θ         = transition c 0 j
+      ; Θ-free    = free 0 j
+      ; fixes     = λ i → subst (_≈ʷ transition c 0 j i) (transition-⨟ c j (suc e) i) (≈ʷ-sym (H i))
+      }
+
+    -- θ_{0,j} misses a generator: j is positive, since θ_{0,0} is the identity and
+    -- θ_{0,k} misses one.
+    proper : ∀ j → (∀ i → transition c 0 j i ≈ʷ transition c 0 (suc e + j) i)
+           → Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g))
+    proper zero     H′ = ⊥-elim (misses 0 (e + 0) (fresh (e + 0 + 0)) (H′ (fresh (e + 0 + 0))))
+    proper (suc j′) H′ = fresh (j′ + 0) , outside (transition c 0 (suc j′)) (fresh (j′ + 0)) (misses 0 j′)
 ```

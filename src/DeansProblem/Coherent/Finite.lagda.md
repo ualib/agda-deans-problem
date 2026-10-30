@@ -71,7 +71,7 @@ module states the finite form as a record
 
 module DeansProblem.Coherent.Finite where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Empty                             using ( ⊥ )
@@ -84,16 +84,19 @@ open import Data.List.Membership.Propositional.Properties
 open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _≤_ ; z≤n ; s≤s )
                                                    renaming ( _<_ to _<ℕ_ )
 open import Data.Nat.Properties                    using ( ≤-trans ; +-assoc ; +-comm
-                                                         ; +-suc ; +-identityʳ ; m≤n⇒∃[o]m+o≡n ; <-trans )
+                                                         ; +-suc ; +-identityʳ ; m≤n⇒∃[o]m+o≡n ; <-trans
+                                                         ; m≤m+n )
 open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
 open import Level                                  using ( Level )
 open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; sym ; trans ; cong ; subst )
+open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst )
 open import Relation.Nullary                       using ( ¬_ )
+open import Relation.Unary                         using ( _⊂_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
 open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Step ; Chain )
+open import DeansProblem.Chain                     using ( Step ; Chain ; fresh∉⟨σ⟩ )
+open import DeansProblem.Chain.Condition           using ( ⟨_⟩ ; step→⊂ )
 open import DeansProblem.Coherent                  using ( FixedSublattice ; Θ-misses ; ℊ-free
                                                          ; first-factor-injective ; bound
                                                          ; transition ; gens≈transition )
@@ -236,6 +239,39 @@ fixed→coherent₂ F = record
   coh {1F} {1F} (s≤s ())
 ```
 
+**Lemma 6.3** of [the paper][], as one statement.  For a coherent chain
+`Θ₀, …, Θₙ₋₁`, the images `Mⱼ = Θⱼ(FL(3))`, the sublattices `⟨ Θ j ⟩`, ascend
+strictly, `Mⱼ ⊊ Mₖ` for `j < k`; each is proper in `FL(3)`, some generator
+lying outside it, so that `Mₙ₋₁ ⊊ FL(3)`; and each is a copy of `FL(3)`,
+since `Θⱼ` freely generates.  And a coherent chain of length two is exactly
+the configuration of the one-step form of Theorem C, a proper self-embedding
+`Θ₁` fixing pointwise the copy `Θ₀(FL(3))` (`FixedSublattice`{.AgdaRecord}):
+each gives the other, with `Θ₁` its embedding and `Θ₀` its copy.
+
+```agda
+-- Lemma 6.3: the images of a coherent chain ascend strictly inside FL(3), each a copy of FL(3);
+-- and a coherent chain of length two is the configuration of Theorem C (one step).
+Lemma-6·3 : Type
+Lemma-6·3 =
+    (∀ {n} (C : Coherent n)
+     →  (∀ {j k} → j < k → ⟨ Coherent.Θ C j ⟩ ⊂ ⟨ Coherent.Θ C k ⟩)
+      × (∀ j → Σ[ g ∈ Fin 3 ] ¬ ⟨ Coherent.Θ C j ⟩ (ℊ g))
+      × (∀ j → FreelyGenerates (Coherent.Θ C j)))
+  × ((C : Coherent 2) → Σ[ F ∈ FixedSublattice ]
+       FixedSublattice.θ F ≡ Coherent.Θ C 1F × FixedSublattice.Θ F ≡ Coherent.Θ C 0F)
+  × ((F : FixedSublattice) → Σ[ C ∈ Coherent 2 ]
+       Coherent.Θ C 1F ≡ FixedSublattice.θ F × Coherent.Θ C 0F ≡ FixedSublattice.Θ F)
+
+-- The proof of Lemma 6.3.
+lemma-6·3 : Lemma-6·3
+lemma-6·3 =
+    (λ C →  (λ j<k → step→⊂ (step C j<k))
+          , (λ j → Coherent.missed C j , λ (t , e) → fresh∉⟨σ⟩ (top-step C j) t e)
+          , Coherent.Θ-free C)
+  , (λ C → coherent₂→fixed C , refl , refl)
+  , (λ F → fixed→coherent₂ F , refl , refl)
+```
+
 Dropping the top link, or the bottom one, keeps a coherent chain coherent: the
 first `n` of `n + 1` embeddings, or the last `n`, with the same equations.
 
@@ -318,6 +354,20 @@ coherentω-unbounded C B bnd =
   open Bounded (_≟_ {3}) (allFin 3) ∈-allFin using ( bounded ; bounded-complete )
 ```
 
+**Proposition 6.6** of [the paper][], as one statement: no infinite coherent
+chain has generator images of bounded complexity.
+
+```agda
+-- Proposition 6.6: the generator images of an infinite coherent chain have unbounded complexity.
+Proposition-6·6 : Type
+Proposition-6·6 =  (C : Coherentω) (B : ℕ)
+                   → ¬ (∀ j i → complexity (_≟_ {3}) (Coherentω.Θ C j i) ≤ B)
+
+-- The proof of Proposition 6.6.
+proposition-6·6 : Proposition-6·6
+proposition-6·6 = coherentω-unbounded
+```
+
 #### Transitions from any base
 
 [DeansProblem.Coherent][] defines the transition `transition c j e` of a
@@ -347,7 +397,7 @@ module _ {X : Type χ} (c : Chain X) where
 Fix a chain and four links `i ≤ j < k < l`, given by `i` and the offsets
 `j = d₁ + i`, `k = suc d₂ + j`, `l = suc d₃ + k`.  Suppose `θ_{i,j} = θ_{i,l}` and
 `θ_{j,k} = θ_{j,l}`.  Then `Θ₀ = θ_{i,l}`, `Θ₁ = θ_{j,l}`, `Θ₂ = θ_{k,l}` form a
-coherent chain of length three (`four-links→coherent₃`{.AgdaFunction}):
+coherent chain of length three (`four-links→coherent₃′`{.AgdaFunction}):
 
 +  each `θ_{a,l}` freely generates, as a first factor of the injective `gens a`
    (`gens a = gens l ∘ θ_{a,l}`);
@@ -364,7 +414,7 @@ contradictory, which costs the construction nothing); `d₂` and `d₃` are
 positive, so that `l` has a last step and `Θ₂` is proper.
 
 ```agda
-module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
+module _ {X : Type χ} (c : Chain X) where
   open Chain c
 
   private
@@ -383,11 +433,11 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
       in fresh∉ (e + a) i' e'
 
   -- Four links i ≤ j < k < l with θ_{i,j} = θ_{i,l} and θ_{j,k} = θ_{j,l} give a coherent chain of length three.
-  four-links→coherent₃ : (i d₁ d₂ d₃ : ℕ)
+  four-links→coherent₃′ : (i d₁ d₂ d₃ : ℕ)
     → (∀ v → transition c i d₁ v ≈ʷ transition c i (suc d₃ + suc d₂ + d₁) v)
     → (∀ v → transition c (d₁ + i) (suc d₂) v ≈ʷ transition c (d₁ + i) (suc d₃ + suc d₂) v)
     → Coherent 3
-  four-links→coherent₃ i d₁ d₂ d₃ H₁ H₂ = record
+  four-links→coherent₃′ i d₁ d₂ d₃ H₁ H₂ = record
     { Θ         = Θ₃
     ; Θ-free    = Θ₃-free
     ; missed    = λ _ → fresh (d₃ + (suc d₂ + (d₁ + i)))
@@ -475,6 +525,45 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
     coh {2F} {2F} (s≤s (s≤s ()))
 ```
 
+The construction uses no decision, so it takes no decidable equality on the
+generators.  An earlier form took it, as an argument it never used, and is
+kept under its name for its users (`four-links→coherent₃`{.AgdaFunction}).
+
+```agda
+module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
+  -- The four-link criterion, with decidable equality it does not use, kept for its users.
+  four-links→coherent₃ : (i d₁ d₂ d₃ : ℕ)
+    → (∀ v → transition c i d₁ v ≈ʷ transition c i (suc d₃ + suc d₂ + d₁) v)
+    → (∀ v → transition c (d₁ + i) (suc d₂) v ≈ʷ transition c (d₁ + i) (suc d₃ + suc d₂) v)
+    → Coherent 3
+  four-links→coherent₃ = four-links→coherent₃′ c
+```
+
+**Theorem C (four links)** of [the paper][], as one statement: four links
+`i ≤ j < k < l` of a chain, given by `i` and the offsets `j = d₁ + i`,
+`k = suc d₂ + j` and `l = suc d₃ + k`, with `θ_{i,j} = θ_{i,l}` and
+`θ_{j,k} = θ_{j,l}`, give a coherent chain of length three, namely
+`Θ₀ = θ_{i,l}`, `Θ₁ = θ_{j,l}` and `Θ₂ = θ_{k,l}`.  The transition `θ_{a,b}`
+is `transition c a (b ∸ a)`.  The paper asks `i < j`; the statement allows
+`i = j` too.  It has no hypothesis beyond the paper's.
+
+```agda
+-- Theorem C (four links): four links with θ_{i,j} = θ_{i,l} and θ_{j,k} = θ_{j,l} give the
+-- coherent chain θ_{i,l}, θ_{j,l}, θ_{k,l} of length three.
+Theorem-C-four-links : Setω
+Theorem-C-four-links =
+  ∀ {χ} {X : Type χ} (c : Chain X) (i d₁ d₂ d₃ : ℕ)
+  → (∀ v → transition c i d₁ v ≈ʷ transition c i (suc d₃ + suc d₂ + d₁) v)
+  → (∀ v → transition c (d₁ + i) (suc d₂) v ≈ʷ transition c (d₁ + i) (suc d₃ + suc d₂) v)
+  → Σ[ C ∈ Coherent 3 ]  Coherent.Θ C 0F ≡ transition c i (suc d₃ + suc d₂ + d₁)
+                       × Coherent.Θ C 1F ≡ transition c (d₁ + i) (suc d₃ + suc d₂)
+                       × Coherent.Θ C 2F ≡ transition c (suc d₂ + (d₁ + i)) (suc d₃)
+
+-- The proof of Theorem C (four links).
+theorem-C-four-links : Theorem-C-four-links
+theorem-C-four-links c i d₁ d₂ d₃ H₁ H₂ = four-links→coherent₃′ c i d₁ d₂ d₃ H₁ H₂ , refl , refl , refl
+```
+
 #### The extraction under a recurrence hypothesis
 
 `Recurs j`{.AgdaFunction} says that the transition `θ_{0,j}` recurs beyond
@@ -553,4 +642,37 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
                        (subst (λ m → transition c j (suc d₂) v ≈ʷ transition c j m v) e′≡
                               (subst (λ m → transition c j m v ≈ʷ transition c j (offsets t′) v) e≡ (E v)))
       in four-links→coherent₃ _≟ˣ_ c 0 j d₂ d₃ H₁ H₂
+```
+
+**Theorem C (length three)** of [the paper][], as one statement: if the
+transition from the bottom to some link `j` recurs beyond every bound, for
+every `m` there being `l > m` with `θ_{0,l} = θ_{0,j}`, the chain yields a
+coherent chain of length three.  The hypothesis is the paper's, read with `l`
+an index of a link; `Recurs`{.AgdaFunction} reads it with `l = e + j`.  The
+hypothesis beyond the paper's is decidable equality on the generators, which
+the bound of Lemma 6.1 needs.
+
+```agda
+-- Theorem C (length three): a recurring transition from the bottom yields a coherent chain of
+-- length three.
+Theorem-C-length-three : Setω
+Theorem-C-length-three =
+  ∀ {χ} {X : Type χ} → DecidableEquality X → (c : Chain X) (j : ℕ)
+  → (∀ m → Σ[ l ∈ ℕ ] m <ℕ l × (∀ i → transition c 0 l i ≈ʷ transition c 0 j i))
+  → Coherent 3
+
+-- The proof of Theorem C (length three).
+theorem-C-length-three : Theorem-C-length-three
+theorem-C-length-three _≟ˣ_ c j H = chain→coherent₃ _≟ˣ_ c j R
+  where
+  -- The hypothesis read with l = e + j: H at m + j gives l = suc m + o + j.
+  R : Recurs _≟ˣ_ c j
+  R m =
+    let (l , m+j<l , e) = H (m + j)
+        (o , lo) = m≤n⇒∃[o]m+o≡n m+j<l
+        l≡ : suc (m + o) + j ≡ l
+        l≡ = trans (cong suc (trans (+-assoc m o j) (trans (cong (m +_) (+-comm o j)) (sym (+-assoc m j o)))))
+                   lo
+    in  suc (m + o) , s≤s (m≤m+n m o)
+      , λ v → subst (λ k → transition c 0 k v ≈ʷ transition c 0 j v) (sym l≡) (e v)
 ```

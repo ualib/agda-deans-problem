@@ -10,6 +10,8 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Fixed][] module of the [agda-lattices][] library.
 
+[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+
 Let `θ` be an injective endomorphism of `FL(n)`.  This module proves three facts
 about the elements it fixes, which are the elements `w` with `θ(w) = w`, and
 about the elements it moves periodically.
@@ -69,8 +71,9 @@ open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+
 open import Data.Nat.Properties                    using ( ≤-trans ; ≤-reflexive ; ≤-total ; +-comm
                                                          ; m≤n⇒∃[o]m+o≡n ; m≤m*n ; 0≢1+n
                                                          ; suc-injective ; m≤n⇒m⊔n≡n ; m≥n⇒m⊔n≡m )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ )
+open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
 open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
+open import Function                               using ( _⇔_ ; mk⇔ ; _∘_ )
 open import Level                                  using ( Level )
 open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst )
 open import Relation.Nullary                       using ( ¬_ )
@@ -206,6 +209,25 @@ m [ θ^(k·(d+1) − k) ] [ θᵏ ]`.
        ≈ʷ-trans (≡→≈ʷ (sym ([]-iter-+ m θ o k)))
          (≈ʷ-trans (≡→≈ʷ (cong (λ j → m [ iter θ j ]) (trans (+-comm o k) k+o≡kd)))
                    (periodic→fixed-multiples m d e k))
+```
+
+**Corollary A4** of [the paper][], as one statement: for an injective
+endomorphism `θ` of `FL(n)`, an element `m` lies in every image `θᵏ(FL(n))`
+exactly when some positive power of `θ` fixes it.
+
+```agda
+-- Corollary A4: the intersection of the images θᵏ(FL(n)) is the set of periodic points of θ.
+Corollary-A4 : Type
+Corollary-A4 =  (n : ℕ) (θ : Sub (Fin n) (Fin n)) → IsInjective (proj₁ (subst-hom θ))
+                → (m : LatTerm (Fin n))
+                → (∀ k → Σ[ mₖ ∈ LatTerm (Fin n) ] mₖ [ iter θ k ] ≈ʷ m)
+                  ⇔ (Σ[ d ∈ ℕ ] m [ iter θ (suc d) ] ≈ʷ m)
+
+-- The proof of Corollary A4.
+corollary-A4 : Corollary-A4
+corollary-A4 n θ θ-inj m =
+  mk⇔ (λ pre → image→periodic θ θ-inj m (proj₁ ∘ pre) (proj₂ ∘ pre))
+      (λ (d , per) → periodic→image θ θ-inj m d per)
 ```
 
 #### The canonical joinands of a fixed point

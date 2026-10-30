@@ -84,7 +84,7 @@ a round where `FL(3)` explodes; the proof here is independent of the engine.
 
 module DeansProblem.Examples.ChainCondition where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Empty                             using ( ⊥-elim )
@@ -93,7 +93,7 @@ open import Data.List.Relation.Unary.Any           using ( Any ; here ; there )
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
 open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _<_ ; z≤n )
+open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _*_ ; _<_ ; z≤n )
                                                    renaming ( _≤_ to _≤ℕ_ )
 open import Data.Nat.Properties                    using ( ≤-refl ; <-cmp )
 open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
@@ -113,6 +113,7 @@ open import DeansProblem.Chain.Condition           using ( ⟨_⟩ ; gen∈ ; ge
                                                          ; ChainCondition ; Stabilizes
                                                          ; strict→ascending ; interleaved-chain
                                                          ; strict-⨟ ; interleave-all
+                                                         ; interleave-even ; interleave-odd
                                                          ; copy≐→freelyGenerates )
 open import DeansProblem.Chain.Copies              using ( copy )
 open import DeansProblem.Ladder                    using ( module Rungs )
@@ -812,4 +813,38 @@ ladder-into-no-copy ι n = meet-below→no-copy (StrictlyAscending.links (ladder
 -- The ladder in any free lattice with three generators that a map back separates.
 ladder-in : (f : Fin 3 → X) (g : X → Fin 3) → (∀ i → g (f i) ≡ i) → StrictlyAscending 3 X
 ladder-in f g gf = ladder-into (mk↣ λ {i} {j} e → trans (sym (gf i)) (trans (cong g e) (gf j)))
+```
+
+**Theorem 4.5** of the paper, as one statement.  In `FL(3)`, with
+`c = (x ∨ z) ∧ (y ∨ z)` (the paper's `d`) and `Aₖ`, `Bₖ` the rungs of the
+ladder over `x`, `y` and `c`, the links `L₂ₖ = ⟨x, y, Aₖ ∨ Bₖ⟩` and
+`L₂ₖ₊₁ = ⟨x, y, Aₖ₊₁⟩` form an infinite strictly ascending chain of 3-generated
+sublattices, and none of them is a copy of `FL(3)`, the image of an embedding
+of `FL(3)` (its first part); so every free lattice with three distinct
+generators, `Fin 3 ↣ X`, contains an infinite strictly ascending chain of
+3-generated sublattices (its second part).  Here `triple w` is the family
+`(x, y, w)` and `E k` is `Aₖ ∨ Bₖ`.
+
+```agda
+-- Theorem 4.5: the ladder's links form an infinite strictly ascending chain of 3-generated
+-- sublattices of FL(3), none a copy of FL(3); so every free lattice with three distinct
+-- generators contains such a chain.
+record Theorem-4·5 : Setω where
+  field
+    part-1 : Σ[ L ∈ StrictlyAscending 3 (Fin 3) ]
+                (∀ k → StrictlyAscending.links L (2 * k) ≡ triple (E k))
+              × (∀ k → StrictlyAscending.links L (suc (2 * k)) ≡ triple (A (suc k)))
+              × (∀ n (e : proj₁ (FL (Fin 3)) IsSubalgebraOf proj₁ (FL (Fin 3)))
+                 → ¬ (copy e ≐ ⟨ StrictlyAscending.links L n ⟩))
+    part-2 : ∀ {χ} {X : Type χ} → Fin 3 ↣ X → StrictlyAscending 3 X
+
+-- The proof of Theorem 4.5.
+theorem-4·5 : Theorem-4·5
+theorem-4·5 = record
+  { part-1 =  ladder
+             , interleave-even (λ k → triple (E k)) (λ k → triple (A (suc k)))
+             , interleave-odd (λ k → triple (E k)) (λ k → triple (A (suc k)))
+             , no-link-is-a-copy
+  ; part-2 = ladder-into
+  }
 ```

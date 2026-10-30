@@ -55,7 +55,7 @@ paper states it (`stable`{.AgdaFunction}).
 
 module DeansProblem.Ladder where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Fin.Base                          using ( Fin )
@@ -226,4 +226,37 @@ at every `j ≤ k`, which is Lemma 4.4's last clause as the paper states it).
     stable k E≤v v≤w j j≤k =
       stable-at j (≤-trans (W.A-mono-≤ j≤k) (≤-trans ∨-upperˡ E≤v))
                   (≤-trans (W.B-mono-≤ j≤k) (≤-trans ∨-upperʳ E≤v)) v≤w
+```
+
+**Lemma 4.4** as one statement, for every lattice and every `a`, `b` and
+`w`: every rung lies below `w`; each side ascends; each rung lies below the
+next rung of the other side; and if `Aₖ(w) ∨ Bₖ(w) ≤ v ≤ w`, then
+`Aⱼ(v) = Aⱼ(w)` and `Bⱼ(v) = Bⱼ(w)` for every `j ≤ k`.  The rungs over the
+bound `w` are `Rungs.A 𝑳 a b w`{.AgdaFunction} and
+`Rungs.B 𝑳 a b w`{.AgdaFunction}.
+
+```agda
+-- Lemma 4.4: the rungs lie below the bound, ascend, interlace, and are stable.
+Lemma-4·4 : Setω
+Lemma-4·4 =
+  ∀ {α ρ} (𝑳 : Lattice α ρ) (a b w : 𝕌[ proj₁ 𝑳 ])
+  → let open Lattice-Op 𝑳 using ( _∨_ )
+        open Lattice-Order 𝑳 using ( _≤_ )
+        open Setoid 𝔻[ proj₁ 𝑳 ] using ( _≈_ )
+        A = Rungs.A 𝑳 a b w
+        B = Rungs.B 𝑳 a b w
+    in  (∀ k → A k ≤ w × B k ≤ w)
+      × (∀ k → A k ≤ A (suc k) × B k ≤ B (suc k))
+      × (∀ k → B k ≤ A (suc k) × A k ≤ B (suc k))
+      × (∀ v k → A k ∨ B k ≤ v → v ≤ w
+         → ∀ j → j ≤ℕ k → Rungs.A 𝑳 a b v j ≈ A j × Rungs.B 𝑳 a b v j ≈ B j)
+
+-- The proof of Lemma 4.4.
+lemma-4·4 : Lemma-4·4
+lemma-4·4 𝑳 a b w =
+    (λ k → A≤w k , B≤w k)
+  , (λ k → A-mono k , B-mono k)
+  , (λ k → B≤A k , A≤B k)
+  , (λ v → stable 𝑳 a b w v)
+  where open Rungs 𝑳 a b w using ( A≤w ; B≤w ; A-mono ; B-mono ; B≤A ; A≤B )
 ```

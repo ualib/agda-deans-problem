@@ -52,6 +52,7 @@ cheap.
 module DeansProblem.Examples.FreeseEquations where
 
 -- Imports from the Agda Standard Library ---------------------------------------
+open import Data.Empty                             using ( ⊥ )
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F ; 3F ; 4F ; 5F ; 6F
                                                          ; 7F ; 8F )
@@ -188,4 +189,20 @@ bar 8F = c̄₂₂
 -- The natural guess is not injective.
 bar-not-free : ¬ FreelyGenerates bar
 bar-not-free (jc , _) = 6F∉[1F] (jc {6F} {1F ∷ []} relation-1)
+```
+
+**Corollary A2** of the paper, as one statement: the equations `Φ(a) = a'`,
+`Φ(b) = b'`, `Φ(c) = c'` have no solution `Φ` among the injective
+endomorphisms of `FL(9)`, the substitutions that freely generate.
+
+```agda
+-- Corollary A2: Freese's equations have no injective solution in the endomorphisms of FL(9).
+Corollary-A2 : Type
+Corollary-A2 =  (Φ : Sub (Fin 9) (Fin 9)) → FreelyGenerates Φ
+                → a [ Φ ] ≈ʷ a' → b [ Φ ] ≈ʷ b' → c [ Φ ] ≈ʷ c' → ⊥
+
+-- The proof of Corollary A2.
+corollary-A2 : Corollary-A2
+corollary-A2 Φ Φ-free ea eb ec =
+  no-FreeseΦ Φ (record { Φ-free = Φ-free ; a↦a' = ea ; b↦b' = eb ; c↦c' = ec })
 ```

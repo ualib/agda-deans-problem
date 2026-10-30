@@ -143,7 +143,7 @@ link of its chain is a copy of `FL(3)`.
 
 module DeansProblem.Chain.Condition where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Empty                             using ( ⊥ ; ⊥-elim )
@@ -162,9 +162,10 @@ open import Data.List.Relation.Unary.Any.Properties
                                                    using ( map⁺ ; lookup-index )
 open import Data.List.Relation.Unary.Unique.Propositional
                                                    using ( Unique )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _≤_ ; _<_ ; z≤n ; s≤s )
+open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _*_ ; _≤_ ; _<_ ; z≤n
+                                                         ; s≤s )
 open import Data.Nat.Properties                    using ( ≤-refl ; ≤-trans ; ≤-reflexive ; <⇒≤
-                                                         ; +-comm ; +-suc ; +-identityʳ
+                                                         ; +-comm ; +-suc ; +-identityʳ ; *-suc
                                                          ; m≤n⇒∃[o]m+o≡n ; n<1+n )
 open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
 open import Data.Sum                               using ( [_,_]′ )
@@ -181,7 +182,7 @@ import Data.List.Relation.Unary.Any as Any
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
 open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Chain ; module Chain ; fresh∉⟨σ⟩ ; iter
+open import DeansProblem.Chain                     using ( Step ; module Step ; Chain ; module Chain ; fresh∉⟨σ⟩ ; iter
                                                          ; []-iter-suc ; []-iter-sucʳ )
 open import DeansProblem.Chain.Copies              using ( CopyChain ; copyChain→chain ; copy
                                                          ; ≤→freelyGenerates )
@@ -344,8 +345,10 @@ A `Chain`{.AgdaRecord} of free triples is a strictly ascending chain of
 3-generated sublattices (`chain→strict`{.AgdaFunction}): its `k`-th step's terms
 put the generators of `gens k` in `⟨ gens (suc k) ⟩`, and its fresh generator,
 a member of `⟨ gens (suc k) ⟩`, is not in `⟨ gens k ⟩`
-(`fresh∉⟨σ⟩`{.AgdaFunction}).  Through `copyChain→chain`{.AgdaFunction}, so is
-a chain of copies (`copyChain→strict`{.AgdaFunction}).  So the chain condition
+(`fresh∉⟨σ⟩`{.AgdaFunction}); the same argument makes every step a strict
+containment (`step→⊂`{.AgdaFunction}).  Through
+`copyChain→chain`{.AgdaFunction}, so is a chain of copies
+(`copyChain→strict`{.AgdaFunction}).  So the chain condition
 for 3-generated sublattices of `FL(X)` excludes both, which is Theorem H for
 `X` (`chainCondition→no-chain`{.AgdaFunction},
 `chainCondition→no-copy-chain`{.AgdaFunction}).
@@ -360,6 +363,11 @@ chain→strict c = record
                            in fresh∉⟨σ⟩ (step k) t e
   }
   where open Chain c
+
+-- A step is a strict containment of generated sublattices.
+step→⊂ : (s : Step X) → ⟨ Step.σ s ⟩ ⊂ ⟨ Step.τ s ⟩
+step→⊂ s =  gens⊆ (λ i → Step.p s i , ≈ʷ-sym (Step.σ≈p[τ] s i))
+          , λ ⊇ → let (t , e) = ⊇ (gen∈ (Step.τ s) (Step.fresh s)) in fresh∉⟨σ⟩ s t e
 
 -- A chain of copies of FL(3) is a strictly ascending chain of 3-generated sublattices.
 copyChain→strict : CopyChain X → StrictlyAscending 3 X
@@ -659,6 +667,26 @@ generated-onto≐ : {X : Type χ} → DecidableEquality X → {n : ℕ} (σ : Su
 generated-onto≐ _≟ˣ_ σ Φ Φ-free σ⊆Φσ = generated-onto _≟ˣ_ σ Φ Φ-free σ⊆Φσ , σ⊆Φσ
 ```
 
+**Theorem A** of [the paper][], as one statement: for an injective
+endomorphism `Φ` of `FL(X)`, a substitution that freely generates (Corollary
+2.5), and a finitely generated sublattice `L = ⟨ σ ⟩`, if `L ⊆ Φ(L)` then
+`Φ(L) = L`, where `Φ(L)` is `⟨ σ ⨟ Φ ⟩`, the sublattice the images `Φ(σ i)`
+generate (`image⇔`{.AgdaFunction}).  The hypothesis beyond the paper's is
+decidable equality on the generators, which the complexity of Theorem B
+needs.
+
+```agda
+-- Theorem A: an injective endomorphism that maps a finitely generated sublattice L onto a
+-- superset of L maps it onto L.
+Theorem-A : Setω
+Theorem-A =  ∀ {χ} {X : Type χ} → DecidableEquality X → {n : ℕ} (σ : Sub (Fin n) X)
+             → (Φ : Sub X X) → FreelyGenerates Φ → ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ σ ⨟ Φ ⟩ ≐ ⟨ σ ⟩
+
+-- The proof of Theorem A.
+theorem-A : Theorem-A
+theorem-A = generated-onto≐
+```
+
 #### Corollary A3
 
 If `⟨ σ ⟩ ⊆ ⟨ τ ⟩` and an injective `Φ` maps `⟨ σ ⟩` onto a sublattice
@@ -706,6 +734,8 @@ with the roles of the two sequences exchanged at each step.  So two families
 of proper steps make a strictly ascending chain
 (`interleaved-chain`{.AgdaFunction}), and a property of every term of both
 sequences holds of every interleaved term (`interleave-all`{.AgdaFunction}).
+The term at `2k` is `e k` and the term at `2k + 1` is `o k`
+(`interleave-even`{.AgdaFunction}, `interleave-odd`{.AgdaFunction}).
 
 ```agda
 -- Interleave two sequences: e 0, o 0, e 1, o 1, ….
@@ -726,6 +756,15 @@ interleave-all : {A : Type ι} {ℓ : Level} (P : A → Type ℓ) (e o : ℕ →
                → (∀ k → P (e k)) → (∀ k → P (o k)) → ∀ n → P (interleave e o n)
 interleave-all P e o pe po zero     = pe zero
 interleave-all P e o pe po (suc n)  = interleave-all P o (λ k → e (suc k)) po (λ k → pe (suc k)) n
+
+-- The interleaved term at 2k is e k, and the one at 2k + 1 is o k.
+interleave-even : {A : Type ι} (e o : ℕ → A) (k : ℕ) → interleave e o (2 * k) ≡ e k
+interleave-even e o zero     = refl
+interleave-even e o (suc k)  = trans (cong (interleave e o) (*-suc 2 k))
+                                     (interleave-even (λ k → e (suc k)) (λ k → o (suc k)) k)
+
+interleave-odd : {A : Type ι} (e o : ℕ → A) (k : ℕ) → interleave e o (suc (2 * k)) ≡ o k
+interleave-odd e o k = interleave-even o (λ k → e (suc k)) k
 
 -- Two families of proper steps make a strictly ascending chain.
 interleaved-chain : (e o : ℕ → Sub (Fin n) X)
@@ -930,4 +969,23 @@ proves it from Lemma 6.1.)
   no-periodic-embedding : (Φ : Sub X X) → FreelyGenerates Φ → (p : ℕ)
                         → ¬ (∀ k → ⟨ links k ⨟ Φ ⟩ ≐ ⟨ links (suc p + k) ⟩)
   no-periodic-embedding Φ Φ-free p every = no-image-laterᶠ Φ Φ-free {0} {suc p + 0} (s≤s z≤n) (every 0)
+```
+
+**Corollary A3** of [the paper][], as one statement: in a chain
+`L₀ ⊊ L₁ ⊊ ⋯` of finitely generated sublattices of `FL(X)`, the links of any
+ranks (`StrictlyAscendingᶠ`{.AgdaRecord}), no injective endomorphism `Φ` has
+`Φ(Lⱼ) = Lₖ` with `j < k`.  The hypothesis beyond the paper's is decidable
+equality on the generators, through Theorem A.
+
+```agda
+-- Corollary A3: in a chain of finitely generated sublattices, no injective endomorphism
+-- maps a link onto a later one.
+Corollary-A3 : Setω
+Corollary-A3 =  ∀ {χ} {X : Type χ} → DecidableEquality X → (c : StrictlyAscendingᶠ X)
+                → (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
+                → ¬ (⟨ StrictlyAscendingᶠ.links c j ⨟ Φ ⟩ ≐ ⟨ StrictlyAscendingᶠ.links c k ⟩)
+
+-- The proof of Corollary A3.
+corollary-A3 : Corollary-A3
+corollary-A3 = no-image-laterᶠ
 ```

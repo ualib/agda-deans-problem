@@ -430,3 +430,23 @@ module _
       ; member-shape      = shaped
       }
 ```
+
+**Corollary E1** of [the paper][], as one statement: a proper self-embedding
+`Θ` of `FL(3)` with a fixed free triple `τ` has the shape `Shape Θ`: it fixes
+exactly one generator, `z`; `Θ(x ∨ y) ≤ x ∨ y` and `Θ(x ∧ y) ≥ x ∧ y`; and,
+up to duality, `Θ` or `Θ²` is inflationary, fixes `x ∨ y`, `x ∨ z` and
+`y ∨ z`, and has `Θ(x) ≤ (x ∨ y) ∧ (x ∨ z)` and `Θ(y) ≤ (x ∨ y) ∧ (y ∨ z)`
+(`InflationaryShape`{.AgdaRecord}, whose inflation gives `x ≤ Θ(x)` and
+`y ≤ Θ(y)`).
+
+```agda
+-- Corollary E1: the shape of a proper self-embedding with a fixed free triple.
+Corollary-E1 : Type
+Corollary-E1 =  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
+                → (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → (∀ i → τ i [ Θ ] ≈ʷ τ i)
+                → Shape Θ
+
+-- The proof of Corollary E1.
+corollary-E1 : Corollary-E1
+corollary-E1 = shape
+```

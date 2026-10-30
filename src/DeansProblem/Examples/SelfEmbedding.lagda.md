@@ -48,6 +48,8 @@ written `ρ`: `θ` fixes exactly the eleven elements of `T₁₁`
 
 module DeansProblem.Examples.SelfEmbedding where
 
+open import Agda.Primitive  using () renaming ( Set to Type )
+
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
@@ -221,4 +223,18 @@ moves every generator, Theorem E leaves it no fixed free triple
 -- So the fixed sublattice of θ contains no free triple.
 θ-no-fixed-triple : (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → ¬ (∀ i → τ i [ θ ] ≈ʷ τ i)
 θ-no-fixed-triple τ τ-free τ-fixed = moves→no-fixed-triple θ θ-free 0F x∉θ τ τ-free τ-fixed θ-moves
+```
+
+**Corollary 7.5** of [the paper][], as one statement: Freese's
+self-embedding `ρ`, here `θ`, fixes exactly the eleven elements of `T₁₁`, up
+to equality in `FL(3)`.
+
+```agda
+-- Corollary 7.5: Freese's self-embedding fixes exactly the eleven elements of T₁₁.
+Corollary-7·5 : Type
+Corollary-7·5 = (w : LatTerm (Fin 3)) → (w [ θ ] ≈ʷ w) ⇔ Any (w ≈ʷ_) T₁₁
+
+-- The proof of Corollary 7.5.
+corollary-7·5 : Corollary-7·5
+corollary-7·5 = θ-fixed⇔T₁₁
 ```

@@ -68,7 +68,7 @@ open import Data.Empty                             using ( ⊥ ; ⊥-elim )
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
 open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.List.Base                         using ( List ; [] ; _∷_ ; map ; allFin )
+open import Data.List.Base                         using ( List ; [] ; _∷_ ; map ; allFin ; length )
 open import Data.List.Properties                   using ( map-∘ ; map-cong )
 open import Data.List.Membership.Propositional     using ( _∈_ ; find ; lose )
 open import Data.List.Membership.Propositional.Properties
@@ -966,4 +966,84 @@ module _ (Θ : Sub (Fin 3) (Fin 3)) (Θ-free : FreelyGenerates Θ) (m : Fin 3) (
     where
     Θ-inj = freelyGenerates→injective Θ Θ-free
     Θᵈ-inj = freelyGenerates→injective Θᵈ (dual-free Θ Θ-free)
+```
+
+#### The paper's statements
+
+Propositions 7.2 to 7.4 and Theorem E of [the paper][], each as one
+statement.  A self-embedding of `FL(3)` is a substitution that freely
+generates, proper when it misses a generator `m`; it fixes a free triple
+`τ` when it fixes each `τ i`, and so every element of the copy of `FL(3)` the
+triple generates.
+
+**Proposition 7.2**: `S = T₁₄`, where `S` is the set of elements whose
+canonical trees have no generator among the meetands of any meet node
+(`NoGeneratorMeetand`{.AgdaFunction}), up to equality in `FL(3)`; and every
+element of `T₁₁` has complexity at most 3.
+
+```agda
+-- Proposition 7.2: S is T₁₄, and the members of T₁₁ have complexity at most 3.
+Proposition-7·2 : Type
+Proposition-7·2 =  ((w : LatTerm (Fin 3)) → NoGeneratorMeetand w ⇔ Any (w ≈ʷ_) T₁₄)
+                 × All (λ t → complexity (_≟_ {3}) t ≤ 3) T₁₁
+
+-- The proof of Proposition 7.2.
+proposition-7·2 : Proposition-7·2
+proposition-7·2 = S⇔T₁₄ , T₁₁-complexity
+```
+
+**Proposition 7.3**: a strictly inflationary self-embedding `Ψ` fixes only
+elements of `T₁₁`; in particular it has at most eleven fixed points, each of
+complexity at most 3.
+
+```agda
+-- Proposition 7.3: a strictly inflationary self-embedding fixes only members of the eleven, each
+-- of complexity at most 3.
+Proposition-7·3 : Type
+Proposition-7·3 =
+  (Ψ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Ψ → Inflationary Ψ → (∀ g → ¬ (Ψ g ≈ʷ ℊ g))
+  →  ((w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → Any (w ≈ʷ_) T₁₁)
+   × length T₁₁ ≡ 11
+   × ((w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → complexity (_≟_ {3}) w ≤ 3)
+
+-- The proof of Proposition 7.3.
+proposition-7·3 : Proposition-7·3
+proposition-7·3 Ψ Ψ-free inf moves =
+  strict-fixed-in-T₁₁ Ψ Ψ-free inf moves , refl , strict-fixed-complexity Ψ Ψ-free inf moves
+```
+
+**Proposition 7.4**: if a proper self-embedding `Θ` fixes a free triple
+`τ` pointwise, then a positive power of `Θ` is inflationary and fixes `τ`, or
+a positive power of its dual `Θ^δ` (`dualˢ Θ`) is inflationary and fixes the
+dual triple.
+
+```agda
+-- Proposition 7.4: an inflationary positive power of Θ fixing the triple, or of its dual fixing
+-- the dual triple.
+Proposition-7·4 : Type
+Proposition-7·4 =
+  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
+  → (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → (∀ i → τ i [ Θ ] ≈ʷ τ i)
+  →  (Σ[ E ∈ ℕ ] Inflationary (iter Θ (suc E)) × (∀ i → τ i [ iter Θ (suc E) ] ≈ʷ τ i))
+   ⊎ (Σ[ E ∈ ℕ ] Inflationary (iter (dualˢ Θ) (suc E))
+                 × (∀ i → dualˢ τ i [ iter (dualˢ Θ) (suc E) ] ≈ʷ dualˢ τ i))
+
+-- The proof of Proposition 7.4.
+proposition-7·4 : Proposition-7·4
+proposition-7·4 = inflationary-fixing-power
+```
+
+**Theorem E**: every proper self-embedding of `FL(3)` whose fixed sublattice
+contains a free triple fixes a generator.
+
+```agda
+-- Theorem E: a proper self-embedding fixing a free triple fixes a generator.
+Theorem-E : Type
+Theorem-E =  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
+             → (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → (∀ i → τ i [ Θ ] ≈ʷ τ i)
+             → Σ[ g ∈ Fin 3 ] Θ g ≈ʷ ℊ g
+
+-- The proof of Theorem E.
+theorem-E : Theorem-E
+theorem-E = fixes-generator
 ```

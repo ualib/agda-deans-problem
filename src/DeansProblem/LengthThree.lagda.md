@@ -356,3 +356,53 @@ no-coherentω C = no-coherent₃ (Coherentω.prefix C 3)
 no-chain-recurs : (_≟ˣ_ : DecidableEquality X) (c : Chain X) (j : ℕ) → Recurs _≟ˣ_ c j → ⊥
 no-chain-recurs _≟ˣ_ c j R = no-coherent₃ (chain→coherent₃ _≟ˣ_ c j R)
 ```
+
+#### The paper's statements
+
+Lemma 5, Lemma 8.1 and Theorem G of [the paper][], each as one statement.
+The generator the paper calls `z` is any of the three, and `other z` and
+`other' z` play `x` and `y`.
+
+**Lemma 5**: every fixed point of an inflationary self-embedding `Ψ` that
+fixes `z` and moves `x` and `y` lies above `c = z ∧ (x ∨ y)`.
+
+```agda
+-- Lemma 5: the fixed points of an inflationary self-embedding fixing z and moving x and y lie
+-- above z ∧ (x ∨ y).
+Lemma-5 : Type
+Lemma-5 =  (Ψ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Ψ → Inflationary Ψ → (z : Fin 3) → Ψ z ≈ʷ ℊ z
+           → ¬ (Ψ (other z) ≈ʷ ℊ (other z)) → ¬ (Ψ (other' z) ≈ʷ ℊ (other' z))
+           → (w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → ℊ z ∧̇ (ℊ (other z) ∨̇ ℊ (other' z)) ≤ʷ w
+
+-- The proof of Lemma 5.
+lemma-5 : Lemma-5
+lemma-5 = fixed-above-c
+```
+
+**Lemma 8.1** (the core): a self-embedding `Θ₁` fixing `z`, and a proper
+inflationary self-embedding `Ψ` fixing `Θ₁(x)`, `Θ₁(y)` and `Θ₁(z)`, cannot
+both exist.
+
+```agda
+-- Lemma 8.1: no proper inflationary self-embedding fixes the images of a self-embedding fixing z.
+Lemma-8·1 : Type
+Lemma-8·1 =  (Θ₁ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ₁ → (z : Fin 3) → Θ₁ z ≈ʷ ℊ z
+             → (Ψ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Ψ → Inflationary Ψ
+             → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Ψ i)) → (∀ i → Θ₁ i [ Ψ ] ≈ʷ Θ₁ i) → ⊥
+
+-- The proof of Lemma 8.1.
+lemma-8·1 : Lemma-8·1
+lemma-8·1 = core
+```
+
+**Theorem G**: there is no coherent chain of length three.
+
+```agda
+-- Theorem G: there is no coherent chain of length three.
+Theorem-G : Type
+Theorem-G = ¬ Coherent 3
+
+-- The proof of Theorem G.
+theorem-G : Theorem-G
+theorem-G = no-coherent₃
+```

@@ -304,8 +304,9 @@ the identity; a proper one, missing a generator `m`, fixes at most one; and a
 triple `(x, y, r)` is free only for `r = z`.
 
 ```agda
--- Lemma 6.10: fixing every generator but z, a self-embedding fixes z; in FL(3), fixing two is
--- the identity, a proper one fixes at most one, and (x, y, r) is free only for r = z.
+-- Lemma 6.10: in FL(X), X finite with at least two elements, a self-embedding fixing every
+-- generator but z fixes z; in FL(3), fixing two is the identity, a proper one fixes at most
+-- one, and (x, y, r) is free only for r = z.
 record Lemma-6·10 : Setω where
   field
     part-1 : ∀ {χ} {X : Type χ} (z g : X) (gs : List X)

@@ -828,7 +828,7 @@ generators, `Fin 3 ↣ X`, contains an infinite strictly ascending chain of
 ```agda
 -- Theorem 4.5: the ladder's links form an infinite strictly ascending chain of 3-generated
 -- sublattices of FL(3), none a copy of FL(3); so every free lattice with three distinct
--- generators contains such a chain.
+-- generators contains an infinite strictly ascending chain of 3-generated sublattices.
 record Theorem-4·5 : Setω where
   field
     part-1 : Σ[ L ∈ StrictlyAscending 3 (Fin 3) ]

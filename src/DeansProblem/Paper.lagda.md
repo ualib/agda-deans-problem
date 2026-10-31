@@ -70,13 +70,15 @@ FJN's results.
 
 +  **Theorem 2.1** (FJN 1.8 and 1.9): `FL(X)` satisfies (W), and so does every
    sublattice of a free lattice.
-+  **Lemma 2.2** (FJN 1.2, 1.4 and 1.5): under (†) the generators are join and
-   meet prime, and a partition of the generators partitions the lattice into a
-   filter and an ideal; (†) holds in `FL(X)`.
++  **Lemma 2.2** (FJN 1.2, 1.4 and 1.5): under (†), read for finite nonempty
+   sets, the generators are join and meet prime, and a partition of the
+   generators into two parts partitions the lattice into a filter and an
+   ideal; (†) holds in `FL(X)`.
 +  **Theorem 2.3** (FJN 1.11, Whitman): Whitman's rules decide the order of
    `FL(X)`.
-+  **Corollary 2.4** (FJN 1.6): every generating set contains the generators,
-   and every automorphism is induced by a permutation of them.
++  **Corollary 2.4** (FJN 1.6): in a lattice generated under (†), every
+   generating set contains the generators, and every automorphism is induced
+   by a permutation of them.
 +  **Corollary 2.5** (FJN 1.12 and 1.13): a family freely generates exactly
    when it satisfies the join condition and its dual.
 +  **Theorem 2.6** (FJN 1.17 and 1.18): each element has a term of least rank,
@@ -97,14 +99,17 @@ FJN's results.
    self-embeddings, and embeds in `FL(X)`; conversely, proper self-embeddings
    whose direct limit embeds in `FL(X)` give a chain.
    [DeansProblem.Chain.Limit][].
-+  **Proposition 4.3**: a step that an injective endomorphism `Φ` carries to
-   itself gives a chain, the triples `Φᵏ(σ)`. [DeansProblem.Chain][].
++  **Proposition 4.3**: if an injective endomorphism `Φ` carries the lower
+   triple `σ` of a step to its upper triple, the triples `Φᵏ(σ)` form a
+   chain. [DeansProblem.Chain][].
 +  **Lemma 4.4**: in any lattice, the rungs of a ladder lie below its bound,
-   ascend, interlace, and are stable under a smaller bound.
+   ascend and interlace, and the rungs up to `Aₖ` and `Bₖ` are unchanged when
+   the bound is lowered to any `v` above `Aₖ ∨ Bₖ`.
    [DeansProblem.Ladder][].
 +  **Theorem 4.5**: the ladder in `FL(3)` is an infinite strictly ascending
-   chain of 3-generated sublattices, none a copy of `FL(3)`, and every free
-   lattice with three generators contains such a chain.
+   chain of 3-generated sublattices, none a copy of `FL(3)`; so every free
+   lattice on at least three generators contains an infinite strictly
+   ascending chain of 3-generated sublattices.
    [DeansProblem.Examples.ChainCondition][].
 
 #### Section 5: no step is self-similar
@@ -151,8 +156,9 @@ FJN's results.
 +  **Proposition 6.9**: nothing but the identity fixes `θ₁(x)`, `θ₁(y)`,
    `θ₁(z)`, so that chain has no third link.
    [DeansProblem.Examples.FixedTriple][].
-+  **Lemma 6.10**: a self-embedding fixing every generator but one fixes that
-   one too; consequences in `FL(3)`. [DeansProblem.Partition][].
++  **Lemma 6.10**: for `X` finite with at least two elements, a self-embedding
+   of `FL(X)` fixing every generator but one fixes that one too; consequences
+   in `FL(3)`. [DeansProblem.Partition][].
 +  **Lemma 6.11**: powers of a self-embedding fix the non-generator canonical
    joinands and meetands of its fixed points, and a fixed point of positive
    complexity descends to a periodic element of complexity 1.
@@ -160,12 +166,16 @@ FJN's results.
 
 #### Section 7: self-embeddings with a fixed free triple
 
-+  **Lemma 1**: a self-embedding fixing `x ∨ y` moves `x` and `y` up, and `z`
-   up. [DeansProblem.Inflationary][].
++  **Lemma 1**: a self-embedding `Θ` fixing `x ∨ y` maps `x` and `y` below
+   `x ∨ y` and moves `z` up; and either `x ≤ Θ(x)` and `y ≤ Θ(y)`, or
+   `x ≤ Θ(y)` and `y ≤ Θ(x)`, in which case `Θ²` is inflationary.
+   [DeansProblem.Inflationary][].
 +  **Lemma 2**: a generator fixed by a positive power of a proper
    self-embedding is fixed by it. [DeansProblem.Inflationary][].
-+  **Lemma 3**: an inflationary self-embedding fixes the nodes of the trees of
-   its fixed points. [DeansProblem.Inflationary][].
++  **Lemma 3**: an inflationary self-embedding fixes every non-generator node
+   of the canonical tree of each of its fixed points, and every generator
+   among a fixed point's canonical meetands; a strictly inflationary one has
+   no fixed point below a generator. [DeansProblem.Inflationary][].
 +  **Lemma 4**: inflation transfers through a fixed element.
    [DeansProblem.Inflationary][].
 +  **Proposition 7.2**: `S = T₁₄`, and the members of `T₁₁` have complexity at
@@ -200,8 +210,10 @@ FJN's results.
    truncates that of its image under an embedding.
    [DeansProblem.Truncation][].
 +  **Theorem 9.2**: free triples in one box, one inside the other's
-   sublattice, agree where the box is irredundant; so no step, and no two
-   links of a chain, lie in such a box. [DeansProblem.AlmostProof.Links][].
+   sublattice, agree at each index where the box is irredundant; so no step
+   has both of its triples in a box irredundant at the generator the step's
+   terms miss, and at most one link of a chain lies in a strongly irredundant
+   box. [DeansProblem.AlmostProof.Links][].
 
 ```agda
 {-# OPTIONS --without-K --exact-split --safe #-}

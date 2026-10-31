@@ -677,8 +677,9 @@ canonical meetand of a fixed point, `Θ(g) = g`; (c) if `Θ` is strictly
 inflationary, moving every generator, no fixed point lies below a generator.
 
 ```agda
--- Lemma 3: an inflationary self-embedding fixes the nodes of its fixed points' trees and their
--- generator meetands; strictly inflationary, it has no fixed point below a generator.
+-- Lemma 3: an inflationary self-embedding fixes the non-generator nodes of its fixed points'
+-- trees and their generator meetands; strictly inflationary, it has no fixed point below a
+-- generator.
 Lemma-3 : Type
 Lemma-3 =
   (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → Inflationary Θ

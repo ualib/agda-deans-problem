@@ -44,7 +44,7 @@ is `CopyChain X`, and the record of a chain by its free triples is `Chain X`,
 which [DeansProblem.Chain.Copies][] proves equivalent to it.
 
 **Hypotheses beyond the paper's**.  Each is in the statement's type and said in
-the prose above it, as follows:
+the prose of its module, as follows:
 
 +  decidable equality on the generators, wherever a decision needs it: to
    decide the order, or to compute canonical forms or complexity, so in
@@ -52,8 +52,10 @@ the prose above it, as follows:
    coherent form) and H, Lemmas 2.8, 2.9 and 6.1, and Corollaries A1, A3 and
    6.4; the paper's sets have it classically;
 +  the infinite pigeonhole principle, as the explicit argument
-   `InfinitePigeonhole`, never a postulate, in the coherent form of Theorem C
-   and Corollary 6.4, whose converse directions take none.
+   `InfinitePigeonhole`, never a postulate, in the first part of the coherent
+   form of Theorem C and in Corollary 6.4, which binds it before both of its
+   directions; the second part of the coherent form takes none, and neither
+   does the proof of the converse of Corollary 6.4 (`coherentω→positive`).
 
 No result stays in prose.
 
@@ -79,8 +81,9 @@ FJN's results.
 +  **Corollary 2.4** (FJN 1.6): in a lattice generated under (†), every
    generating set contains the generators, and every automorphism is induced
    by a permutation of them.
-+  **Corollary 2.5** (FJN 1.12 and 1.13): a family freely generates exactly
-   when it satisfies the join condition and its dual.
++  **Corollary 2.5** (FJN 1.12 and 1.13): a family satisfies the join
+   condition and its dual exactly when the homomorphism it induces is
+   injective, that is, when it freely generates.
 +  **Theorem 2.6** (FJN 1.17 and 1.18): each element has a term of least rank,
    unique up to commutativity, and a term has least rank exactly when it
    satisfies the conditions of canonical form.
@@ -167,7 +170,7 @@ FJN's results.
 #### Section 7: self-embeddings with a fixed free triple
 
 +  **Lemma 1**: a self-embedding `Θ` fixing `x ∨ y` maps `x` and `y` below
-   `x ∨ y` and moves `z` up; and either `x ≤ Θ(x)` and `y ≤ Θ(y)`, or
+   `x ∨ y` and has `z ≤ Θ(z)`; and either `x ≤ Θ(x)` and `y ≤ Θ(y)`, or
    `x ≤ Θ(y)` and `y ≤ Θ(x)`, in which case `Θ²` is inflationary.
    [DeansProblem.Inflationary][].
 +  **Lemma 2**: a generator fixed by a positive power of a proper

@@ -551,11 +551,13 @@ theorem-C-coherent = record
 
 **Corollary 6.4** of [the paper][], as one statement: Dean's problem has a
 positive answer, some free lattice containing a chain of copies of `FL(3)`,
-if and only if an infinite coherent chain exists.  The forward direction takes
-the infinite pigeonhole principle, through the coherent form of Theorem C, and
-decidable equality on the free lattice's generators, which a positive answer
-here includes; the reverse direction gives `FL(3)`, whose generators have it,
-and takes no hypothesis (`coherentω→positive`{.AgdaFunction}).
+if and only if an infinite coherent chain exists.  A positive answer here is a
+chain over a type `X : Type` of generators with decidable equality, which the
+forward direction needs, with the infinite pigeonhole principle, through the
+coherent form of Theorem C; the reverse direction gives `FL(3)`, whose
+generators have decidable equality.  The statement binds the principle before
+both directions, though the proof of the reverse direction takes no
+hypothesis (`coherentω→positive`{.AgdaFunction}).
 
 ```agda
 -- Corollary 6.4: from the principle, Dean's problem has a positive answer if and only if an

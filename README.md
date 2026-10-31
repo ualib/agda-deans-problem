@@ -99,15 +99,18 @@ Agda configuration takes part.
    stated type.  A statement about explicit terms is checked by computation:
    Whitman's procedure is a decision `s ≤ʷ? t`, which Agda evaluates while it
    checks the module, and `from-yes` or `from-no` turns the answer into a
-   proof.  When the terms are too large for the procedure to run within the
-   heap limit, as for Freese's example, the decision runs on smaller terms
-   checked equal to the defined ones, and the statement is transported along
-   the equality.
+   proof.  For Freese's example, whose terms exhausted the build's heap under
+   that recursion, the decisions run through the library's table `_≤ᵖ?_`,
+   whose verdicts are proved to be the recursion's (`≤ᵖ?-agrees`), on
+   smaller terms checked equal to the defined ones, and each statement is
+   transported along the equality.
 +  Each of the paper's 48 results is one Agda definition whose type is its
-   statement, with one proof, defined in the module that proves it and
-   re-exported, in the paper's order, by `DeansProblem.Paper`.  No result
-   stays in prose.  A hypothesis beyond the paper's is in the statement's
-   type, and said in the prose above it: decidable equality on the
+   statement, with one proof, defined in the module that proves it (for the
+   ten results of Section 2, `DeansProblem.Preliminaries`, from the library's
+   statements) and re-exported, in the paper's order, by
+   `DeansProblem.Paper`.  No result stays in prose.  A hypothesis beyond the
+   paper's is in the statement's type, and said in its module's prose:
+   decidable equality on the
    generators, where a decision needs it, and the infinite pigeonhole
    principle.
 +  The main theorem, `Theorem-H` in `DeansProblem.NoChain`, has decidable
@@ -124,8 +127,10 @@ Agda configuration takes part.
    LPO (`pigeonhole→LPO`): the coherent form of Theorem C and Corollary 6.4,
    with the recurrence of Remark 5.1.  They take the principle, the record
    `InfinitePigeonhole` of `DeansProblem.Pigeonhole`, as an explicit argument
-   named in their types, never as a postulate; their converse directions
-   take none, and neither does the proof of Theorem H.
+   named in their types, never as a postulate.  The converse of the
+   coherent form, its second part, takes none; `Corollary-6·4` binds the
+   principle before both of its directions, though its converse is proved
+   without it (`coherentω→positive`); and the proof of Theorem H takes none.
 +  `scripts/check-paper.sh` (`make paper-check`, the last step of
    `make check`) checks that the table of results below and
    `DeansProblem.Paper` list the same results in the same order, and that
@@ -214,24 +219,24 @@ checked, under its number, are the following.
 | Remark 5.1: from the infinite pigeonhole principle, one proper self-embedding expresses the bottom triple, by the same three terms, in infinitely many later triples | `BottomRecurrence`, `bottom-recurrence` | `DeansProblem.Coherent.Infinite` |
 | Remark 6.5: the hypothesis of the length-three form | `Recurs` | `DeansProblem.Coherent.Finite` |
 | Remark 6.5: the infinite pigeonhole principle supplies it | `some-link-recurs`, `pigeonhole→coherent₃` | `DeansProblem.Coherent.Infinite` |
-| Remark 6.5: the principle, which decides LPO | `InfinitePigeonhole`, `pigeonhole→LPO` | `DeansProblem.Pigeonhole` |
+| Remark 6.5: the infinite pigeonhole principle, which, as this repository adds, decides LPO | `InfinitePigeonhole`, `pigeonhole→LPO` | `DeansProblem.Pigeonhole` |
 | Remark 6.8: `Fix(θ₁)` contains a copy of `FL(ω)`, and the sublattice `⟨p, q, z⟩` | `ω-embedding`, `ω-fixed`, `⟨pqz⟩-fixed` | `DeansProblem.Examples.FixedTriple.Remarks` |
 | Computation 6.12: the positive facts its counts rest on, that `ρ` fixes the eleven and fixes no free triple | `θ-fixes-T₁₁`, `θ-no-fixed-triple` | `DeansProblem.Examples.SelfEmbedding` |
 | Computation 6.12: `θ₁` fixes a free triple | `fixed-triple` | `DeansProblem.Examples.FixedTriple` |
 | Remark 8.2: the constructive proof of Theorem H, for the record of a chain | `recurrences-bounded`, `chain-escapes`, `Escapes`, `finite-colors-exhausted`, `no-chain` | `DeansProblem.NoChain` |
-| Computation 10.1: the positive facts the searches found, that `θ₁` and `θ₂` fix the free triple of Theorem D and are rigid | `rigid′`, `fixed-triple₂`, `rigid₂` | `DeansProblem.Examples.Rigidity` |
+| Computation 10.1: the positive facts the searches found, that `θ₂` fixes the free triple of Theorem D, and that `θ₁` and `θ₂` are rigid (that `θ₁` fixes it is the row of Computation 6.12) | `rigid′`, `fixed-triple₂`, `rigid₂` | `DeansProblem.Examples.Rigidity` |
 
 ### Other checked claims, by section
 
 | Claim | Names | Module |
 | --- | --- | --- |
 | Section 1.1(i): a chain in one free lattice gives one in `FL(3)` and in every `FL(X)` with three distinct generators | `reduction`, `copyChain⇔FL₃` | `DeansProblem.Chain.Reduction` |
-| Section 1.1(i): `FL(X)` is finite for `\|X\| ≤ 2` | `FL₀-enumeration`, `FL₁-enumeration`, `FL₂-enumeration` | `Lattices.Free.Small` |
+| Section 1.1(i): `FL(n)` is finite for `n ≤ 2` | `FL₀-enumeration`, `FL₁-enumeration`, `FL₂-enumeration` | `Lattices.Free.Small` |
 | Section 1.1: Freese's old generators have complexity 3 and his new ones 4 | `old-complexity`, `new-complexity` | `DeansProblem.Examples.FreeseStep.Complexity` |
 | Section 2.3: `FL(X)` has a least and a greatest element exactly when `X` has a finite nonempty enumeration | `FL-bottom⇔enumeration`, `FL-top⇔enumeration` | `Lattices.Free.Extrema` |
 | Section 2.3: a self-embedding is proper exactly when some generator is none of its images | `not-onto⇔missed-generator` | `Lattices.Free.Membership` |
-| Section 2.4: the requirement of Lemma 2.8 that the joinand not be a generator cannot be dropped | `generator-joinand-not-preserved` | `DeansProblem.Examples.FixedTriple.Remarks` |
-| Section 3.3: Freese's example, items (i) to (iv) | `relation-1`, `abc-free`, `abc'-free`, `abc≈`, `a'∉⟨abc⟩` | `DeansProblem.Examples.FreeseStep` |
+| Section 2.5: the requirement of Lemma 2.8 that the joinand not be a generator cannot be dropped | `generator-joinand-not-preserved` | `DeansProblem.Examples.FixedTriple.Remarks` |
+| Section 3.3: Freese's example, items (i) to (iv) | `relation-1`, `relation-2`, `relation-3`, `relation-4`, `relation-1ᵇ`, `relation-2ᵇ`, `relation-3ᵇ`, `relation-4ᵇ`, `relation-1ᶜ`, `relation-2ᶜ`, `relation-3ᶜ`, `relation-4ᶜ`, `abc-free`, `abc'-free`, `abc≈`, `a'∉⟨abc⟩` | `DeansProblem.Examples.FreeseStep` |
 | Section 3.3: Freese's example, item (v) | `b̄₂≤a`, `c̄₂≤a` | `DeansProblem.Examples.FreeseBox` |
 | Section 3.4: Freese's step inside `FL(3)`, and the descending chain | `θ-free`, `x∉θ`, `inside`, `descending` | `DeansProblem.Examples.SelfEmbedding` |
 | Section 4.2: the chain condition for `n`-generated sublattices, which contains Theorem H | `StrictlyAscending`, `ChainCondition`, `chainCondition→no-copy-chain` | `DeansProblem.Chain.Condition` |
@@ -247,7 +252,8 @@ checked, under its number, are the following.
 | Section 7.4, after Corollary 7.5: a proper self-embedding that moves every generator fixes no free triple | `moves→no-fixed-triple` | `DeansProblem.FixedGenerator` |
 | Section 8.2: every proper self-embedding with a fixed free triple is rigid | `no-upper-link` | `DeansProblem.LengthThree` |
 | Section 8.3: no infinite coherent chain, and no chain with a recurring transition | `no-coherentω`, `no-chain-recurs` | `DeansProblem.LengthThree` |
-| Section 9.2: labeled patterns, finitely many on a fixed tree, and their boxes | `Pattern`, `patternOf`, `Enumerate.finitely-many-patterns`, `bound-sound` | `DeansProblem.Truncation.Pattern` |
+| Section 9.2: labeled patterns, finitely many on a fixed tree | `Pattern`, `patternOf`, `Enumerate.finitely-many-patterns` | `DeansProblem.Truncation.Pattern` |
+| Section 9.3: the box of a labeled pattern holds the triple of every truncation with that pattern | `bound-sound` | `DeansProblem.Truncation.Pattern` |
 | Section 9.3: Freese's Lemma 2, in any lattice | `above-or-below`, `lemma-2-at`, `lemma-2` | `DeansProblem.Irredundant` |
 | Section 9.3: the gap, as a decidable predicate | `StronglyIrredundant`, `DecideBox.stronglyIrredundant?` | `DeansProblem.AlmostProof` |
 | Section 9.3: Freese's `a₁` lies outside his link | `a₁∉⟨a',b',c'⟩` | `DeansProblem.Examples.FreeseGap` |

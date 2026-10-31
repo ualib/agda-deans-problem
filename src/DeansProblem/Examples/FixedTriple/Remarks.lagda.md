@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The self-embedding θ₁ of Theorem D: its fixed sublattice, and a remark on Lemma 9.13
 
-This is the [DeansProblem.Examples.FixedTriple.Remarks][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FixedTriple.Remarks][] module of this repository.
 
 [DeansProblem.Examples.FixedTriple][] decides that the self-embedding
 
@@ -326,3 +326,15 @@ of `⟨p, q, z⟩` up to equality, by the pigeonhole principle on the list
   let (i , j , i<j , e) = pigeonhole-≈ L (λ k → ω-term k [ pqz ]) (λ k → cover (ω-term k))
   in <-irrefl (⟨pqz⟩-infinite i j e) i<j
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.FixedTriple.Remarks]: DeansProblem.Examples.FixedTriple.Remarks.html
+[DeansProblem.Examples.FixedTriple]: DeansProblem.Examples.FixedTriple.html
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[DeansProblem.Partition]: DeansProblem.Partition.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042
+[Lattices.Free.Countable]: Lattices.Free.Countable.html
+[Lattices.Free.Embedding]: Lattices.Free.Embedding.html
+[Lattices.Free.WhitmanPolynomials]: Lattices.Free.WhitmanPolynomials.html

@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### A self-embedding of FL(3) with a fixed free triple fixes a generator
 
-This is the [DeansProblem.FixedGenerator][] module of the [agda-lattices][] library.
+This is the [DeansProblem.FixedGenerator][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -68,7 +68,7 @@ open import Data.Empty                             using ( ⊥ ; ⊥-elim )
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
 open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.List.Base                         using ( List ; [] ; _∷_ ; map ; allFin )
+open import Data.List.Base                         using ( List ; [] ; _∷_ ; map ; allFin ; length )
 open import Data.List.Properties                   using ( map-∘ ; map-cong )
 open import Data.List.Membership.Propositional     using ( _∈_ ; find ; lose )
 open import Data.List.Membership.Propositional.Properties
@@ -108,7 +108,7 @@ open import Lattices.Free.Complexity               using ( complexity ; complexi
                                                          ; module Bounded )
 open import Lattices.Free.Embedding                using ( canonicalJoinands-antichain
                                                          ; canonicalMeetands-antichain )
-open import DeansProblem.Fixed                     using ( fixed→image ; child-of-complexity ; positive-not-gen
+open import DeansProblem.Fixed                     using ( fixed→image ; positive-not-gen ; descent-parent
                                                          ; joinand-periodic ; meetand-periodic ; iter-free
                                                          ; []-iter-* )
 open import Lattices.Free.Duality                  using ( dual ; dual-involutive ; dual-cong ; dual-reflects
@@ -573,14 +573,16 @@ module _ (Ψ : Sub (Fin 3) (Fin 3)) (Ψ-free : FreelyGenerates Ψ) (inf : Inflat
 
 #### The descent, with the parent of its last step
 
-The descent of [DeansProblem.Fixed][] is repeated here with one more
-output: from a fixed point of complexity `m + 2` it reaches an element `u` of
-complexity two fixed by a positive power, and a canonical joinand or meetand
-`v` of `u` of complexity one, fixed by a further power
-(`descent-pair`{.AgdaFunction}).  Every element lies below `x ∨ y ∨ z` and
-above `x ∧ y ∧ z` (`≤-top`{.AgdaFunction}, `bot-≤`{.AgdaFunction}), and
-neither is a canonical joinand or meetand of an element of complexity two
-(`top-not-child`{.AgdaFunction}, `bot-not-child`{.AgdaFunction}).
+The descent of [DeansProblem.Fixed][], with one more output: from a fixed
+point of complexity `m + 2` it reaches an element `u` of complexity two fixed
+by a positive power, and a canonical joinand or meetand `v` of `u` of
+complexity one, fixed by a further power (`descent-pair`{.AgdaFunction}).  It
+is the case `n = 3` of `descent-parent`{.AgdaFunction} of
+[DeansProblem.Fixed][], which holds in `FL(n)`.  Every element lies below
+`x ∨ y ∨ z` and above `x ∧ y ∧ z` (`≤-top`{.AgdaFunction},
+`bot-≤`{.AgdaFunction}), and neither is a canonical joinand or meetand of an
+element of complexity two (`top-not-child`{.AgdaFunction},
+`bot-not-child`{.AgdaFunction}).
 
 ```agda
 -- The descent, keeping the parent of the last step.
@@ -588,31 +590,7 @@ descent-pair : (m : ℕ) (θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates θ
              → (w : LatTerm (Fin 3)) → w [ θ ] ≈ʷ w → κ w ≡ suc (suc m)
              → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin 3) ] Σ[ v ∈ LatTerm (Fin 3) ]
                  u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
-descent-pair zero     θ θ-free w fix e =
-  pack (child-of-complexity w 1 e)
-  where
-  -- The fixed point itself is the parent, and its child of complexity one the element.
-  pack : (Σ[ c ∈ LatTerm (Fin 3) ] c ∈ CJ w × κ c ≡ 1) ⊎ (Σ[ c ∈ LatTerm (Fin 3) ] c ∈ CM w × κ c ≡ 1)
-       → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin 3) ] Σ[ v ∈ LatTerm (Fin 3) ]
-           u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
-  pack (inj₁ (c , c∈ , κc)) = 0 , w , c , fixed→image θ (freelyGenerates→injective θ θ-free) w fix 1 , e , inj₁ c∈ , κc
-  pack (inj₂ (c , c∈ , κc)) = 0 , w , c , fixed→image θ (freelyGenerates→injective θ θ-free) w fix 1 , e , inj₂ c∈ , κc
-descent-pair (suc m)  θ θ-free w fix e = step (child-of-complexity w (suc (suc m)) e)
-  where
-  -- Recurse on the child, under the power that fixes it.
-  recurse : (c : LatTerm (Fin 3)) → κ c ≡ suc (suc m) → Σ[ d ∈ ℕ ] c [ iter θ (suc d) ] ≈ʷ c
-          → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin 3) ] Σ[ v ∈ LatTerm (Fin 3) ]
-              u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
-  recurse c κc (d₁ , per) =
-    let (d₂ , u , v , fixu , κu , v∈ , κv) =
-          descent-pair m (iter θ (suc d₁)) (iter-free θ θ-free (suc d₁)) c per κc
-    in d₁ + d₂ * suc d₁ , u , v , ≈ʷ-trans (≡→≈ʷ (sym ([]-iter-* u θ (suc d₁) (suc d₂)))) fixu , κu , v∈ , κv
-
-  step : (Σ[ c ∈ LatTerm (Fin 3) ] c ∈ CJ w × κ c ≡ suc (suc m)) ⊎ (Σ[ c ∈ LatTerm (Fin 3) ] c ∈ CM w × κ c ≡ suc (suc m))
-       → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin 3) ] Σ[ v ∈ LatTerm (Fin 3) ]
-           u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
-  step (inj₁ (c , c∈ , κc)) = recurse c κc (joinand-periodic θ θ-free w fix c∈ (positive-not-gen c (suc m) κc))
-  step (inj₂ (c , c∈ , κc)) = recurse c κc (meetand-periodic θ θ-free w fix c∈ (positive-not-gen c (suc m) κc))
+descent-pair = descent-parent
 
 -- Every element lies below x ∨ y ∨ z and above x ∧ y ∧ z.
 ≤-top : (t : LatTerm (Fin 3)) → t ≤ʷ top
@@ -989,3 +967,93 @@ module _ (Θ : Sub (Fin 3) (Fin 3)) (Θ-free : FreelyGenerates Θ) (m : Fin 3) (
     Θ-inj = freelyGenerates→injective Θ Θ-free
     Θᵈ-inj = freelyGenerates→injective Θᵈ (dual-free Θ Θ-free)
 ```
+
+#### The paper's statements
+
+Propositions 7.2 to 7.4 and Theorem E of [the paper][], each as one
+statement.  A self-embedding of `FL(3)` is a substitution that freely
+generates, proper when it misses a generator `m`; it fixes a free triple
+`τ` when it fixes each `τ i`, and so every element of the copy of `FL(3)` the
+triple generates.
+
+**Proposition 7.2**: `S = T₁₄`, where `S` is the set of elements whose
+canonical trees have no generator among the meetands of any meet node
+(`NoGeneratorMeetand`{.AgdaFunction}), up to equality in `FL(3)`; and every
+element of `T₁₁` has complexity at most 3.
+
+```agda
+-- Proposition 7.2: S is T₁₄, and the members of T₁₁ have complexity at most 3.
+Proposition-7·2 : Type
+Proposition-7·2 =  ((w : LatTerm (Fin 3)) → NoGeneratorMeetand w ⇔ Any (w ≈ʷ_) T₁₄)
+                 × All (λ t → complexity (_≟_ {3}) t ≤ 3) T₁₁
+
+-- The proof of Proposition 7.2.
+proposition-7·2 : Proposition-7·2
+proposition-7·2 = S⇔T₁₄ , T₁₁-complexity
+```
+
+**Proposition 7.3**: a strictly inflationary self-embedding `Ψ` fixes only
+elements of `T₁₁`; in particular it has at most eleven fixed points, each of
+complexity at most 3.
+
+```agda
+-- Proposition 7.3: a strictly inflationary self-embedding fixes only members of the eleven, each
+-- of complexity at most 3.
+Proposition-7·3 : Type
+Proposition-7·3 =
+  (Ψ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Ψ → Inflationary Ψ → (∀ g → ¬ (Ψ g ≈ʷ ℊ g))
+  →  ((w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → Any (w ≈ʷ_) T₁₁)
+   × length T₁₁ ≡ 11
+   × ((w : LatTerm (Fin 3)) → w [ Ψ ] ≈ʷ w → complexity (_≟_ {3}) w ≤ 3)
+
+-- The proof of Proposition 7.3.
+proposition-7·3 : Proposition-7·3
+proposition-7·3 Ψ Ψ-free inf moves =
+  strict-fixed-in-T₁₁ Ψ Ψ-free inf moves , refl , strict-fixed-complexity Ψ Ψ-free inf moves
+```
+
+**Proposition 7.4**: if a proper self-embedding `Θ` fixes a free triple
+`τ` pointwise, then a positive power of `Θ` is inflationary and fixes `τ`, or
+a positive power of its dual `Θ^δ` (`dualˢ Θ`) is inflationary and fixes the
+dual triple.
+
+```agda
+-- Proposition 7.4: an inflationary positive power of Θ fixing the triple, or of its dual fixing
+-- the dual triple.
+Proposition-7·4 : Type
+Proposition-7·4 =
+  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
+  → (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → (∀ i → τ i [ Θ ] ≈ʷ τ i)
+  →  (Σ[ E ∈ ℕ ] Inflationary (iter Θ (suc E)) × (∀ i → τ i [ iter Θ (suc E) ] ≈ʷ τ i))
+   ⊎ (Σ[ E ∈ ℕ ] Inflationary (iter (dualˢ Θ) (suc E))
+                 × (∀ i → dualˢ τ i [ iter (dualˢ Θ) (suc E) ] ≈ʷ dualˢ τ i))
+
+-- The proof of Proposition 7.4.
+proposition-7·4 : Proposition-7·4
+proposition-7·4 = inflationary-fixing-power
+```
+
+**Theorem E**: every proper self-embedding of `FL(3)` whose fixed sublattice
+contains a free triple fixes a generator.
+
+```agda
+-- Theorem E: a proper self-embedding fixing a free triple fixes a generator.
+Theorem-E : Type
+Theorem-E =  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
+             → (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → (∀ i → τ i [ Θ ] ≈ʷ τ i)
+             → Σ[ g ∈ Fin 3 ] Θ g ≈ʷ ℊ g
+
+-- The proof of Theorem E.
+theorem-E : Theorem-E
+theorem-E = fixes-generator
+```
+
+--------------------------------------
+
+[DeansProblem.FixedGenerator]: DeansProblem.FixedGenerator.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Fixed]: DeansProblem.Fixed.html
+[DeansProblem.Inflationary]: DeansProblem.Inflationary.html
+[Lattices.Free.Canonical.Joinands]: Lattices.Free.Canonical.Joinands.html
+[Lattices.Free.Canonical.Recognition]: Lattices.Free.Canonical.Recognition.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html

@@ -387,3 +387,10 @@ copyChain⇔FL₃ _≟ʸ_ y = mk⇔ (copyChain→FL₃ _≟ʸ_) (FL₃→copyCha
 --------------------------------------
 
 [DeansProblem.Chain.Reduction]: DeansProblem.Chain.Reduction.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Copies]: DeansProblem.Chain.Copies.html
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042
+[Lattices.Free.Countable]: Lattices.Free.Countable.html
+[Lattices.Free.Small]: Lattices.Free.Small.html

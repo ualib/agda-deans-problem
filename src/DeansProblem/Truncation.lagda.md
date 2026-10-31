@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Truncation: the term in the new generators truncates the canonical form
 
-This is the [DeansProblem.Truncation][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Truncation][] module of this repository.
 
 Let `τ` be a family of elements of `FL(Y)`, indexed by `I`, that freely
 generates a copy of `FL(I)`: the homomorphism `FL(I) → FL(Y)` that `τ` induces is
@@ -74,7 +74,7 @@ the join, and injectivity below that child, against the antichain).
 
 module DeansProblem.Truncation where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Empty                             using ( ⊥-elim )
@@ -470,3 +470,30 @@ module _ {I : Type ι} {Y : Type υ} (_≟ᴵ_ : DecidableEquality I) (_≟ʸ_ :
     truncation τ inj (canonicalᴵ p) (canonicalʸ (p [ τ ])) (isCanonicalᴵ p) (isCanonicalʸ (p [ τ ]))
                (≈ʷ-trans ([]-cong τ (soundᴵ p)) (≈ʷ-sym (soundʸ (p [ τ ]))))
 ```
+
+**Theorem 9.1** of the paper (the truncation theorem), as one statement: for
+an embedding `τ` of `FL(I)` in `FL(Y)`, a term `p` over `I` with canonical
+form `C`, and the canonical form `D` of `τ(p)`, `C` truncates `D` through `τ`
+(`Truncates._⊑_`{.AgdaDatatype}).  A canonical form of an element is a
+canonical term naming it; no decidable equality is needed.
+
+```agda
+-- Theorem 9.1: the canonical form of p truncates that of its image under an embedding.
+Theorem-9·1 : Setω
+Theorem-9·1 =  ∀ {ι υ} {I : Type ι} {Y : Type υ} (τ : Sub I Y) → IsInjective (proj₁ (subst-hom τ))
+               → (p : LatTerm I) (C : CTerm I) (D : CTerm Y)
+               → IsCanonical C → ⌊ C ⌋ ≈ʷ p → IsCanonical D → ⌊ D ⌋ ≈ʷ p [ τ ]
+               → Truncates._⊑_ τ C D
+
+-- The proof of Theorem 9.1.
+theorem-9·1 : Theorem-9·1
+theorem-9·1 τ inj p C D icC eC icD eD =
+  truncation τ inj C D icC icD (≈ʷ-trans ([]-cong τ eC) (≈ʷ-sym eD))
+```
+
+--------------------------------------
+
+[DeansProblem.Truncation]: DeansProblem.Truncation.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042
+[Lattices.Free.Canonical.Joinands]: Lattices.Free.Canonical.Joinands.html
+[Lattices.Free.Embedding]: Lattices.Free.Embedding.html

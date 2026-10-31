@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Chains of free sublattices
 
-This is the [DeansProblem.Chain][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Chain][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -89,14 +89,14 @@ Takahasi's theorem for free groups (Section 4 of [the paper][]);
 
 module DeansProblem.Chain where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ )
-open import Data.Product                           using ( _,_ ; proj₁ )
+open import Data.Product                           using ( Σ-syntax ; _,_ ; proj₁ )
 open import Level                                  using ( Level )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; sym ; trans ; cong ; subst
+open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst
                                                          ; subst₂ )
 open import Relation.Nullary                       using ( ¬_ )
 
@@ -309,3 +309,34 @@ module _ (s : Step X) (Φ : Sub X X) (Φ-free : FreelyGenerates Φ)
     ; fresh∉     = λ _ → fresh∉p
     }
 ```
+
+**Proposition 4.3** of [the paper][] is this theorem: if an injective
+endomorphism `Φ` of `FL(X)` sends the lower triple `σ` of a step to its upper
+triple `τ`, coordinatewise, then the triples `Φᵏ(σ)`, `k ≥ 0`, form a chain.
+Its type names the chain's triples, which the type of
+`selfSimilar→chain`{.AgdaFunction} leaves to its definition: the `k`-th is
+`σ i [ iter Φ k ]` at each index `i`.  An injective endomorphism of `FL(X)` is
+a substitution `Φ : Sub X X` that freely generates, by Corollary 2.5.
+
+```agda
+-- Proposition 4.3: a self-similar step gives a chain, whose k-th triple is Φᵏ(σ).
+Proposition-4·3 : Setω
+Proposition-4·3 =  ∀ {χ} {X : Type χ} (s : Step X) (Φ : Sub X X) → FreelyGenerates Φ
+                   → (∀ i → Step.σ s i [ Φ ] ≈ʷ Step.τ s i)
+                   → Σ[ c ∈ Chain X ] (∀ k i → Chain.gens c k i ≡ Step.σ s i [ iter Φ k ])
+
+-- The proof of Proposition 4.3.
+proposition-4·3 : Proposition-4·3
+proposition-4·3 s Φ Φ-free Φσ≈τ = selfSimilar→chain s Φ Φ-free Φσ≈τ , λ k i → refl
+```
+
+--------------------------------------
+
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Condition]: DeansProblem.Chain.Condition.html
+[DeansProblem.Chain.Limit]: DeansProblem.Chain.Limit.html
+[DeansProblem.Examples.ChainCondition]: DeansProblem.Examples.ChainCondition.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html
+[Lattices.Free.Generation]: Lattices.Free.Generation.html
+[Lattices.Free.Substitution]: Lattices.Free.Substitution.html

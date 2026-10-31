@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Worked example: rigidity for two self-embeddings of FL(3) with fixed free triples
 
-This is the [DeansProblem.Examples.Rigidity][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.Rigidity][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -176,3 +176,9 @@ no-extension₂ F Θ≈θ₂ = missed∉θ missed (≈ʷ-sym (rigid₂ θ θ-fre
   fixes-θ₂ : ∀ i → θ₂ i [ θ ] ≈ʷ θ₂ i
   fixes-θ₂ i = ≈ʷ-trans ([]-cong θ (≈ʷ-sym (Θ≈θ₂ i))) (≈ʷ-trans (fixes i) (Θ≈θ₂ i))
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.Rigidity]: DeansProblem.Examples.Rigidity.html
+[DeansProblem.Examples.FixedTriple]: DeansProblem.Examples.FixedTriple.html
+[DeansProblem.Inflationary]: DeansProblem.Inflationary.html

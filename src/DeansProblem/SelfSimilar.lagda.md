@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### No step toward Dean's problem is self-similar
 
-This is the [DeansProblem.SelfSimilar][] module of the [agda-lattices][] library.
+This is the [DeansProblem.SelfSimilar][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -70,7 +70,7 @@ commutation, and the argument goes no further.  Theorem H of [the paper][]
 
 module DeansProblem.SelfSimilar where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Fin.Base                          using ( Fin )
@@ -230,3 +230,29 @@ no-self-similar-step _≟ˣ_ s Φ Φ-free Φσ≈τ =
   τ≈ : ∀ i → τ i ≈ʷ p i [ τ ] [ Φ ]
   τ≈ i = ≈ʷ-trans (≈ʷ-sym (Φσ≈τ i)) ([]-cong Φ (σ≈p[τ] i))
 ```
+
+**Corollary A1** of [the paper][], as one statement: no step
+`⟨σ⟩ ⊊ ⟨τ⟩` in `FL(X)` admits an injective endomorphism `Φ` of `FL(X)`, a
+substitution that freely generates, with `Φ(σ) = τ`.  The hypothesis beyond
+the paper's is decidable equality on the generators, which the complexity of
+Theorem B needs.
+
+```agda
+-- Corollary A1: no step admits an injective endomorphism carrying its lower triple to its upper.
+Corollary-A1 : Setω
+Corollary-A1 =  ∀ {χ} {X : Type χ} → DecidableEquality X → (s : Step X)
+                → (Φ : Sub X X) → FreelyGenerates Φ → ¬ (∀ i → Step.σ s i [ Φ ] ≈ʷ Step.τ s i)
+
+-- The proof of Corollary A1.
+corollary-A1 : Corollary-A1
+corollary-A1 = no-self-similar-step
+```
+
+--------------------------------------
+
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Examples.FreeseEquations]: DeansProblem.Examples.FreeseEquations.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html

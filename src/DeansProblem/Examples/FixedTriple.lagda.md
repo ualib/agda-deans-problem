@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Worked example: a proper self-embedding of FL(3) fixing a copy of FL(3)
 
-This is the [DeansProblem.Examples.FixedTriple][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FixedTriple][] module of this repository.
 
 The fixed-sublattice question of [DeansProblem.Coherent][] asks whether `FL(3)`
 has an injective endomorphism `θ` that is not onto and whose fixed sublattice
@@ -56,6 +56,8 @@ within the same bound, with no free triple.
 
 module DeansProblem.Examples.FixedTriple where
 
+open import Agda.Primitive  using () renaming ( Set to Type )
+
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
@@ -64,16 +66,19 @@ open import Data.List.Base                         using ( allFin )
 open import Data.List.Membership.Propositional.Properties
                                                    using ( ∈-allFin )
 open import Data.Empty                             using ( ⊥ ; ⊥-elim )
-open import Data.Product                           using ( _,_ ; proj₁ ; proj₂ )
+open import Data.Nat.Base                          using ( z≤n ; s≤s )
+open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
 open import Data.Sum.Base                          using ( [_,_]′ )
 open import Function                               using ( id )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ )
+open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl )
 open import Relation.Nullary                       using ( ¬_ )
+open import Relation.Unary                         using ( _⊂_ )
 open import Relation.Nullary.Decidable.Core        using ( from-yes ; from-no )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-sym ; ≈ʷ-trans )
+open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
 open import DeansProblem.Chain                     using ( Step )
+open import DeansProblem.Chain.Condition           using ( ⟨_⟩ ; step→⊂ )
 open import DeansProblem.Coherent                  using ( FixedSublattice ; lower-step )
 open import DeansProblem.Coherent.Finite           using ( Coherent ; fixed→coherent₂ )
 open import Lattices.Free.Generation               using ( FreelyGenerates ; module Decide )
@@ -273,3 +278,81 @@ no-extension F Θ≈θ₁ = missed∉θ missed (≈ʷ-sym (rigid θ fixes-θ₁ 
   fixes-θ₁ : ∀ i → θ₁ i [ θ ] ≈ʷ θ₁ i
   fixes-θ₁ i = ≈ʷ-trans ([]-cong θ (≈ʷ-sym (Θ≈θ₁ i))) (≈ʷ-trans (fixes i) (Θ≈θ₁ i))
 ```
+
+**Theorem D** of the paper, as one statement: the self-embedding `θ₁` of
+`FL(3)` is proper, missing the generator `x`; it fixes `m₁`, `m₂` and `m₃`,
+the members of the triple `Θ`; and these three freely generate.  So
+`Θ₀ = Θ` and `Θ₁ = θ₁` form a coherent chain of length two, and
+`⟨m₁, m₂, m₃⟩ ⊊ θ₁(FL(3)) ⊊ FL(3)`, where `FL(3)` is `⟨ ℊ ⟩`, the sublattice
+the generators generate.
+
+```agda
+-- Theorem D: θ₁ is a proper self-embedding fixing the free triple (m₁, m₂, m₃), so the two form a
+-- coherent chain of length two, and ⟨m₁, m₂, m₃⟩ ⊊ θ₁(FL(3)) ⊊ FL(3).
+Theorem-D : Type
+Theorem-D =  (FreelyGenerates θ₁ × (∀ i → ¬ (x ≈ʷ θ₁ i)))
+           × (∀ i → Θ i [ θ₁ ] ≈ʷ Θ i)
+           × FreelyGenerates Θ
+           × (Σ[ C ∈ Coherent 2 ] Coherent.Θ C 0F ≡ Θ × Coherent.Θ C 1F ≡ θ₁)
+           × ⟨ Θ ⟩ ⊂ ⟨ θ₁ ⟩ × ⟨ θ₁ ⟩ ⊂ ⟨ ℊ ⟩
+
+-- The proof of Theorem D.
+theorem-D : Theorem-D
+theorem-D =  (θ₁-free , x∉θ₁) , θ₁-fixes , m-free , (coherent₂ , refl , refl)
+           , step→⊂ lower , step→⊂ upper
+```
+
+**Proposition 6.9** of the paper, as one statement: an endomorphism `Φ` of
+`FL(3)` that fixes `θ₁(x)`, `θ₁(y)` and `θ₁(z)` is the identity, with no
+injectivity asked of `Φ`; hence no proper self-embedding `Θ₂` fixes
+`θ₁(FL(3))` pointwise, and no coherent chain of length three has
+`Θ₀ = (m₁, m₂, m₃)` and `Θ₁ = θ₁`, since its `Θ₂` would be such an embedding.
+
+```agda
+-- Proposition 6.9: nothing but the identity fixes θ₁(x), θ₁(y), θ₁(z); so nothing proper fixes
+-- θ₁(FL(3)) pointwise, and the coherent chain of Theorem D extends to no third link.
+Proposition-6·9 : Type
+Proposition-6·9 =
+    ((Φ : Sub (Fin 3) (Fin 3)) → (∀ i → θ₁ i [ Φ ] ≈ʷ θ₁ i) → ∀ i → Φ i ≈ʷ ℊ i)
+  × ((Θ₂ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ₂ → (g : Fin 3) → (∀ i → ¬ (ℊ g ≈ʷ Θ₂ i))
+     → ¬ (∀ t → t [ θ₁ ] [ Θ₂ ] ≈ʷ t [ θ₁ ]))
+  × ((C : Coherent 3) → (∀ i → Coherent.Θ C 0F i ≈ʷ Θ i) → (∀ i → Coherent.Θ C 1F i ≈ʷ θ₁ i) → ⊥)
+
+-- The proof of Proposition 6.9.
+proposition-6·9 : Proposition-6·9
+proposition-6·9 =
+    rigid
+  , (λ Θ₂ Θ₂-free g g∉ fix → no-extension (record  { θ         = Θ₂
+                                                   ; θ-free    = Θ₂-free
+                                                   ; missed    = g
+                                                   ; missed∉θ  = g∉
+                                                   ; Θ         = θ₁
+                                                   ; Θ-free    = θ₁-free
+                                                   ; fixes     = λ i → fix (ℊ i)
+                                                   })
+                                          (λ i → ≈ʷ-refl))
+  , third
+  where
+  -- The third link of such a chain fixes θ₁(x), θ₁(y), θ₁(z), so it is the identity.
+  third : (C : Coherent 3) → (∀ i → Coherent.Θ C 0F i ≈ʷ Θ i) → (∀ i → Coherent.Θ C 1F i ≈ʷ θ₁ i) → ⊥
+  third C _ Θ₁≈θ₁ = missed∉ 2F (missed 2F) (≈ʷ-sym (rigid Θ₂ fix (missed 2F)))
+    where
+    open Coherent C using ( missed ; missed∉ ; coherent )
+
+    -- The third link.
+    Θ₂ : Sub (Fin 3) (Fin 3)
+    Θ₂ = Coherent.Θ C 2F
+
+    -- Θ₂ fixes θ₁ x, θ₁ y and θ₁ z, through Θ₁.
+    fix : ∀ i → θ₁ i [ Θ₂ ] ≈ʷ θ₁ i
+    fix i = ≈ʷ-trans ([]-cong Θ₂ (≈ʷ-sym (Θ₁≈θ₁ i)))
+                     (≈ʷ-trans (coherent (s≤s (s≤s z≤n)) i) (Θ₁≈θ₁ i))
+```
+
+--------------------------------------
+
+[DeansProblem.Examples.FixedTriple]: DeansProblem.Examples.FixedTriple.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Examples.SelfEmbedding]: DeansProblem.Examples.SelfEmbedding.html
+[DeansProblem.Partition]: DeansProblem.Partition.html

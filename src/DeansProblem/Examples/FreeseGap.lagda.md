@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The ends of Freese's box lie outside his link
 
-This is the [DeansProblem.Examples.FreeseGap][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FreeseGap][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -70,3 +70,10 @@ a₁≉ 2F e = from-no (a₁ ≈ᵖ? abc″ 2F) (≈ʷ-trans e (abc'≈abc″ 2F
 a₁∉⟨a',b',c'⟩ : ¬ ⟨ abc' ⟩ a₁
 a₁∉⟨a',b',c'⟩ (t , e) = let (i , e′) = generator-in-image abc' t (≈ʷ-sym e) in a₁≉ i e′
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.FreeseGap]: DeansProblem.Examples.FreeseGap.html
+[DeansProblem.Examples.FreeseBox]: DeansProblem.Examples.FreeseBox.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[DeansProblem.Truncation.Pattern]: DeansProblem.Truncation.Pattern.html

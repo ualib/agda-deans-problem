@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### At most one link in a strongly irredundant box: Theorem 9.2's last clause
 
-This is the [DeansProblem.AlmostProof.Links][] module of the [agda-lattices][] library.
+This is the [DeansProblem.AlmostProof.Links][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -41,14 +41,14 @@ argument above and not by the absurdity of its hypothesis.
 
 module DeansProblem.AlmostProof.Links where
 
-open import Agda.Primitive  using () renaming ( Set to Type )
+open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
 open import Data.Empty                             using ( ⊥-elim )
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Nat.Base                          using ( ℕ ; _<_ )
 open import Data.Nat.Properties                    using ( <⇒≤ ; <-cmp )
-open import Data.Product                           using ( _,_ ; proj₁ ; proj₂ )
+open import Data.Product                           using ( _×_ ; _,_ ; proj₁ ; proj₂ )
 open import Level                                  using ( Level )
 open import Relation.Binary                        using ( Tri ; tri< ; tri≈ ; tri> )
 open import Relation.Binary.PropositionalEquality  using ( _≡_ )
@@ -57,11 +57,13 @@ open import Relation.Unary                         using ( _⊆_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
 open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-sym )
-open import DeansProblem.AlmostProof               using ( InBox ; StronglyIrredundant ; box-agree )
-open import DeansProblem.Chain                     using ( Chain ; module Chain )
+open import DeansProblem.AlmostProof               using ( InBox ; IrredundantAt ; StronglyIrredundant
+                                                         ; box-agree ; no-step-in-box )
+open import DeansProblem.Chain                     using ( Step ; module Step ; Chain ; module Chain )
 open import DeansProblem.Chain.Condition           using ( ⟨_⟩ ; gen∈ ; gens⊆ ; StrictlyAscending
                                                          ; strict→ascending ; ascends-≤ ; chain→strict )
-open import Lattices.Free.Substitution             using ( Sub )
+open import Lattices.Free.Generation               using ( FreelyGenerates )
+open import Lattices.Free.Substitution             using ( Sub ; _[_] )
 open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
 open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
 
@@ -129,3 +131,43 @@ at-most-one-linkᶜ : {X : Type χ} (c : Chain X) {lo hi : Fin 3 → LatTerm X} 
                   → ∀ {j k} → InBox lo hi (Chain.gens c j) → InBox lo hi (Chain.gens c k) → j ≡ k
 at-most-one-linkᶜ c = at-most-one-link (chain→strict c)
 ```
+
+**Theorem 9.2** of [the paper][], as one statement, for a box with lower ends
+`lo` and upper ends `hi`.  Free triples `σ'` and `τ'` lying in the box, with
+`σ'` in the sublattice `τ'` generates, agree at every index at which the box
+is irredundant; hence no step has both of its triples in a box irredundant at
+the generator the step's terms miss, and at most one link of a chain lies in a
+strongly irredundant box.  The freeness of `σ'` and `τ'` is the paper's
+hypothesis, and `box-agree`{.AgdaFunction} does not use it.
+
+```agda
+-- Theorem 9.2: triples in one box, one inside the other's sublattice, agree where the box is
+-- irredundant; so no step lies in a box irredundant at its missed generator, and at most one
+-- link of a chain lies in a strongly irredundant box.
+Theorem-9·2 : Setω
+Theorem-9·2 =
+  ∀ {χ} {X : Type χ} (lo hi : Fin 3 → LatTerm X)
+  →  ((σ' τ' : Sub (Fin 3) X) → FreelyGenerates σ' → FreelyGenerates τ'
+      → InBox lo hi σ' → InBox lo hi τ' → (∀ j → ⟨ τ' ⟩ (σ' j))
+      → (i : Fin 3) → IrredundantAt lo hi i → σ' i ≈ʷ τ' i)
+   × ((s : Step X) → InBox lo hi (Step.σ s) → InBox lo hi (Step.τ s)
+      → ¬ IrredundantAt lo hi (Step.fresh s))
+   × ((c : Chain X) → StronglyIrredundant lo hi
+      → ∀ {j k} → InBox lo hi (Chain.gens c j) → InBox lo hi (Chain.gens c k) → j ≡ k)
+
+-- The proof of Theorem 9.2.
+theorem-9·2 : Theorem-9·2
+theorem-9·2 lo hi =
+    (λ σ' τ' _ _ σ'∈ τ'∈ in⟨τ'⟩ →
+       box-agree (λ j → proj₁ (in⟨τ'⟩ j)) (λ j → ≈ʷ-sym (proj₂ (in⟨τ'⟩ j))) σ'∈ τ'∈)
+  , (λ s → no-step-in-box s)
+  , (λ c → at-most-one-linkᶜ c)
+```
+
+--------------------------------------
+
+[DeansProblem.AlmostProof.Links]: DeansProblem.AlmostProof.Links.html
+[DeansProblem.AlmostProof]: DeansProblem.AlmostProof.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Condition]: DeansProblem.Chain.Condition.html
+[DeansProblem.Examples.ChainCondition]: DeansProblem.Examples.ChainCondition.html

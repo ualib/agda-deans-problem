@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### The transitions of a chain are never the powers of one map
 
-This is the [DeansProblem.Chain.Powers][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Chain.Powers][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -240,3 +240,13 @@ not-powersᶜ : {X : Type χ} → DecidableEquality X → (c : CopyChain X)
                    (∀ k i → copy-terms c k i ≈ʷ iter ψ (suc (m k)) i))
 not-powersᶜ _≟ˣ_ c = not-powers _≟ˣ_ (copyChain→chain c)
 ```
+
+--------------------------------------
+
+[DeansProblem.Chain.Powers]: DeansProblem.Chain.Powers.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Chain.Condition]: DeansProblem.Chain.Condition.html
+[DeansProblem.Chain.Copies]: DeansProblem.Chain.Copies.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html

@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Labeled patterns: finitely many for a fixed tree
 
-This is the [DeansProblem.Truncation.Pattern][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Truncation.Pattern][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -551,3 +551,8 @@ found at (`anyᴶ-lose`{.AgdaFunction}).
   point-box-in-link τ {D = D} r e = point-box τ r (trans e (self-pattern D))
 ```
 
+
+--------------------------------------
+
+[DeansProblem.Truncation.Pattern]: DeansProblem.Truncation.Pattern.html
+[DeansProblem.Truncation]: DeansProblem.Truncation.html

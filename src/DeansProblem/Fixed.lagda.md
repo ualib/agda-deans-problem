@@ -8,7 +8,9 @@ author: "the agda-lattices development team"
 
 ### Fixed points of a self-embedding of a free lattice
 
-This is the [DeansProblem.Fixed][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Fixed][] module of this repository.
+
+[the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
 Let `θ` be an injective endomorphism of `FL(n)`.  This module proves three facts
 about the elements it fixes, which are the elements `w` with `θ(w) = w`, and
@@ -65,12 +67,14 @@ open import Data.List.Membership.Propositional.Properties
                                                    using ( ∈-allFin ; ∈-map⁺ )
 open import Data.List.Relation.Unary.All           using ( lookup )
 open import Data.List.Relation.Unary.Any           using ( Any ; here ; there )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _*_ ; _⊔_ ; _≤_ ; _<_ )
+open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _*_ ; _⊔_ ; _≤_ ; _<_
+                                                         ; s≤s )
 open import Data.Nat.Properties                    using ( ≤-trans ; ≤-reflexive ; ≤-total ; +-comm
                                                          ; m≤n⇒∃[o]m+o≡n ; m≤m*n ; 0≢1+n
                                                          ; suc-injective ; m≤n⇒m⊔n≡n ; m≥n⇒m⊔n≡m )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ )
+open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
 open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
+open import Function                               using ( _⇔_ ; mk⇔ ; _∘_ )
 open import Level                                  using ( Level )
 open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst )
 open import Relation.Nullary                       using ( ¬_ )
@@ -206,6 +210,25 @@ m [ θ^(k·(d+1) − k) ] [ θᵏ ]`.
        ≈ʷ-trans (≡→≈ʷ (sym ([]-iter-+ m θ o k)))
          (≈ʷ-trans (≡→≈ʷ (cong (λ j → m [ iter θ j ]) (trans (+-comm o k) k+o≡kd)))
                    (periodic→fixed-multiples m d e k))
+```
+
+**Corollary A4** of [the paper][], as one statement: for an injective
+endomorphism `θ` of `FL(n)`, an element `m` lies in every image `θᵏ(FL(n))`
+exactly when some positive power of `θ` fixes it.
+
+```agda
+-- Corollary A4: the intersection of the images θᵏ(FL(n)) is the set of periodic points of θ.
+Corollary-A4 : Type
+Corollary-A4 =  (n : ℕ) (θ : Sub (Fin n) (Fin n)) → IsInjective (proj₁ (subst-hom θ))
+                → (m : LatTerm (Fin n))
+                → (∀ k → Σ[ mₖ ∈ LatTerm (Fin n) ] mₖ [ iter θ k ] ≈ʷ m)
+                  ⇔ (Σ[ d ∈ ℕ ] m [ iter θ (suc d) ] ≈ʷ m)
+
+-- The proof of Corollary A4.
+corollary-A4 : Corollary-A4
+corollary-A4 n θ θ-inj m =
+  mk⇔ (λ pre → image→periodic θ θ-inj m (proj₁ ∘ pre) (proj₂ ∘ pre))
+      (λ (d , per) → periodic→image θ θ-inj m d per)
 ```
 
 #### The canonical joinands of a fixed point
@@ -433,3 +456,110 @@ a positive power of `θᵈ⁺¹`, which is a positive power of `θ`
           → Σ[ d ∈ ℕ ] Σ[ v ∈ LatTerm (Fin n) ] v [ iter θ (suc d) ] ≈ʷ v × κ v ≡ 1
   descent θ θ-free w fix pos = let (m , e) = positive (κ w) pos in descent≤ m θ θ-free w fix e
 ```
+
+The descent can keep the parent of its last step (`descent-parent`{.AgdaFunction}):
+from a fixed point of complexity `m + 2` it reaches an element `u` of
+complexity 2, fixed by a positive power of `θ`, and a canonical joinand or
+meetand `v` of `u` of complexity 1.  The recursion is the descent's, stopped
+one level higher: at complexity 2 the fixed point itself is `u`, and its child
+of complexity 1 is `v`.  [DeansProblem.FixedGenerator][] uses it in `FL(3)`,
+as `descent-pair`{.AgdaFunction}.
+
+```agda
+  -- The descent, keeping the parent of the last step.
+  descent-parent : (m : ℕ) (θ : Sub (Fin n) (Fin n)) → FreelyGenerates θ
+                 → (w : LatTerm (Fin n)) → w [ θ ] ≈ʷ w → κ w ≡ suc (suc m)
+                 → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin n) ] Σ[ v ∈ LatTerm (Fin n) ]
+                     u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
+  descent-parent zero     θ θ-free w fix e =
+    pack (child-of-complexity w 1 e)
+    where
+    -- The fixed point itself is the parent, and its child of complexity one the element.
+    pack : (Σ[ c ∈ LatTerm (Fin n) ] c ∈ CJ w × κ c ≡ 1) ⊎ (Σ[ c ∈ LatTerm (Fin n) ] c ∈ CM w × κ c ≡ 1)
+         → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin n) ] Σ[ v ∈ LatTerm (Fin n) ]
+             u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
+    pack (inj₁ (c , c∈ , κc)) =
+      0 , w , c , fixed→image θ (freelyGenerates→injective θ θ-free) w fix 1 , e , inj₁ c∈ , κc
+    pack (inj₂ (c , c∈ , κc)) =
+      0 , w , c , fixed→image θ (freelyGenerates→injective θ θ-free) w fix 1 , e , inj₂ c∈ , κc
+  descent-parent (suc m)  θ θ-free w fix e = step (child-of-complexity w (suc (suc m)) e)
+    where
+    -- Recurse on the child, under the power that fixes it.
+    recurse : (c : LatTerm (Fin n)) → κ c ≡ suc (suc m) → Σ[ d ∈ ℕ ] c [ iter θ (suc d) ] ≈ʷ c
+            → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin n) ] Σ[ v ∈ LatTerm (Fin n) ]
+                u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
+    recurse c κc (d₁ , per) =
+      let (d₂ , u , v , fixu , κu , v∈ , κv) =
+            descent-parent m (iter θ (suc d₁)) (iter-free θ θ-free (suc d₁)) c per κc
+      in  d₁ + d₂ * suc d₁ , u , v
+        , ≈ʷ-trans (≡→≈ʷ (sym ([]-iter-* u θ (suc d₁) (suc d₂)))) fixu , κu , v∈ , κv
+
+    -- The child of complexity m + 2, a joinand or a meetand.
+    step : (Σ[ c ∈ LatTerm (Fin n) ] c ∈ CJ w × κ c ≡ suc (suc m))
+           ⊎ (Σ[ c ∈ LatTerm (Fin n) ] c ∈ CM w × κ c ≡ suc (suc m))
+         → Σ[ d ∈ ℕ ] Σ[ u ∈ LatTerm (Fin n) ] Σ[ v ∈ LatTerm (Fin n) ]
+             u [ iter θ (suc d) ] ≈ʷ u × κ u ≡ 2 × (v ∈ CJ u ⊎ v ∈ CM u) × κ v ≡ 1
+    step (inj₁ (c , c∈ , κc)) =
+      recurse c κc (joinand-periodic θ θ-free w fix c∈ (positive-not-gen c (suc m) κc))
+    step (inj₂ (c , c∈ , κc)) =
+      recurse c κc (meetand-periodic θ θ-free w fix c∈ (positive-not-gen c (suc m) κc))
+```
+
+**Lemma 6.11** of [the paper][], as one statement, for a self-embedding `θ` of
+`FL(n)` and a fixed point `w`: (a) if `u` is a canonical joinand or meetand of
+`w` that is not a generator, some positive power of `θ` fixes `u`; (b) if
+`cx(w) ≥ 1`, some positive power of `θ` fixes an element `v` of complexity 1;
+and, more precisely, if `cx(w) ≥ 2`, there are an element `u` of complexity 2
+fixed by a positive power `θᵉ` and a canonical joinand or meetand `v` of `u` of
+complexity 1 fixed by a positive power of `θᵉ`.  The last part is
+`descent-parent`{.AgdaFunction} followed by part (a) for `θᵉ`.
+
+```agda
+-- Lemma 6.11: powers of θ fix the non-generator children of a fixed point, and a fixed point of
+-- positive complexity descends to a periodic element of complexity 1, through one of complexity 2.
+Lemma-6·11 : Type
+Lemma-6·11 =
+  (n : ℕ) (θ : Sub (Fin n) (Fin n)) → FreelyGenerates θ → (w : LatTerm (Fin n)) → w [ θ ] ≈ʷ w
+  →  ({u : LatTerm (Fin n)} → u ∈ canonicalJoinands (_≟_ {n}) w ⊎ u ∈ canonicalMeetands (_≟_ {n}) w
+      → (∀ x → ¬ (u ≈ʷ ℊ x)) → Σ[ d ∈ ℕ ] u [ iter θ (suc d) ] ≈ʷ u)
+   × (1 ≤ complexity (_≟_ {n}) w
+      → Σ[ d ∈ ℕ ] Σ[ v ∈ LatTerm (Fin n) ] v [ iter θ (suc d) ] ≈ʷ v × complexity (_≟_ {n}) v ≡ 1)
+   × (2 ≤ complexity (_≟_ {n}) w
+      → Σ[ e ∈ ℕ ] Σ[ u ∈ LatTerm (Fin n) ]
+          u [ iter θ (suc e) ] ≈ʷ u × complexity (_≟_ {n}) u ≡ 2
+        × Σ[ v ∈ LatTerm (Fin n) ]
+            (v ∈ canonicalJoinands (_≟_ {n}) u ⊎ v ∈ canonicalMeetands (_≟_ {n}) u)
+          × complexity (_≟_ {n}) v ≡ 1 × Σ[ d ∈ ℕ ] v [ iter (iter θ (suc e)) (suc d) ] ≈ʷ v)
+
+-- The proof of Lemma 6.11.
+lemma-6·11 : Lemma-6·11
+lemma-6·11 n θ θ-free w fix =
+    [ joinand-periodic θ θ-free w fix , meetand-periodic θ θ-free w fix ]′
+  , descent θ θ-free w fix
+  , precisely (complexity (_≟_ {n}) w) refl
+  where
+  -- The last part, by cases on the complexity of w.
+  precisely : (k : ℕ) → complexity (_≟_ {n}) w ≡ k → 2 ≤ k
+            → Σ[ e ∈ ℕ ] Σ[ u ∈ LatTerm (Fin n) ]
+                u [ iter θ (suc e) ] ≈ʷ u × complexity (_≟_ {n}) u ≡ 2
+              × Σ[ v ∈ LatTerm (Fin n) ]
+                  (v ∈ canonicalJoinands (_≟_ {n}) u ⊎ v ∈ canonicalMeetands (_≟_ {n}) u)
+                × complexity (_≟_ {n}) v ≡ 1 × Σ[ d ∈ ℕ ] v [ iter (iter θ (suc e)) (suc d) ] ≈ʷ v
+  precisely zero          _  ()
+  precisely (suc zero)    _  (s≤s ())
+  precisely (suc (suc m)) κw _ =
+    let (e , u , v , fixu , κu , v∈ , κv) = descent-parent m θ θ-free w fix κw
+        θᵉ-free = iter-free θ θ-free (suc e)
+        periodic = [ (λ v∈ → joinand-periodic (iter θ (suc e)) θᵉ-free u fixu v∈ (positive-not-gen v 0 κv))
+                   , (λ v∈ → meetand-periodic (iter θ (suc e)) θᵉ-free u fixu v∈ (positive-not-gen v 0 κv)) ]′ v∈
+    in  e , u , fixu , κu , v , v∈ , κv , periodic
+```
+
+--------------------------------------
+
+[DeansProblem.Fixed]: DeansProblem.Fixed.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.FixedGenerator]: DeansProblem.FixedGenerator.html
+[Lattices.Free.Canonical.Joinands]: Lattices.Free.Canonical.Joinands.html
+[Lattices.Free.Complexity]: Lattices.Free.Complexity.html
+[Lattices.Free.Embedding]: Lattices.Free.Embedding.html

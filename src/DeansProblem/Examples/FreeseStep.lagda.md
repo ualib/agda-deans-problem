@@ -8,7 +8,7 @@ author: "the agda-algebras development team"
 
 ### Worked example: Freese's step toward Dean's problem
 
-This is the [DeansProblem.Examples.FreeseStep][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FreeseStep][] module of this repository.
 
 Dean asked whether a free lattice can have an infinite ascending chain of
 sublattices, each isomorphic to `FL(3)`.  A descending chain is easy, since
@@ -406,3 +406,11 @@ a'∉⟨abc⟩ t e =
                    (≈ʷ-trans (≈ʷ-sym e) (⟨abc⟩⊆⟨abc'⟩ t))
   in x∉ρ i x≈
 ```
+
+--------------------------------------
+
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[Lattices.Free.Canonical.Algorithm]: Lattices.Free.Canonical.Algorithm.html
+[Lattices.Free.Generation]: Lattices.Free.Generation.html
+[Lattices.Free.Substitution]: Lattices.Free.Substitution.html
+[Lattices.Free.Whitman.Polynomial]: Lattices.Free.Whitman.Polynomial.html

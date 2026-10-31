@@ -39,11 +39,12 @@ flakes enabled, needs nothing else:
 
 `make check` first runs `scripts/check-safety.sh` (below), then generates
 `src/EverythingDeansProblem.agda`, which imports every module under `src/`
-and the two modules of agda-lattices that the table below names and no
-module here imports (`Lattices.Free.Canonical` and
-`Lattices.Free.Semidistributive`), and type-checks it with a heap limit of
-6 GiB (`+RTS -M6G -A128M`), the limit under which the paper's costs are
-measured.  It exits 0 when every module checks.  There is no separate test step:
+and the two modules of agda-lattices that the tables below name and no
+module here imports (`Lattices.Free.Membership` and `Lattices.Free.Small`),
+type-checks it with a heap limit of 6 GiB (`+RTS -M6G -A128M`), the limit
+under which the paper's costs are measured, and last runs
+`scripts/check-paper.sh` (below).  It exits 0 when every module checks and
+the tables agree with the development.  There is no separate test step:
 type-checking is the test.
 
 The Agda is a pre-release of Agda 2.9.0, which Nix builds from source in about
@@ -98,108 +99,234 @@ Agda configuration takes part.
    stated type.  A statement about explicit terms is checked by computation:
    Whitman's procedure is a decision `s ≤ʷ? t`, which Agda evaluates while it
    checks the module, and `from-yes` or `from-no` turns the answer into a
-   proof.  When the terms are too large for the procedure to run within the
-   heap limit, as for Freese's example, the decision runs on smaller terms
-   checked equal to the defined ones, and the statement is transported along
-   the equality.
-+  The one hypothesis of the main theorem, `no-copy-chain` in
-   `DeansProblem.NoChain`, is decidable equality on the generators:
+   proof.  For Freese's example, whose terms exhausted the build's heap under
+   that recursion, the decisions run through the library's table `_≤ᵖ?_`,
+   whose verdicts are proved to be the recursion's (`≤ᵖ?-agrees`), on
+   smaller terms checked equal to the defined ones, and each statement is
+   transported along the equality.
++  Each of the paper's 48 results is one Agda definition whose type is its
+   statement, with one proof, defined in the module that proves it (for the
+   ten results of Section 2, `DeansProblem.Preliminaries`, from the library's
+   statements) and re-exported, in the paper's order, by
+   `DeansProblem.Paper`.  No result stays in prose.  A hypothesis beyond the
+   paper's is in the statement's type, and said in its module's prose:
+   decidable equality on the
+   generators, where a decision needs it, and the infinite pigeonhole
+   principle.
++  The main theorem, `Theorem-H` in `DeansProblem.NoChain`, has decidable
+   equality on the generators as its one hypothesis:
 
-       no-copy-chain : (_≟ˣ_ : DecidableEquality X) → CopyChain X → ⊥
+       Theorem-H = ∀ {χ} {X : Type χ} → DecidableEquality X → CopyChain X → ⊥
 
    says that the free lattice over a type `X` of generators with decidable
    equality contains no infinite strictly ascending chain of sublattices
    isomorphic to `FL(3)`.  Its proof uses finite searches and induction on a
    natural number, and no classical principle.
-+  The paper says which of its statements are checked and in what form.
-   Three of them rest on the infinite pigeonhole principle, which is
-   classically true and which Agda's constructive logic does not prove, since
-   it decides LPO: the coherent form of its Theorem C, its Corollary 6.4 and
-   the recurrence of its Remark 5.1.  They are checked with the principle as
-   a hypothesis, the record `InfinitePigeonhole` of `DeansProblem.Pigeonhole`,
-   which each of them takes as an explicit argument and names in its type,
-   never as a postulate; their converse directions take none, and neither
-   does the proof of Theorem H.  The clause of its ladder theorem that no
-   link of the chain is a copy of `FL(3)` stays in prose there.
++  Two results rest on the infinite pigeonhole principle, which is classically
+   true and which Agda's constructive logic does not prove, since it decides
+   LPO (`pigeonhole→LPO`): the coherent form of Theorem C and Corollary 6.4,
+   with the recurrence of Remark 5.1.  They take the principle, the record
+   `InfinitePigeonhole` of `DeansProblem.Pigeonhole`, as an explicit argument
+   named in their types, never as a postulate.  The converse of the
+   coherent form, its second part, takes none; `Corollary-6·4` binds the
+   principle before both of its directions, though its converse is proved
+   without it (`coherentω→positive`); and the proof of Theorem H takes none.
++  `scripts/check-paper.sh` (`make paper-check`, the last step of
+   `make check`) checks that the table of results below and
+   `DeansProblem.Paper` list the same results in the same order, and that
+   every name in the tables of this section resolves in the module its row
+   gives, by an Agda probe whose output it reads for warnings.
 
-## The paper's statements and their names
+## The paper's results and their names
 
-The table maps the statements of the paper to their names in Agda.  A module
-under `Lattices` is agda-lattices', at the pinned commit; a module under
-`DeansProblem` is this repository's.  A few names are defined inside a
-parameterized submodule of the module given (`_≤ʷ?_` in
-`Lattices.Free.Whitman.Decision`, for instance, which takes decidable
-equality on the generators).
+One row per result of the paper, in the paper's order, with the statement
+(a type) and its proof, and the module where both are defined.  A module
+under `DeansProblem` is this repository's.  The numbering is that of the
+paper's full version.
 
-| Statement | Names | Module |
+| Result | Statement, proof | Module |
 | --- | --- | --- |
-| Whitman's rules decide the order, and are sound and complete (FJN Theorems 1.8 and 1.11) | `_≤ʷ_`, `_≤ʷ?_`; `≤ʷ→≤`, `≤→≤ʷ` | `Lattices.Free.Whitman`, `Lattices.Free.Universal` |
-| `FL(X)` with the universal property | `FL`, `FL-extend` | `Lattices.Free.Universal` |
-| canonical form exists and is unique up to permutation, with the conditions of FJN Theorems 1.17 and 1.18 | `canonical`, `IsCanonical`, `≈ʷ⇒≈ᶜ`, `isCanonical?` | `Lattices.Free.Canonical` and its submodules |
-| canonical joinands refine every join (FJN Theorem 1.19); equal elements have the same canonical joinands | `canonicalJoinands-refine`, `canonicalJoinands-≈ˡ` | `Lattices.Free.Canonical.Joinands` |
-| `FL(X)` satisfies (W) and is semidistributive (FJN Theorems 1.8 and 1.21) | `FL-satisfiesW`, `FL-isSemidistributive` | `Lattices.Free.Semidistributive` |
-| substitutions induce the homomorphisms; every homomorphism is induced | `subst-hom`, `hom-induced` | `Lattices.Free.Substitution` |
-| free generation is injectivity (FJN Corollary 1.13), decided; a generator in a generated sublattice is a generator of it (FJN Corollary 1.6) | `freelyGenerates⇔injective`, `freelyGenerates?`, `generator-in-image` | `Lattices.Free.Generation` |
-| FJN Lemma 9.13 and its dual | `embedding-canonicalJoinand` | `Lattices.Free.Embedding` |
-| Theorem B; finitely many elements of bounded complexity; the pigeonhole for tuples, infinite and finite | `complexity-mono`, `bounded-complete`, `pigeonhole-≈`, `pigeonhole-≈ⁿ`, `finite-pigeonhole-≈ⁿ` | `Lattices.Free.Complexity` |
-| steps and chains; a self-similar step gives a chain | `Step`, `Chain`, `selfSimilar→chain` | `DeansProblem.Chain` |
-| chains of sublattices isomorphic to `FL(3)`, as embeddings whose images ascend strictly; equivalent to the record of a chain | `CopyChain`, `copyChain→chain`, `chain→copyChain` | `DeansProblem.Chain.Copies` |
-| Proposition 4.2: the union of a chain is the direct limit of its self-embeddings `θₖ` of Definition 4.1, and embeds in `FL(X)`; proper self-embeddings of `FL(3)` whose direct limit embeds in `FL(X)` give a chain | `Proposition-4·2`, `proposition-4·2`, `copy-θ`, `copy-θ-not-onto`, `copyUnion≅copyLimit`, `copyLimit-embedding`, `limit→copyChain` | `DeansProblem.Chain.Limit` |
-| Section 1.1(i): an embedding carries a chain of copies to a chain of copies; a chain in one free lattice, over generators with decidable equality, gives one in `FL(3)` and in every `FL(X)` with three distinct generators, and `FL(3)` is the only case | `embed-copyChain`, `renumber`, `copyChain→FL₃`, `FL₃→copyChain`, `reduction`, `copyChain⇔FL₃` | `DeansProblem.Chain.Reduction` |
-| Theorem A for a free sublattice; Corollary A1 | `self-similar-onto`, `no-self-similar-step` | `DeansProblem.SelfSimilar` |
-| Theorem A; Corollary A3; the chain condition for 3-generated sublattices, which contains Theorem H | `generated-onto`, `no-onto-later`, `StrictlyAscending`, `ChainCondition`, `chainCondition→no-copy-chain` | `DeansProblem.Chain.Condition` |
-| the ladder: its rungs, and an infinite strictly ascending chain of 3-generated sublattices of `FL(3)` | `stable`, `A-strict`, `inv-A`, `ladder`, `chain-condition-fails`, `ladder-in` | `DeansProblem.Examples.ChainCondition` |
-| Freese's example | `abc-free`, `abc'-free`, `abc≈`, `a'∉⟨abc⟩` | `DeansProblem.Examples.FreeseStep` |
-| Freese's step inside `FL(3)`, the descending chain | `θ-free`, `x∉θ`, `inside`, `descending` | `DeansProblem.Examples.SelfEmbedding` |
-| Corollary A2: Freese's equations have no injective solution; the three candidates | `no-FreeseΦ`, `π-fails`, `bar-not-free` | `DeansProblem.Examples.FreeseEquations` |
-| the transitions of a chain, their bound and a repeat; Theorem C (one step); the configuration of the fixed-sublattice question | `transition`, `transition-bound′`, `transition-bound`, `transition-repeats`, `chain→fixed-sublattice`, `FixedSublattice` | `DeansProblem.Coherent` |
-| the partition lemma; an embedding fixing all generators but one is the identity | `partition`, `fixes-last`, `fix-two-generators` | `DeansProblem.Partition` |
-| Corollary A4 (both directions); the descent of a fixed point | `image→periodic`, `periodic→image`, `joinand-periodic`, `descent` | `DeansProblem.Fixed` |
-| Theorem D; nothing but the identity fixes the image of `θ₁` | `fixed-triple`, `coherent₂`, `rigid`, `no-extension` | `DeansProblem.Examples.FixedTriple` |
-| coherent chains of length `n` and their images; Theorem C (four links, and length three); an infinite coherent chain has unbounded complexity | `Coherent`, `step`, `coherent₂→fixed`, `four-links→coherent₃`, `Recurs`, `chain→coherent₃`, `Coherentω`, `coherentω-unbounded` | `DeansProblem.Coherent.Finite` |
-| the infinite pigeonhole principle, as a hypothesis; it decides LPO; a sequence of covered tuples is constant along a selection | `InfinitePigeonhole`, `pigeonhole→LPO`, `constant-along` | `DeansProblem.Pigeonhole` |
-| from the principle: the recurrence of Remark 5.1; Theorem C (length three) without its hypothesis; Theorem C (coherent form); Corollary 6.4; with none: a subsequence of a chain is a chain, and the converse of the coherent form | `BottomRecurrence`, `bottom-recurrence`, `some-link-recurs`, `pigeonhole→coherent₃`, `CoherentForm`, `coherent-form`, `PositiveAnswer`, `positive⇔coherentω`, `subchain`, `coherentω→chain`, `coherentω→copyChain` | `DeansProblem.Coherent.Infinite` |
-| Lemmas 1 to 4; Theorem F | `fixes-join`, `fixes-join-third`, `power-fixes→fixes`, `node-fixed`, `meetand-gen-fixed`, `strict-fixed-not-below`, `inflation-transfer`, `rigid-class` | `DeansProblem.Inflationary` |
-| the fourteen elements and the eleven fixed points; the descent with the parent; an inflationary power; Theorem E | `T₁₄-∨`, `T₁₁-∧`, `strict-fixed-in-T₁₁`, `descent-pair`, `inflationary-power`, `fixes-generator` | `DeansProblem.FixedGenerator` |
-| Corollary E1: the unique fixed generator, the inflationary member, its three fixed joins and two bounds | `Shape`, `InflationaryShape`, `shape` | `DeansProblem.Shape` |
-| Lemma 5; the core lemma; Theorem G; no infinite coherent chain; no chain with a recurring transition | `fixed-above-c`, `core`, `no-coherent₃`, `no-coherentω`, `no-chain-recurs` | `DeansProblem.LengthThree` |
-| Theorem H, for the record of a chain and as stated, by finite searches | `recurrences-bounded`, `chain-escapes`, `finite-colors-exhausted`, `no-chain`, `no-copy-chain` | `DeansProblem.NoChain` |
-| `θ₁` rigid by Theorem F; `θ₂` fixes the same triple and is rigid | `rigid′`, `fixed-triple₂`, `rigid₂` | `DeansProblem.Examples.Rigidity` |
-| the truncation theorem | `_⊑_`, `truncation`, `truncation-canonical` | `DeansProblem.Truncation` |
-| Freese's Lemma 2 in any lattice; the partition lemma for a generated sublattice | `above-or-below`, `lemma-2-at`, `lemma-2` | `DeansProblem.Irredundant` |
-| boxes, the gap as a predicate, and the theorem that no step has both triples in a strongly irredundant box | `StronglyIrredundant`, `stronglyIrredundant?`, `box-agree`, `no-step-in-box` | `DeansProblem.AlmostProof` |
-| Freese's box is strongly irredundant; his terms express his base in at most one link | `freese-box-irredundant`, `freese-terms-in-box`, `freese-terms-once` | `DeansProblem.Examples.FreeseBox` |
+| Theorem H | `Theorem-H`, `theorem-H` | `DeansProblem.NoChain` |
+| Theorem 2.1 | `Theorem-2·1`, `theorem-2·1` | `DeansProblem.Preliminaries` |
+| Lemma 2.2 | `Lemma-2·2`, `lemma-2·2` | `DeansProblem.Preliminaries` |
+| Theorem 2.3 | `Theorem-2·3`, `theorem-2·3` | `DeansProblem.Preliminaries` |
+| Corollary 2.4 | `Corollary-2·4`, `corollary-2·4` | `DeansProblem.Preliminaries` |
+| Corollary 2.5 | `Corollary-2·5`, `corollary-2·5` | `DeansProblem.Preliminaries` |
+| Theorem 2.6 | `Theorem-2·6`, `theorem-2·6` | `DeansProblem.Preliminaries` |
+| Theorem 2.7 | `Theorem-2·7`, `theorem-2·7` | `DeansProblem.Preliminaries` |
+| Lemma 2.8 | `Lemma-2·8`, `lemma-2·8` | `DeansProblem.Preliminaries` |
+| Theorem B | `Theorem-B`, `theorem-B` | `DeansProblem.Preliminaries` |
+| Lemma 2.9 | `Lemma-2·9`, `lemma-2·9` | `DeansProblem.Preliminaries` |
+| Proposition 4.2 | `Proposition-4·2`, `proposition-4·2` | `DeansProblem.Chain.Limit` |
+| Proposition 4.3 | `Proposition-4·3`, `proposition-4·3` | `DeansProblem.Chain` |
+| Lemma 4.4 | `Lemma-4·4`, `lemma-4·4` | `DeansProblem.Ladder` |
+| Theorem 4.5 | `Theorem-4·5`, `theorem-4·5` | `DeansProblem.Examples.ChainCondition` |
+| Theorem A | `Theorem-A`, `theorem-A` | `DeansProblem.Chain.Condition` |
+| Corollary A1 | `Corollary-A1`, `corollary-A1` | `DeansProblem.SelfSimilar` |
+| Corollary A2 | `Corollary-A2`, `corollary-A2` | `DeansProblem.Examples.FreeseEquations` |
+| Corollary A3 | `Corollary-A3`, `corollary-A3` | `DeansProblem.Chain.Condition` |
+| Corollary A4 | `Corollary-A4`, `corollary-A4` | `DeansProblem.Fixed` |
+| Lemma 6.1 | `Lemma-6·1`, `lemma-6·1` | `DeansProblem.Coherent` |
+| Theorem C (one step) | `Theorem-C-one-step`, `theorem-C-one-step` | `DeansProblem.Coherent` |
+| Lemma 6.3 | `Lemma-6·3`, `lemma-6·3` | `DeansProblem.Coherent.Finite` |
+| Theorem C (four links) | `Theorem-C-four-links`, `theorem-C-four-links` | `DeansProblem.Coherent.Finite` |
+| Theorem C (length three) | `Theorem-C-length-three`, `theorem-C-length-three` | `DeansProblem.Coherent.Finite` |
+| Theorem C (coherent form) | `Theorem-C-coherent`, `theorem-C-coherent` | `DeansProblem.Coherent.Infinite` |
+| Corollary 6.4 | `Corollary-6·4`, `corollary-6·4` | `DeansProblem.Coherent.Infinite` |
+| Proposition 6.6 | `Proposition-6·6`, `proposition-6·6` | `DeansProblem.Coherent.Finite` |
+| Theorem D | `Theorem-D`, `theorem-D` | `DeansProblem.Examples.FixedTriple` |
+| Proposition 6.9 | `Proposition-6·9`, `proposition-6·9` | `DeansProblem.Examples.FixedTriple` |
+| Lemma 6.10 | `Lemma-6·10`, `lemma-6·10` | `DeansProblem.Partition` |
+| Lemma 6.11 | `Lemma-6·11`, `lemma-6·11` | `DeansProblem.Fixed` |
+| Lemma 1 | `Lemma-1`, `lemma-1` | `DeansProblem.Inflationary` |
+| Lemma 2 | `Lemma-2`, `lemma-2` | `DeansProblem.Inflationary` |
+| Lemma 3 | `Lemma-3`, `lemma-3` | `DeansProblem.Inflationary` |
+| Lemma 4 | `Lemma-4`, `lemma-4` | `DeansProblem.Inflationary` |
+| Proposition 7.2 | `Proposition-7·2`, `proposition-7·2` | `DeansProblem.FixedGenerator` |
+| Proposition 7.3 | `Proposition-7·3`, `proposition-7·3` | `DeansProblem.FixedGenerator` |
+| Proposition 7.4 | `Proposition-7·4`, `proposition-7·4` | `DeansProblem.FixedGenerator` |
+| Theorem E | `Theorem-E`, `theorem-E` | `DeansProblem.FixedGenerator` |
+| Corollary 7.5 | `Corollary-7·5`, `corollary-7·5` | `DeansProblem.Examples.SelfEmbedding` |
+| Corollary E1 | `Corollary-E1`, `corollary-E1` | `DeansProblem.Shape` |
+| Theorem F | `Theorem-F`, `theorem-F` | `DeansProblem.Inflationary` |
+| Lemma 5 | `Lemma-5`, `lemma-5` | `DeansProblem.LengthThree` |
+| Lemma 8.1 | `Lemma-8·1`, `lemma-8·1` | `DeansProblem.LengthThree` |
+| Theorem G | `Theorem-G`, `theorem-G` | `DeansProblem.LengthThree` |
+| Theorem 9.1 | `Theorem-9·1`, `theorem-9·1` | `DeansProblem.Truncation` |
+| Theorem 9.2 | `Theorem-9·2`, `theorem-9·2` | `DeansProblem.AlmostProof.Links` |
+
+### The definitions
+
+A definition of the paper is named by the Agda definition it is.
+
+| Definition | Names | Module |
+| --- | --- | --- |
+| Definition 4.1, a chain of sublattices isomorphic to `FL(3)`, and its equivalence with the record by free triples | `CopyChain`, `copyChain→chain`, `chain→copyChain` | `DeansProblem.Chain.Copies` |
+| Definition 4.1, the record of a chain by its free triples, and of a step | `Chain`, `Step` | `DeansProblem.Chain` |
+| Definition 6.2, coherent chains of length `n`, and infinite ones | `Coherent`, `Coherentω` | `DeansProblem.Coherent.Finite` |
+| Definition 7.1, inflationary and deflationary self-embeddings | `Inflationary`, `Deflationary` | `DeansProblem.Inflationary` |
+
+### The remarks and the computations
+
+A remark or a computation is not a result.  The claims of each that are
+checked, under its number, are the following.
+
+| Claim | Names | Module |
+| --- | --- | --- |
+| Computation 4.6: the sublattice `⟨x, y, d⟩` contains every link of the ladder and is infinite | `links⊆⟨x,y,c⟩`, `⟨x,y,c⟩-infinite` | `DeansProblem.Examples.ChainCondition` |
+| Computation 4.6: membership in a finitely generated sublattice of a free lattice is decided | `inImage?` | `Lattices.Free.Membership` |
+| Remark 5.1: the transitions from the bottom have bounded complexity | `transition-bound` | `DeansProblem.Coherent` |
+| Remark 5.1: from the infinite pigeonhole principle, one proper self-embedding expresses the bottom triple, by the same three terms, in infinitely many later triples | `BottomRecurrence`, `bottom-recurrence` | `DeansProblem.Coherent.Infinite` |
+| Remark 6.5: the hypothesis of the length-three form | `Recurs` | `DeansProblem.Coherent.Finite` |
+| Remark 6.5: the infinite pigeonhole principle supplies it | `some-link-recurs`, `pigeonhole→coherent₃` | `DeansProblem.Coherent.Infinite` |
+| Remark 6.5: the infinite pigeonhole principle, which, as this repository adds, decides LPO | `InfinitePigeonhole`, `pigeonhole→LPO` | `DeansProblem.Pigeonhole` |
+| Remark 6.8: `Fix(θ₁)` contains a copy of `FL(ω)`, and the sublattice `⟨p, q, z⟩` | `ω-embedding`, `ω-fixed`, `⟨pqz⟩-fixed` | `DeansProblem.Examples.FixedTriple.Remarks` |
+| Computation 6.12: the positive facts its counts rest on, that `ρ` fixes the eleven and fixes no free triple | `θ-fixes-T₁₁`, `θ-no-fixed-triple` | `DeansProblem.Examples.SelfEmbedding` |
+| Computation 6.12: `θ₁` fixes a free triple | `fixed-triple` | `DeansProblem.Examples.FixedTriple` |
+| Remark 8.2: the constructive proof of Theorem H, for the record of a chain | `recurrences-bounded`, `chain-escapes`, `Escapes`, `finite-colors-exhausted`, `no-chain` | `DeansProblem.NoChain` |
+| Computation 10.1: the positive facts the searches found, that `θ₂` fixes the free triple of Theorem D, and that `θ₁` and `θ₂` are rigid (that `θ₁` fixes it is the row of Computation 6.12) | `rigid′`, `fixed-triple₂`, `rigid₂` | `DeansProblem.Examples.Rigidity` |
+
+### Other checked claims, by section
+
+| Claim | Names | Module |
+| --- | --- | --- |
+| Section 1.1(i): a chain in one free lattice gives one in `FL(3)` and in every `FL(X)` with three distinct generators | `reduction`, `copyChain⇔FL₃` | `DeansProblem.Chain.Reduction` |
+| Section 1.1(i): `FL(n)` is finite for `n ≤ 2` | `FL₀-enumeration`, `FL₁-enumeration`, `FL₂-enumeration` | `Lattices.Free.Small` |
+| Section 1.1: Freese's old generators have complexity 3 and his new ones 4 | `old-complexity`, `new-complexity` | `DeansProblem.Examples.FreeseStep.Complexity` |
+| Section 2.3: `FL(X)` has a least and a greatest element exactly when `X` has a finite nonempty enumeration | `FL-bottom⇔enumeration`, `FL-top⇔enumeration` | `Lattices.Free.Extrema` |
+| Section 2.3: a self-embedding is proper exactly when some generator is none of its images | `not-onto⇔missed-generator` | `Lattices.Free.Membership` |
+| Section 2.5: the requirement of Lemma 2.8 that the joinand not be a generator cannot be dropped | `generator-joinand-not-preserved` | `DeansProblem.Examples.FixedTriple.Remarks` |
+| Section 3.3: Freese's example, items (i) to (iv) | `relation-1`, `relation-2`, `relation-3`, `relation-4`, `relation-1ᵇ`, `relation-2ᵇ`, `relation-3ᵇ`, `relation-4ᵇ`, `relation-1ᶜ`, `relation-2ᶜ`, `relation-3ᶜ`, `relation-4ᶜ`, `abc-free`, `abc'-free`, `abc≈`, `a'∉⟨abc⟩` | `DeansProblem.Examples.FreeseStep` |
+| Section 3.3: Freese's example, item (v) | `b̄₂≤a`, `c̄₂≤a` | `DeansProblem.Examples.FreeseBox` |
+| Section 3.4: Freese's step inside `FL(3)`, and the descending chain | `θ-free`, `x∉θ`, `inside`, `descending` | `DeansProblem.Examples.SelfEmbedding` |
+| Section 4.2: the chain condition for `n`-generated sublattices, which contains Theorem H | `StrictlyAscending`, `ChainCondition`, `chainCondition→no-copy-chain` | `DeansProblem.Chain.Condition` |
+| Section 4.2: two elements generate at most four, so the chain condition holds for two generators | `two-generate-four`, `chainCondition₂` | `DeansProblem.Chain.TwoGenerated` |
+| Section 4.2, after Theorem 4.5: the bottom link's term recurs in every link | `t₀-recurs` | `DeansProblem.Examples.ChainCondition` |
+| Section 5: Theorem A for a free sublattice | `self-similar-onto` | `DeansProblem.SelfSimilar` |
+| Section 5, after Corollary A2: the three candidates fail | `π-fails`, `π²-fails`, `bar-not-free` | `DeansProblem.Examples.FreeseEquations` |
+| Section 5, after Corollary A3: no chain is generated by one embedding, even with a period | `no-periodic-embedding` | `DeansProblem.Chain.Condition` |
+| Section 5, after Corollary A3: the steps of a chain are never the powers of one map | `not-powers`, `not-powersᶜ` | `DeansProblem.Chain.Powers` |
+| Section 6.4, after Theorem D: `θ₁` fixes `⟨p, q, z⟩`, which holds the triple of Theorem D and is infinite | `⟨pqz⟩-fixed`, `Θ≈μ[pqz]`, `⟨pqz⟩-infinite` | `DeansProblem.Examples.FixedTriple.Remarks` |
+| Section 7.1: the dual of a self-embedding | `dualˢ`, `dual-free`, `dual-misses`, `dual-fixed`, `dual-iter`, `dual-inflationary` | `DeansProblem.FixedGenerator` |
+| Section 7.2, after Lemma 3: a proper inflationary self-embedding fixes no meet of two generators | `fixes-no-meet`, `fixes-z-no-meetand` | `DeansProblem.Inflationary` |
+| Section 7.4, after Corollary 7.5: a proper self-embedding that moves every generator fixes no free triple | `moves→no-fixed-triple` | `DeansProblem.FixedGenerator` |
+| Section 8.2: every proper self-embedding with a fixed free triple is rigid | `no-upper-link` | `DeansProblem.LengthThree` |
+| Section 8.3: no infinite coherent chain, and no chain with a recurring transition | `no-coherentω`, `no-chain-recurs` | `DeansProblem.LengthThree` |
+| Section 9.2: labeled patterns, finitely many on a fixed tree | `Pattern`, `patternOf`, `Enumerate.finitely-many-patterns` | `DeansProblem.Truncation.Pattern` |
+| Section 9.3: the box of a labeled pattern holds the triple of every truncation with that pattern | `bound-sound` | `DeansProblem.Truncation.Pattern` |
+| Section 9.3: Freese's Lemma 2, in any lattice | `above-or-below`, `lemma-2-at`, `lemma-2` | `DeansProblem.Irredundant` |
+| Section 9.3: the gap, as a decidable predicate | `StronglyIrredundant`, `DecideBox.stronglyIrredundant?` | `DeansProblem.AlmostProof` |
+| Section 9.3: Freese's `a₁` lies outside his link | `a₁∉⟨a',b',c'⟩` | `DeansProblem.Examples.FreeseGap` |
+| Section 9.3: inside a link read as `FL(3)`, the box of a generator that is both a joinand and a meetand is a point | `point-box-in-link` | `DeansProblem.Truncation.Pattern` |
+| Section 9.4: Freese's box is strongly irredundant, and his terms express his base in at most one link | `freese-box-irredundant`, `freese-terms-in-box`, `freese-terms-once` | `DeansProblem.Examples.FreeseBox` |
+| Section 10.1: `FL(X)` with its universal property | `FL`, `FL-extend` | `Lattices.Free.Universal` |
+
+### The names
+
++  **The convention**.  The statement of Theorem 4.5 is the type
+   `Theorem-4·5`, and its proof is `theorem-4·5 : Theorem-4·5`; likewise
+   `Lemma-2·2`, `Corollary-2·4`, `Proposition-4·2`.  The lettered results are
+   `Theorem-A` to `Theorem-H`, `Corollary-A1` to `Corollary-A4`,
+   `Corollary-E1` and `Lemma-1` to `Lemma-5`, and the four forms of Theorem C
+   are `Theorem-C-one-step`, `Theorem-C-four-links`, `Theorem-C-length-three`
+   and `Theorem-C-coherent`.  A statement whose parts quantify over universe
+   levels separately is a record in `Setω` with fields `part-1`, `part-2`,
+   ..., in the paper's order.
++  **The middle dot**.  Agda reserves `.` for qualified names
+   (`Theorem-4.5` is a parse error), so the separator is the middle dot `·`
+   (U+00B7), which Agda takes inside a name.
++  **The numbering** is that of the paper's full version.  If the paper
+   renumbers its results, the names follow, in a commit of their own.
++  **FJN's results**.  agda-lattices names the results of
+   [Freese, Ježek and Nation][FJN] that it proves by a standard name where
+   the result has one (`WhitmansTheorem` for FJN Theorem 1.11), and otherwise
+   by FJN's number (`FJN-1·19`, with its proof `fjn-1·19`); its module
+   `Lattices.Free.FJN` lists them in the book's order.  The statements of the
+   paper's Section 2 are built from them in `DeansProblem.Preliminaries`.
 
 ## The modules
 
 Every module of this repository is under `src/DeansProblem/`, with the barrel
-`DeansProblem`, which re-exports the modules below but the worked examples and
-`DeansProblem.Irredundant`.
+`DeansProblem`, which re-exports the modules below but the worked examples,
+`DeansProblem.Irredundant`, `DeansProblem.Ladder` and `DeansProblem.Paper`.
 
-+  **Chains**.  `DeansProblem.Chain` (steps and chains of free triples),
-   `DeansProblem.Chain.Copies` (chains of sublattices isomorphic to `FL(3)`,
-   the paper's definition, proved equivalent to the record of a chain),
-   `DeansProblem.Chain.Limit` (Proposition 4.2, a chain and the direct limit
-   of its self-embeddings), `DeansProblem.Chain.Reduction` (the reduction of
-   Section 1.1 to `FL(3)`) and `DeansProblem.Chain.Condition` (Theorem A for
-   a finitely generated sublattice, and the chain condition for
-   `n`-generated sublattices).
-+  **Toward Theorem H**.  `DeansProblem.SelfSimilar` (Theorem A for a free
-   sublattice), `DeansProblem.Coherent` and `DeansProblem.Coherent.Finite`
-   (transitions and coherent chains, Theorem C), `DeansProblem.Partition`
-   (the partition lemma), `DeansProblem.Fixed` (periodic and fixed points),
-   `DeansProblem.Inflationary` (Lemmas 1 to 4 and Theorem F),
-   `DeansProblem.FixedGenerator` (Theorem E), `DeansProblem.Shape`
-   (Corollary E1), `DeansProblem.LengthThree` (Theorem G) and
++  **The paper's results**.  `DeansProblem.Paper` (the 48 results in the
+   paper's order) and `DeansProblem.Preliminaries` (Section 2).
++  **Chains**.  `DeansProblem.Chain` (steps and chains of free triples,
+   Proposition 4.3), `DeansProblem.Chain.Copies` (chains of sublattices
+   isomorphic to `FL(3)`, the paper's definition, proved equivalent to the
+   record of a chain), `DeansProblem.Chain.Limit` (Proposition 4.2, a chain
+   and the direct limit of its self-embeddings),
+   `DeansProblem.Chain.Reduction` (the reduction of Section 1.1 to `FL(3)`),
+   `DeansProblem.Chain.Condition` (Theorem A and Corollary A3, and the chain
+   condition for `n`-generated sublattices), `DeansProblem.Chain.Powers` (the
+   steps of a chain are never the powers of one map) and
+   `DeansProblem.Chain.TwoGenerated` (the chain condition for two
+   generators).
++  **Toward Theorem H**.  `DeansProblem.SelfSimilar` (Corollary A1),
+   `DeansProblem.Coherent` and `DeansProblem.Coherent.Finite` (transitions
+   and coherent chains, Lemmas 6.1 and 6.3, Theorem C's finite forms and
+   Proposition 6.6), `DeansProblem.Pigeonhole` (the infinite pigeonhole
+   principle, as a hypothesis), `DeansProblem.Coherent.Infinite` (Theorem C's
+   coherent form and Corollary 6.4), `DeansProblem.Partition` (the partition
+   lemma, Lemma 6.10), `DeansProblem.Fixed` (periodic and fixed points,
+   Corollary A4 and Lemma 6.11), `DeansProblem.Inflationary` (Lemmas 1 to 4
+   and Theorem F), `DeansProblem.FixedGenerator` (Propositions 7.2 to 7.4
+   and Theorem E), `DeansProblem.Shape` (Corollary E1),
+   `DeansProblem.LengthThree` (Lemmas 5 and 8.1 and Theorem G) and
    `DeansProblem.NoChain` (Theorem H).
-+  **Freese's notes**.  `DeansProblem.Truncation` (the truncation theorem),
-   `DeansProblem.Irredundant` (Freese's Lemma 2 in any lattice) and
-   `DeansProblem.AlmostProof` (boxes, and the gap in Freese's almost proof as
-   a predicate).
++  **Without freeness**.  `DeansProblem.Ladder` (Lemma 4.4, in any lattice).
++  **Freese's notes**.  `DeansProblem.Truncation` (Theorem 9.1, the
+   truncation theorem), `DeansProblem.Truncation.Pattern` (labeled patterns
+   and their boxes), `DeansProblem.Irredundant` (Freese's Lemma 2 in any
+   lattice), `DeansProblem.AlmostProof` (boxes, and the gap in Freese's almost
+   proof as a predicate) and `DeansProblem.AlmostProof.Links` (Theorem 9.2).
 +  **Worked examples**, under `DeansProblem.Examples`: `FreeseStep` (Freese's
-   example, on terms over nine generators), `SelfEmbedding`,
-   `FreeseEquations`, `FreeseBox`, `FixedTriple` (Theorem D), `Rigidity` and
-   `ChainCondition` (the ladder).
+   example, on terms over nine generators), `FreeseStep.Complexity` (the
+   complexities of its generators), `SelfEmbedding` (Corollary 7.5),
+   `FreeseEquations` (Corollary A2), `FreeseBox`, `FreeseGap`, `FixedTriple`
+   (Theorem D and Proposition 6.9), `FixedTriple.Remarks`, `Rigidity` and
+   `ChainCondition` (the ladder, Theorem 4.5).
 
 ## The cost
 
@@ -258,3 +385,4 @@ statement and proof.
 [Cachix]: https://www.cachix.org/
 [Nix]: https://nixos.org/
 [paper]: https://arxiv.org/abs/YYMM.NNNNN
+[FJN]: https://doi.org/10.1090/surv/042

@@ -15,6 +15,11 @@
 #   make safety              Every module carries the --safe pragma and no
 #                            postulate or unsafe pragma (scripts/check-safety.sh).
 #   make safety-test         The cases of that check (scripts/test-check-safety.sh).
+#   make paper-check         The README's tables against the development: its
+#                            table of results lists DeansProblem.Paper's
+#                            re-exports in order, and every name of its tables
+#                            resolves in its module (scripts/check-paper.sh);
+#                            the last step of make check.
 #   make profile             Type-check with Agda profiling enabled.
 #   make clean               Remove this development's interface files and
 #                            the aggregator (the copies of agda-algebras and
@@ -25,7 +30,7 @@
 #   +  every module under src/, and the library modules of
 #      TABLE_LIBRARY_MODULES (below), generated and gitignored, so that one
 #      run of Agda checks the whole development and every module the
-#      README's table names;
+#      README's tables name;
 #   +  a PHONY target, always regenerated, so that adding or removing a module
 #      is picked up without anyone having to remember; `find` rather than
 #      `git ls-tree`, so that untracked files in the working tree are included.
@@ -35,7 +40,7 @@
 #   AGDA_OPTS      extra agda flags
 # =============================================================================
 
-.PHONY: help default check test safety safety-test profile clean EverythingDeansProblem.agda
+.PHONY: help default check test safety safety-test paper-check profile clean EverythingDeansProblem.agda
 
 # -- Configuration -----------------------------------------------------------
 SRCDIR    := src
@@ -45,10 +50,11 @@ AGDA      ?= agda
 # procedure while they are checked.
 RTS_OPTS  := +RTS -M6G -A128M -RTS
 AGDA_OPTS ?=
-# The modules of the pinned agda-lattices that the README's table of the
-# paper's statements names and no module under src/ imports.  The aggregator
-# imports them too, so that `make check` checks every module the table names.
-TABLE_LIBRARY_MODULES := Lattices.Free.Canonical Lattices.Free.Semidistributive
+# The modules of the pinned agda-lattices that the README's tables of the
+# paper's results and claims name and no module under src/ imports.  The
+# aggregator imports them too, so that `make check` checks every module the
+# tables name.
+TABLE_LIBRARY_MODULES := Lattices.Free.Membership Lattices.Free.Small
 
 .DEFAULT_GOAL := help
 
@@ -92,9 +98,14 @@ safety-test: ## Run the cases of the safety check
 	@echo "target: $@"
 	bash scripts/test-check-safety.sh
 
-check test: safety EverythingDeansProblem.agda ## Check the pragmas, then type-check the development
+check test: safety EverythingDeansProblem.agda ## Check the pragmas, type-check the development, then the README's tables
 	@echo "target: $@"
 	$(AGDA) $(RTS_OPTS) $(AGDA_OPTS) $(SRCDIR)/EverythingDeansProblem.agda
+	AGDA=$(AGDA) bash scripts/check-paper.sh
+
+paper-check: ## Check the README's tables against DeansProblem.Paper and the modules
+	@echo "target: $@"
+	AGDA=$(AGDA) bash scripts/check-paper.sh
 
 # Profile a whole type-check.  Agda accepts one profiling mode at a
 # time, so override PROFILE to choose: internal (phases), modules (per-module

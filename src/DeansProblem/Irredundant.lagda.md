@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Strongly irredundant intervals: Freese's Lemma 2
 
-This is the [DeansProblem.Irredundant][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Irredundant][] module of this repository.
 
 Freese's "Notes on Dean's problem" (1997) end with an "almost proof" that a free
 lattice has no infinite ascending chain of sublattices isomorphic to `FL(3)`, and
@@ -223,3 +223,10 @@ module _ (𝑳 : Lattice α ρ) where
             → (t : LatTerm (Fin 3)) → lo i ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ hi i → ⟦ t ⟧ η ≈ η i
     lemma-2 si box i = lemma-2-at i (si i) box
 ```
+
+--------------------------------------
+
+[DeansProblem.Irredundant]: DeansProblem.Irredundant.html
+[DeansProblem.AlmostProof]: DeansProblem.AlmostProof.html
+[Lattices.Breadth]: Lattices.Breadth.html
+[Lattices.Free.Term]: Lattices.Free.Term.html

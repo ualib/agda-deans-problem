@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Worked example: the equations for a self-similar Freese step
 
-This is the [DeansProblem.Examples.FreeseEquations][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Examples.FreeseEquations][] module of this repository.
 
 Freese's step toward Dean's problem ([DeansProblem.Examples.FreeseStep][]) is a
 proper containment `⟨a, b, c⟩ ⊊ ⟨a', b', c'⟩` of two copies of `FL(3)` in the
@@ -52,6 +52,7 @@ cheap.
 module DeansProblem.Examples.FreeseEquations where
 
 -- Imports from the Agda Standard Library ---------------------------------------
+open import Data.Empty                             using ( ⊥ )
 open import Data.Fin.Base                          using ( Fin )
 open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F ; 3F ; 4F ; 5F ; 6F
                                                          ; 7F ; 8F )
@@ -189,3 +190,26 @@ bar 8F = c̄₂₂
 bar-not-free : ¬ FreelyGenerates bar
 bar-not-free (jc , _) = 6F∉[1F] (jc {6F} {1F ∷ []} relation-1)
 ```
+
+**Corollary A2** of the paper, as one statement: the equations `Φ(a) = a'`,
+`Φ(b) = b'`, `Φ(c) = c'` have no solution `Φ` among the injective
+endomorphisms of `FL(9)`, the substitutions that freely generate.
+
+```agda
+-- Corollary A2: Freese's equations have no injective solution in the endomorphisms of FL(9).
+Corollary-A2 : Type
+Corollary-A2 =  (Φ : Sub (Fin 9) (Fin 9)) → FreelyGenerates Φ
+                → a [ Φ ] ≈ʷ a' → b [ Φ ] ≈ʷ b' → c [ Φ ] ≈ʷ c' → ⊥
+
+-- The proof of Corollary A2.
+corollary-A2 : Corollary-A2
+corollary-A2 Φ Φ-free ea eb ec =
+  no-FreeseΦ Φ (record { Φ-free = Φ-free ; a↦a' = ea ; b↦b' = eb ; c↦c' = ec })
+```
+
+--------------------------------------
+
+[DeansProblem.Examples.FreeseEquations]: DeansProblem.Examples.FreeseEquations.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Examples.FreeseStep]: DeansProblem.Examples.FreeseStep.html
+[DeansProblem.SelfSimilar]: DeansProblem.SelfSimilar.html

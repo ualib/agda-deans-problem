@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Chains of copies of FL(3)
 
-This is the [DeansProblem.Chain.Copies][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Chain.Copies][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -315,3 +315,13 @@ copy-round-trip : (c : CopyChain X)
 copy-round-trip c k = (λ (a , e) → a , ≈ʷ-trans (copy-φ≈ c k a) e)
                     , (λ (a , e) → a , ≈ʷ-trans (≈ʷ-sym (copy-φ≈ c k a)) e)
 ```
+
+--------------------------------------
+
+[DeansProblem.Chain.Copies]: DeansProblem.Chain.Copies.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[Lattices.Free.Generation]: Lattices.Free.Generation.html
+[Setoid.Functions]: Setoid.Functions.html
+[Setoid.Subalgebras.Basic]: Setoid.Subalgebras.Basic.html

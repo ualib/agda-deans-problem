@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Inflationary self-embeddings of FL(3), and rigidity for a class
 
-This is the [DeansProblem.Inflationary][] module of the [agda-lattices][] library.
+This is the [DeansProblem.Inflationary][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -622,3 +622,134 @@ module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) (z : Fin 3) (
   rigid-class (inj₁ nd) = rigid-fixed a fixa nd
   rigid-class (inj₂ nd) = rigid-fixed b fixb nd
 ```
+
+#### The paper's statements
+
+Lemmas 1 to 4 and Theorem F of [the paper][], each as one statement, in
+`FL(3)` as the paper states them; the names above hold the lemmas in `FL(n)`
+where they can.  The generators the paper calls `x`, `y` and `z` are any
+three: in Lemma 1 and Theorem F, `z` and the other two, `other z` and
+`other' z`, which play `x` and `y`; in Lemma 4, any `x`, `y`, `z` that cover
+`Fin 3` with `x ≠ z`.  A self-embedding of `FL(3)` is a substitution that
+freely generates, and it is proper when it misses a generator.
+
+**Lemma 1**: if a self-embedding `Θ` fixes `x ∨ y`, then `Θ(x), Θ(y) ≤ x ∨ y`
+and `z ≤ Θ(z)`, and either `x ≤ Θ(x)` and `y ≤ Θ(y)`, or `x ≤ Θ(y)` and
+`y ≤ Θ(x)`, in which case `Θ²` is inflationary.
+
+```agda
+-- Lemma 1: a self-embedding fixing x ∨ y moves x and y up, straight or swapped, below x ∨ y, and
+-- z up; swapped, its square is inflationary.
+Lemma-1 : Type
+Lemma-1 =  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (z : Fin 3)
+           → let x = other z ; y = other' z in
+             (ℊ x ∨̇ ℊ y) [ Θ ] ≈ʷ ℊ x ∨̇ ℊ y
+           → (Θ x ≤ʷ ℊ x ∨̇ ℊ y × Θ y ≤ʷ ℊ x ∨̇ ℊ y) × ℊ z ≤ʷ Θ z
+           × ((ℊ x ≤ʷ Θ x × ℊ y ≤ʷ Θ y) ⊎ (ℊ x ≤ʷ Θ y × ℊ y ≤ʷ Θ x × Inflationary (iter Θ 2)))
+
+-- The proof of Lemma 1.
+lemma-1 : Lemma-1
+lemma-1 Θ Θ-free z fix =
+  let (cases , bx , by) = fixes-join Θ Θ-free z fix
+  in  (bx , by) , fixes-join-third Θ Θ-free z fix
+    , [ inj₁ , (λ (p , q) → inj₂ (p , q , fixes-join-swapped Θ Θ-free z fix p q)) ]′ cases
+```
+
+**Lemma 2**: if a positive power `Θⁿ` of a proper self-embedding `Θ` fixes a
+generator `g`, so does `Θ`.
+
+```agda
+-- Lemma 2: a generator fixed by a positive power of a proper self-embedding is fixed by it.
+Lemma-2 : Type
+Lemma-2 =  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
+           → (e : ℕ) (g : Fin 3) → iter Θ (suc e) g ≈ʷ ℊ g → Θ g ≈ʷ ℊ g
+
+-- The proof of Lemma 2.
+lemma-2 : Lemma-2
+lemma-2 = power-fixes→fixes
+```
+
+**Lemma 3**, for an inflationary self-embedding `Θ`: (a) a non-generator
+canonical joinand or meetand of a fixed point is fixed, and so every
+non-generator node of the canonical tree of a fixed point
+(`Node`{.AgdaDatatype}, the root included); (b) if a generator `g` is a
+canonical meetand of a fixed point, `Θ(g) = g`; (c) if `Θ` is strictly
+inflationary, moving every generator, no fixed point lies below a generator.
+
+```agda
+-- Lemma 3: an inflationary self-embedding fixes the non-generator nodes of its fixed points'
+-- trees and their generator meetands; strictly inflationary, it has no fixed point below a
+-- generator.
+Lemma-3 : Type
+Lemma-3 =
+  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → Inflationary Θ
+  →  ((w : LatTerm (Fin 3)) → w [ Θ ] ≈ʷ w → {u : LatTerm (Fin 3)}
+      → u ∈ canonicalJoinands (_≟_ {3}) w ⊎ u ∈ canonicalMeetands (_≟_ {3}) w
+      → (∀ v → ¬ (u ≈ʷ ℊ v)) → u [ Θ ] ≈ʷ u)
+   × ((w : LatTerm (Fin 3)) → w [ Θ ] ≈ʷ w → {u : LatTerm (Fin 3)} → Node w u → u [ Θ ] ≈ʷ u)
+   × ((w : LatTerm (Fin 3)) → w [ Θ ] ≈ʷ w → {g : Fin 3} → ℊ g ∈ canonicalMeetands (_≟_ {3}) w
+      → Θ g ≈ʷ ℊ g)
+   × ((∀ g → ¬ (Θ g ≈ʷ ℊ g)) → (w : LatTerm (Fin 3)) → w [ Θ ] ≈ʷ w → (g : Fin 3) → ¬ (w ≤ʷ ℊ g))
+
+-- The proof of Lemma 3.
+lemma-3 : Lemma-3
+lemma-3 Θ Θ-free inf =
+    (λ w fix → [ fixed-joinand-inflationary Θ Θ-free inf w fix
+               , fixed-meetand-inflationary Θ Θ-free inf w fix ]′)
+  , node-fixed Θ Θ-free inf
+  , meetand-gen-fixed Θ Θ-free inf
+  , (λ moves → strict-fixed-not-below Θ Θ-free inf (λ v le → moves v (le , inf v)))
+```
+
+**Lemma 4**: if a self-embedding `Φ` fixes `z` and an element `a` with
+`x ≤ a` and `y ≰ a`, then `x ≤ Φ(x)`.
+
+```agda
+-- Lemma 4: inflation transfers to x through a fixed element above x and not above y.
+Lemma-4 : Type
+Lemma-4 =  (Φ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Φ → (x y z : Fin 3)
+           → (∀ v → v ≡ x ⊎ v ≡ y ⊎ v ≡ z) → x ≢ z → Φ z ≈ʷ ℊ z
+           → (a : LatTerm (Fin 3)) → a [ Φ ] ≈ʷ a → ℊ x ≤ʷ a → ¬ (ℊ y ≤ʷ a) → ℊ x ≤ʷ Φ x
+
+-- The proof of Lemma 4.
+lemma-4 : Lemma-4
+lemma-4 = inflation-transfer
+```
+
+**Theorem F**: let `Θ₁ : x, y, z ↦ a, b, z` be a self-embedding fixing `z`
+with `x ≤ a`, `y ≰ a`, `y ≤ b` and `x ≰ b`, and let `Φ` be a self-embedding
+fixing `a`, `b` and `z`; if the canonical tree of some fixed point of `Φ` has a
+meet node with `x` or `y` among its meetands, then `Φ` is the identity.
+
+```agda
+-- Theorem F: rigidity for a class: a meet node with x or y as a meetand, in the tree of a fixed
+-- point of an embedding fixing Θ₁'s images, makes that embedding the identity.
+Theorem-F : Type
+Theorem-F =
+  (z : Fin 3) (Θ₁ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ₁ → Θ₁ z ≈ʷ ℊ z
+  → let x = other z ; y = other' z in
+    ℊ x ≤ʷ Θ₁ x → ¬ (ℊ y ≤ʷ Θ₁ x) → ℊ y ≤ʷ Θ₁ y → ¬ (ℊ x ≤ʷ Θ₁ y)
+  → (Φ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Φ → (∀ i → Θ₁ i [ Φ ] ≈ʷ Θ₁ i)
+  → (w : LatTerm (Fin 3)) → w [ Φ ] ≈ʷ w → {u : LatTerm (Fin 3)} → Node w u
+  → {g : Fin 3} → g ≢ z → ℊ g ∈ canonicalMeetands (_≟_ {3}) u → ∀ v → Φ v ≈ʷ ℊ v
+
+-- The proof of Theorem F.
+theorem-F : Theorem-F
+theorem-F z Θ₁ _ fixz₁ x≤a y≰a y≤b x≰b Φ Φ-free fix =
+  rigid-fixed Φ Φ-free z fixz (Θ₁ (other z)) (Θ₁ (other' z)) (fix (other z)) (fix (other' z))
+              x≤a y≰a y≤b x≰b
+  where
+  -- Φ fixes z, the image of z.
+  fixz : Φ z ≈ʷ ℊ z
+  fixz = ≈ʷ-trans ([]-cong Φ (≈ʷ-sym fixz₁)) (≈ʷ-trans (fix z) fixz₁)
+```
+
+--------------------------------------
+
+[DeansProblem.Inflationary]: DeansProblem.Inflationary.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Examples.Rigidity]: DeansProblem.Examples.Rigidity.html
+[DeansProblem.Fixed]: DeansProblem.Fixed.html
+[DeansProblem.Partition]: DeansProblem.Partition.html
+[DeansProblem.Shape]: DeansProblem.Shape.html
+[Freese, Ježek, and Nation (1995)]: https://doi.org/10.1090/surv/042

@@ -318,3 +318,8 @@ proposition-4·2 =
 --------------------------------------
 
 [DeansProblem.Chain.Limit]: DeansProblem.Chain.Limit.html
+[DeansProblem.Chain.Copies]: DeansProblem.Chain.Copies.html
+[DeansProblem.LengthThree]: DeansProblem.LengthThree.html
+[DeansProblem.NoChain]: DeansProblem.NoChain.html
+[Lattices.DirectLimit]: Lattices.DirectLimit.html
+[Lattices.DirectLimit.Union]: Lattices.DirectLimit.Union.html

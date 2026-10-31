@@ -8,7 +8,7 @@ author: "the agda-lattices development team"
 
 ### Freese's almost-proof, and its gap as a predicate
 
-This is the [DeansProblem.AlmostProof][] module of the [agda-lattices][] library.
+This is the [DeansProblem.AlmostProof][] module of this repository.
 
 [the paper]: https://arxiv.org/abs/YYMM.NNNNN
 
@@ -291,3 +291,17 @@ what make a box wider than a point, and they are visible only in the ambient
 lattice, whose trees stay fixed along the chain.  So the gap is a property of a
 recurring labelled pattern in the ambient lattice, as Freese stated it; the
 pair `(θ, M)` carries the terms of the pattern and not its box.
+
+--------------------------------------
+
+[DeansProblem.AlmostProof]: DeansProblem.AlmostProof.html
+[DeansProblem.AlmostProof.Links]: DeansProblem.AlmostProof.Links.html
+[DeansProblem.Chain]: DeansProblem.Chain.html
+[DeansProblem.Coherent]: DeansProblem.Coherent.html
+[DeansProblem.Coherent.Finite]: DeansProblem.Coherent.Finite.html
+[DeansProblem.Examples.FreeseBox]: DeansProblem.Examples.FreeseBox.html
+[DeansProblem.Examples.FreeseGap]: DeansProblem.Examples.FreeseGap.html
+[DeansProblem.Irredundant]: DeansProblem.Irredundant.html
+[DeansProblem.Truncation]: DeansProblem.Truncation.html
+[DeansProblem.Truncation.Pattern]: DeansProblem.Truncation.Pattern.html
+[Lattices.Free.Universal]: Lattices.Free.Universal.html

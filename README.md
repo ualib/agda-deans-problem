@@ -432,7 +432,8 @@ check it, and how a pull request is reviewed.
 The development is licensed under the Apache License 2.0 (`LICENSE`);
 `NOTICE` records the attribution it carries from the Agda Universal Algebra
 Library.  `CITATION.cff` gives the metadata for citing it; the paper cites
-the tagged release, whose archived copy will have a DOI.
+the release tagged `v0.1.0`, whose archived copy will have a DOI, and whose
+notes are [`docs/releases/v0.1.0.md`](docs/releases/v0.1.0.md).
 
 ## Acknowledgment
 

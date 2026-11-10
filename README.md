@@ -350,13 +350,68 @@ Every module of this repository is under `src/DeansProblem/`, with the barrel
 
 The cost of the check is stated for the paper's tag, measured as follows:
 `make check` from a clean clone, with the Agda already in the Nix store, timed
-for wall time and peak resident memory, three runs, the median reported; once
-with the interface files of agda-lattices and of the Agda Universal Algebra
-Library built in the same run, and once with them already built, which is the
-cost of this repository's modules alone.  The figures, and the counts of
-modules and lines the paper states, will be added here when the tag is cut.
-The cost is where the Whitman decisions are, above all in the worked examples
-on Freese's terms.
+for wall time and peak resident memory by `/usr/bin/time -v`, the median of
+the runs reported with their range; once with the interface files of
+agda-lattices and of the Agda Universal Algebra Library built in the same run
+(a fresh clone's first check, which checks 173 modules: this repository's 38,
+39 of agda-lattices, 95 of the Agda Universal Algebra Library, and the
+aggregator), and once with them already built (`make clean`, then the check
+again, which checks 39), which is the cost of this repository's modules
+alone.  The Agda run, the figure the paper gives, is timed on its own, by a
+timing wrapper given to the Makefile as `AGDA`; the rest of `make check` is
+`make safety` and `scripts/check-paper.sh`, whose two Agda probes load the
+development's interfaces.  The Agda run uses one core: its processor time is
+its wall time.
+
+Measured on 9 November 2026 at commit `9f195d3`, whose code the tag has, in
+six runs of each kind (two sets of three, from six fresh clones), on a
+machine with an Intel Core i9-12900H (6 performance and 8 efficiency cores,
+20 threads) and 62 GiB of memory, shared with other work at a load average
+of 3.1 to 4.8:
+
+| The libraries' interfaces | `make check` | The Agda run | Peak resident memory |
+| --- | --- | --- | --- |
+| built in the run | 52.7 s (44.2 to 56.8) | 45.4 s (37.8 to 49.6) | 2.03 to 2.25 GiB |
+| already built | 26.3 s (24.1 to 28.5) | 19.1 s (17.6 to 21.2) | 1.74 to 1.77 GiB |
+
+The load is the measurement's, not the release's.  The same commit, with the
+same toolchain, measured on 31 October 2026 at a load average of 0.3 to 1.1,
+gave the paper's figures: the Agda run took 32.5 seconds from source (32.4
+to 32.6, three runs) and 15.0 seconds with the libraries built, and
+`make check` from source 37.7 seconds.  The medians above are 27 and 40
+percent higher, and a check with the libraries built, pinned to the least
+busy performance core, took 16.9 seconds for the Agda run.  The peak
+follows the garbage collector's schedule, which depends on timing: each set
+of three runs from source peaked at one value, 2.25 GiB in the first and
+2.03 GiB in the second, and the runs of 31 October at 2.24, 2.24 and 2.34
+GiB.
+
+Pinned to one core, with Agda's per-module profile (every interface file
+deleted, then `taskset -c 0 make PROFILE=modules profile`), the check from
+source took 43.3 seconds on 9 November, and 32.4 on 31 October.  The
+costliest modules of this repository were, both times and in this order,
+`DeansProblem.Examples.FreeseStep.Complexity` (3.0 seconds on 9 November),
+`DeansProblem.Examples.FreeseBox` (2.4), `DeansProblem.Examples.FreeseStep`
+(1.8) and `DeansProblem.FixedGenerator` (1.6); no other module, of this
+repository or of the libraries, took a second.  The cost is where the
+Whitman decisions are, above all in the worked examples on Freese's terms.
+
+### The counts
+
+At commit `9f195d3`, with the libraries at the commits the flake pins, the
+counts the paper states are as follows:
+
++  this repository's 38 modules have 15,410 lines of literate source, of
+   which 9,312 are Agda code;
++  the 39 modules of agda-lattices that the check reads, of the 91 at its
+   pin, have 16,435 lines, of which 10,247 are code;
++  the check reads 95 modules of the Agda Universal Algebra Library.
+
+A line of code is one inside a block that Agda reads, by its rules for
+literate Markdown: a block opened by a fence that is bare or marked `agda`,
+and closed by a bare fence, indented or not.  The modules of agda-lattices
+are those that this repository's modules import, directly or not, with the
+two that `make check` adds (`TABLE_LIBRARY_MODULES` in the `Makefile`).
 
 ## Provenance
 

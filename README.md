@@ -37,6 +37,13 @@ flakes enabled, needs nothing else:
     cd agda-deans-problem
     nix develop --command make check
 
+If flakes are not enabled in your Nix configuration, write
+`nix --extra-experimental-features 'nix-command flakes' develop` in place of
+`nix develop`.  The paper cites the tag `v0.1.0`; to check that state of the
+repository, run `git checkout v0.1.0` before `nix develop`.  The tag's
+archived copy, a source archive without the git history, checks the same
+way from the directory it unpacks to.
+
 `make check` first runs `scripts/check-safety.sh` (below), then generates
 `src/EverythingDeansProblem.agda`, which imports every module under `src/`
 and the two modules of agda-lattices that the tables below name and no
@@ -44,8 +51,11 @@ module here imports (`Lattices.Free.Membership` and `Lattices.Free.Small`),
 type-checks it with a heap limit of 6 GiB (`+RTS -M6G -A128M`), the limit
 under which the paper's costs are measured, and last runs
 `scripts/check-paper.sh` (below).  It exits 0 when every module checks and
-the tables agree with the development.  There is no separate test step:
-type-checking is the test.
+the tables agree with the development, and its last line is the following:
+
+    check-paper: 48 results agree with DeansProblem.Paper; 207 names resolve in 40 modules
+
+There is no separate test step: type-checking is the test.
 
 The Agda is a pre-release of Agda 2.9.0, which Nix builds from source in about
 an hour unless it can fetch it from the public binary cache
@@ -58,10 +68,18 @@ user):
     extra-substituters = https://formalverification.cachix.org
     extra-trusted-public-keys = formalverification.cachix.org-1:KG/AJuuli2F4/bA56rUYC9V8ZE/Zw6iZjxJEf40cQOo=
 
+The cache holds the build for x86_64-linux, the system that the Agda
+Universal Algebra Library's CI runs on, as do this repository's CI and the
+measurements of [The cost][cost].  The flake also names aarch64-linux and
+macOS, where Nix may have to build the Agda, and where the release has not
+been checked.  The toolchain takes about 3.2 GiB of the Nix store, 2.5 GiB
+of it the GHC 9.10.3 that the Agda environment carries.
+
 The first `make check` also checks the modules of agda-lattices and of the
 Agda Universal Algebra Library that the development imports, and keeps their
-interface files under `.deps/`, so later runs check this repository's modules
-alone.
+interface files under `.deps/`.  A later run checks only what has changed;
+after `make clean`, which removes this repository's interface files and
+leaves `.deps/` alone, it checks this repository's modules alone.
 
 ### The toolchain
 
@@ -344,8 +362,9 @@ on Freese's terms.
 
 The development was first written together with the general modules that
 now form agda-lattices, and moved into the namespace `DeansProblem` in October
-2026, when those were published as a library of their own.  One module, `DeansProblem.Examples.FreeseStep` (Freese's example),
-was first written in the [Agda Universal Algebra Library][agda-algebras].
+2026, when those were published as a library of their own.  One module,
+`DeansProblem.Examples.FreeseStep` (Freese's example), was first written in
+the [Agda Universal Algebra Library][agda-algebras].
 
 ## Contributing
 
@@ -383,6 +402,7 @@ statement and proof.
 [agda-pin]: https://github.com/agda/agda/tree/da66a8c75f11d10699a6b38b261efdf244b66f2a
 [agda-stdlib]: https://github.com/agda/agda-stdlib
 [Cachix]: https://www.cachix.org/
+[cost]: #the-cost
 [Nix]: https://nixos.org/
 [paper]: https://arxiv.org/abs/YYMM.NNNNN
 [FJN]: https://doi.org/10.1090/surv/042

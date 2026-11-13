@@ -360,8 +360,8 @@ again, which checks 39), which is the cost of this repository's modules
 alone.  The Agda run, the figure the paper gives, is timed on its own, by a
 timing wrapper given to the Makefile as `AGDA`; the rest of `make check` is
 `make safety` and `scripts/check-paper.sh`, whose two Agda probes load the
-development's interfaces.  The Agda run uses one core: its processor time is
-its wall time.
+development's interfaces.  The Agda run uses one core; the times below are wall
+times, which on a loaded machine can exceed its processor time.
 
 Measured on 9 November 2026 at commit `9f195d3`, whose code the tag has, in
 six runs of each kind (two sets of three, from six fresh clones), on a
@@ -378,9 +378,10 @@ The load is the measurement's, not the release's.  The same commit, with the
 same toolchain, measured on 31 October 2026 at a load average of 0.3 to 1.1,
 gave the paper's figures: the Agda run took 32.5 seconds from source (32.4
 to 32.6, three runs) and 15.0 seconds with the libraries built, and
-`make check` from source 37.7 seconds.  The medians above are 27 and 40
-percent higher, and a check with the libraries built, pinned to the least
-busy performance core, took 16.9 seconds for the Agda run.  The peak
+`make check` from source 37.7 seconds.  The medians above are 40 percent
+higher from source and 27 percent higher with the libraries built, and a
+check with them built, pinned to the least busy performance core, took
+16.9 seconds for the Agda run.  The peak
 follows the garbage collector's schedule, which depends on timing: each set
 of three runs from source peaked at one value, 2.25 GiB in the first and
 2.03 GiB in the second, and the runs of 31 October at 2.24, 2.24 and 2.34

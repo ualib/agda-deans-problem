@@ -2,6 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it using these metadata."
 type: software
 title: "agda-deans-problem: the formal development of a paper on Dean's problem"
+version: 0.1.0
 abstract: >-
   The formal development, in Agda, of the paper "No free lattice contains an
   infinite ascending chain of copies of FL(3)" by William DeMeo and Ralph

@@ -46,7 +46,7 @@ type-checks it under a heap limit of 6 GiB, and then runs
 `scripts/check-paper.sh` (`make paper-check`), which checks the README's
 tables against the development (see "The README", below).  It exits 0 when
 every module checks and the tables agree; there is no separate test step,
-since type-checking is the test.  On 2026-10-30 it ended as follows:
+since type-checking is the test.  On 2026-11-09 it ended as follows:
 
     target: safety
     bash scripts/check-safety.sh src
@@ -56,7 +56,7 @@ since type-checking is the test.  On 2026-10-30 it ended as follows:
     target: check
     agda +RTS -M6G -A128M -RTS  src/EverythingDeansProblem.agda
     AGDA=agda bash scripts/check-paper.sh
-    check-paper: 48 results agree with DeansProblem.Paper; 196 names resolve in 40 modules
+    check-paper: 48 results agree with DeansProblem.Paper; 207 names resolve in 40 modules
 
 The aggregator is generated, and found by `find`, so a new module is checked
 without any list to edit.  The cases of the safety check run with the

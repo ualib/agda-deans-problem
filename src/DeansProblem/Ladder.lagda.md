@@ -239,7 +239,7 @@ bound `w` are `Rungs.A 𝑳 a b w`{.AgdaFunction} and
 -- Lemma 4.4: the rungs lie below the bound, ascend, interlace, and are stable.
 Lemma-4·4 : Setω
 Lemma-4·4 =
-  ∀ {α ρ} (𝑳 : Lattice α ρ) (a b w : 𝕌[ proj₁ 𝑳 ])
+  ∀ {α ρ} (𝑳 : Lattice α ρ) (a b w : 𝕌[ 𝑳 .proj₁ ])
   → let open Lattice-Op 𝑳 using ( _∨_ )
         open Lattice-Order 𝑳 using ( _≤_ )
         open Setoid 𝔻[ proj₁ 𝑳 ] using ( _≈_ )

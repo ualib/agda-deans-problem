@@ -143,7 +143,7 @@ injectivity of `θᵃ`, that is, `m_b [ θᵈ⁺¹ ] ≈ʷ m_b`.  Then
 since iterates commute (`[]-iter-+`{.AgdaFunction} both ways).
 
 ```agda
-module _ {n : ℕ} (θ : Sub (Fin n) (Fin n)) (θ-inj : IsInjective (proj₁ (subst-hom θ))) where
+module _ {n : ℕ} (θ : Sub (Fin n) (Fin n)) (θ-inj : IsInjective (subst-hom θ .proj₁)) where
   open Bounded (_≟_ {n}) (allFin n) ∈-allFin using ( bounded ; bounded-complete )
 
   private
@@ -219,7 +219,7 @@ exactly when some positive power of `θ` fixes it.
 ```agda
 -- Corollary A4: the intersection of the images θᵏ(FL(n)) is the set of periodic points of θ.
 Corollary-A4 : Type
-Corollary-A4 =  (n : ℕ) (θ : Sub (Fin n) (Fin n)) → IsInjective (proj₁ (subst-hom θ))
+Corollary-A4 =  (n : ℕ) (θ : Sub (Fin n) (Fin n)) → IsInjective (subst-hom θ .proj₁)
                 → (m : LatTerm (Fin n))
                 → (∀ k → Σ[ mₖ ∈ LatTerm (Fin n) ] mₖ [ iter θ k ] ≈ʷ m)
                   ⇔ (Σ[ d ∈ ℕ ] m [ iter θ (suc d) ] ≈ʷ m)
@@ -249,7 +249,7 @@ module _ {n : ℕ} (θ : Sub (Fin n) (Fin n)) (θ-free : FreelyGenerates θ) whe
   open Canonicalization (_≟_ {n}) using ( canonical ; canonical-isCanonical )
 
   private
-    θ-inj : IsInjective (proj₁ (subst-hom θ))
+    θ-inj : IsInjective (subst-hom θ .proj₁)
     θ-inj = freelyGenerates→injective θ θ-free
 
     -- Complexity in FL(n).

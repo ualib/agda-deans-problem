@@ -154,7 +154,7 @@ leaves `ψ^(d + 1)(xᵢ) = xᵢ` (`power-fixes`{.AgdaFunction}).
 
 ```agda
   -- The power equal to the transition from the bottom to link j is injective.
-  power-injective : ∀ j → IsInjective (proj₁ (subst-hom (iter ψ (exponent j))))
+  power-injective : ∀ j → IsInjective (subst-hom (iter ψ (exponent j)) .proj₁)
   power-injective j {s} {t} e =
     first-factor-injective (transition c 0 j) (gens (j + 0)) (gens 0) (gens≈transition c 0 j)
       (freelyGenerates→injective (gens 0) (gens-free 0))

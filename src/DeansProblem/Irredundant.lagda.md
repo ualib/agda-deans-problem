@@ -179,7 +179,7 @@ module _ (𝑳 : Lattice α ρ) where
   open Setoid 𝔻[ proj₁ 𝑳 ]   using ( _≈_ )
   open Evaluation 𝑳          using ( ⟦_⟧ )
 
-  module _ (η lo hi : Fin 3 → 𝕌[ proj₁ 𝑳 ]) where
+  module _ (η lo hi : Fin 3 → 𝕌[ 𝑳 .proj₁ ]) where
 
     -- Freese's conditions at one index, at all three, and the family in the intervals.
     IrredundantAt : Fin 3 → Type ρ

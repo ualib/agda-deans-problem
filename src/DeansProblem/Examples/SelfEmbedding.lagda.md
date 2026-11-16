@@ -166,7 +166,7 @@ iterates are injective (`freelyGenerates-⨟`{.AgdaFunction}).
 
 ```agda
 -- The iterates of θ are injective.
-θ-injective : (k : ℕ) → IsInjective (proj₁ (subst-hom (iter θ k)))
+θ-injective : (k : ℕ) → IsInjective (subst-hom (iter θ k) .proj₁)
 θ-injective = iter-injective θ (freelyGenerates→injective θ θ-free)
 
 -- The descending chain FL(3) ⊋ θ(FL(3)) ⊋ θ²(FL(3)) ⊋ ⋯, one step at a time.

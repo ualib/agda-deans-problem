@@ -155,13 +155,13 @@ module _ {X : Type χ} (c : CopyChain X) where
 
   -- Any homomorphisms with that property agree with these at every element.
   copy-θ-unique : (θ : (k : ℕ) → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁))
-    → (∀ k a → copy-map c (suc k) (proj₁ (θ k) ⟨$⟩ a) ≈ʷ copy-map c k a)
+    → (∀ k a → copy-map c (suc k) (θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a)
     → ∀ k a → θ k .proj₁ ⟨$⟩ a ≈ʷ copy-θ k .proj₁ ⟨$⟩ a
   copy-θ-unique θ commutes k a =
     proj₂ (φ (suc k)) (≈ʷ-trans (commutes k a) (≈ʷ-sym (copy-θ-commutes k a)))
 
   -- Each θₖ is injective.
-  copy-θ-injective : (k : ℕ) → IsInjective (proj₁ (copy-θ k))
+  copy-θ-injective : (k : ℕ) → IsInjective (copy-θ k .proj₁)
   copy-θ-injective = step-injective FL₃ (FL X) φ copy-⊆
 ```
 
@@ -225,7 +225,7 @@ both limits, at a cost of ten seconds.
   copyLimit-range = (λ ((k , a) , e) → k , a , e) , (λ (k , a , e) → (k , a) , e)
 
   -- The union of the chain is the direct limit of the θₖ.
-  copyUnion≅copyLimit : proj₁ copyUnion ≅ proj₁ copyLimit
+  copyUnion≅copyLimit : copyUnion .proj₁ ≅ copyLimit .proj₁
   copyUnion≅copyLimit = rangeUnion≅limit FL₃ copy-θ (FL X) copy-hom copy-θ-commutes copy-injective
 ```
 
@@ -241,7 +241,7 @@ module _ {X : Type χ} (θ : (k : ℕ) → hom (FL (Fin 3) .proj₁) (FL (Fin 3)
          (e : DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁) where
 
   -- Each θₖ is injective.
-  limit-θ-injective : (k : ℕ) → IsInjective (proj₁ (θ k))
+  limit-θ-injective : (k : ℕ) → IsInjective (θ k .proj₁)
   limit-θ-injective = proj₁ ∘ proper
 
   -- The k-th embedding: e after the canonical map ιₖ.

@@ -307,7 +307,7 @@ lattice `FL(X)`.
 
 ```agda
 -- No free lattice over generators with decidable equality admits such a chain.
-no-chain : (_≟ˣ_ : DecidableEquality X) → Chain X → ⊥
+no-chain : DecidableEquality X → Chain X → ⊥
 no-chain _≟ˣ_ c =
   finite-colors-exhausted (code-count _≟ˣ_ c 0) (bottom-color _≟ˣ_ c)
                         (chain-escapes _≟ˣ_ c)
@@ -329,7 +329,7 @@ hypothesis, and it enters only through `no-chain`{.AgdaFunction}.
 ```agda
 -- Theorem H: no free lattice over generators with decidable equality contains
 -- an infinite strictly ascending chain of copies of FL(3).
-no-copy-chain : (_≟ˣ_ : DecidableEquality X) → CopyChain X → ⊥
+no-copy-chain : DecidableEquality X → CopyChain X → ⊥
 no-copy-chain _≟ˣ_ c = no-chain _≟ˣ_ (copyChain→chain c)
 ```
 

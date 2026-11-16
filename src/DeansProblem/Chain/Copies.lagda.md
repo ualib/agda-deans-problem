@@ -108,7 +108,7 @@ copy ((e , _) , _) = IsInRange e
 
 -- Given P ⊆ Q, the negation of Q ⊆ P is the negation of P = Q.
 ⊉⇔≠ : {P : Pred A ℓ₁} {Q : Pred A ℓ₂} → P ⊆ Q → (¬ (Q ⊆ P)) ⇔ (¬ (P ≐ Q))
-⊉⇔≠ P⊆Q = mk⇔ (λ Q⊈P P≐Q → Q⊈P (λ {x} → proj₂ P≐Q {x}))
+⊉⇔≠ P⊆Q = mk⇔ (λ Q⊈P P≐Q → Q⊈P (λ {x} → P≐Q .proj₂ {x}))
                (λ P≠Q Q⊆P → P≠Q ((λ {x} → P⊆Q {x}) , λ {x} → Q⊆P {x}))
 ```
 
@@ -167,7 +167,7 @@ module _ (c : CopyChain X) where
 
   -- The k-th triple: the images of the generators.
   copy-gens : ℕ → Sub (Fin 3) X
-  copy-gens k = restriction (proj₁ (φ k))
+  copy-gens k = restriction (φ k .proj₁)
 
   -- The k-th embedding is substitution by the k-th triple.
   copy-φ≈ : ∀ k a → copy-map k a ≈ʷ a [ copy-gens k ]
@@ -183,7 +183,7 @@ module _ (c : CopyChain X) where
 
   -- The terms express each triple in the next.
   copy-gens≈ : ∀ k i → copy-gens k i ≈ʷ copy-terms k i [ copy-gens (suc k) ]
-  copy-gens≈ k i = ≈ʷ-trans (≈ʷ-sym (proj₂ (copy-lift k (ℊ i)))) (copy-φ≈ (suc k) (copy-terms k i))
+  copy-gens≈ k i = ≈ʷ-trans (≈ʷ-sym (copy-lift k (ℊ i) .proj₂)) (copy-φ≈ (suc k) (copy-terms k i))
 ```
 
 Suppose every generator `ℊ g` of `FL(3)` is equal to one of the terms,
@@ -212,7 +212,7 @@ the next triple, and that term is `ℊ g`, so the member is the next triple's
 
     -- Each member named through idx is the next triple's member.
     member : ∀ g → copy-gens k (idx g) ≈ʷ copy-gens (suc k) g
-    member g = ≈ʷ-trans (copy-gens≈ k (idx g)) ([]-cong (copy-gens (suc k)) (≈ʷ-sym (proj₂ (covered g))))
+    member g = ≈ʷ-trans (copy-gens≈ k (idx g)) ([]-cong (copy-gens (suc k)) (≈ʷ-sym (covered g .proj₂)))
 ```
 
 So strictness makes some generator equal to none of the terms.  Which one is
@@ -229,7 +229,7 @@ generator, and a finite search finds it (`copy-misses`{.AgdaFunction}), as
     -- The search, on the decision of whether every generator is one of the terms.
     search : ∀ k → Dec (∀ g → Σ[ i ∈ Fin 3 ] ℊ g ≈ʷ copy-terms k i)
            → Σ[ g ∈ Fin 3 ] (∀ i → ¬ (ℊ g ≈ʷ copy-terms k i))
-    search k (yes covered)  = ⊥-elim (proj₂ (ascends k) (covered→⊇ k covered))
+    search k (yes covered)  = ⊥-elim (ascends k .proj₂ (covered→⊇ k covered))
     search k (no ¬covered)  =
       let (g , ¬∃) = ¬∀⟶∃¬ 3 _ (λ g → any? (λ i → ℊ g ≈ʷ? copy-terms k i)) ¬covered
       in g , λ i e → ¬∃ (i , e)
@@ -245,8 +245,8 @@ generator, and a finite search finds it (`copy-misses`{.AgdaFunction}), as
     ; gens-free  = λ k → ≤→freelyGenerates (φ k)
     ; terms      = copy-terms
     ; gens≈      = copy-gens≈
-    ; fresh      = λ k → proj₁ (copy-misses k)
-    ; fresh∉     = λ k → proj₂ (copy-misses k)
+    ; fresh      = λ k → copy-misses k .proj₁
+    ; fresh∉     = λ k → copy-misses k .proj₂
     }
 ```
 

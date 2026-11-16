@@ -116,12 +116,12 @@ finite-colors-exhausted (suc n) u E =
 
   -- Iterate those searches to omit the first color.
   skip : ℕ → ℕ
-  skip zero = proj₁ (next 0)
-  skip (suc k) = proj₁ (next (skip k))
+  skip zero = next 0 .proj₁
+  skip (suc k) = next (skip k) .proj₁
 
   -- Each search advances strictly.
   skip-step : ∀ k → skip k < skip (suc k)
-  skip-step k = proj₁ (proj₂ (next (skip k)))
+  skip-step k = next (skip k) .proj₂ .proj₁
 
   -- The selected positions form a subsequence.
   skip-increasing : Increasing skip
@@ -129,8 +129,8 @@ finite-colors-exhausted (suc n) u E =
 
   -- The first color is absent from every selected position.
   skip-avoids : ∀ k → u 0 ≢ u (skip k)
-  skip-avoids zero = proj₂ (proj₂ (next 0))
-  skip-avoids (suc k) = proj₂ (proj₂ (next (skip k)))
+  skip-avoids zero = next 0 .proj₂ .proj₂
+  skip-avoids (suc k) = next (skip k) .proj₂ .proj₂
 
   -- Delete the omitted color from the finite carrier.
   reduced : ℕ → Fin n
@@ -219,11 +219,11 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
 
   -- A common complexity bound for the generators at one link.
   generator-bound : ℕ → ℕ
-  generator-bound j = proj₁ (bound 3 (λ v → complexity _≟ˣ_ (gens j v)))
+  generator-bound j = bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₁
 
   -- Each generator satisfies that common bound.
   generators-bounded : ∀ j v → complexity _≟ˣ_ (gens j v) ≤ generator-bound j
-  generators-bounded j = proj₂ (bound 3 (λ v → complexity _≟ˣ_ (gens j v)))
+  generators-bounded j = bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₂
 
   -- The number of codes for the transitions from j, a computable upper bound
   -- for the number of their values.

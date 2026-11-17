@@ -454,7 +454,7 @@ b₁≰c p = from-no (b₁ ≤ʷ? ⌊ cᶜ ⌋) (≤ʷ-trans p (proj₂ cᶜ-sou
 c₁≰a : ¬ (c₁ ≤ʷ a)
 c₁≰a p = from-no (c₁ ≤ʷ? ⌊ âᶜ ⌋) (≤ʷ-trans p (proj₂ âᶜ-sound))
 
-module _ (τ : Sub (Fin 3) (Fin 9)) (inj : IsInjective (proj₁ (subst-hom τ)))
+module _ (τ : Sub (Fin 3) (Fin 9)) (inj : IsInjective (subst-hom τ .proj₁))
          (abc≈ρ : ∀ i → abc i ≈ʷ ρ i [ τ ]) where
   open Truncates τ
 

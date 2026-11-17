@@ -103,12 +103,12 @@ not being equal (`⊉⇔≠`{.AgdaFunction}), for predicates on any type.
 
 ```agda
 -- The copy of FL(I) that an embedding names: its image, a predicate on FL(X).
-copy : {I : Type ι} {X : Type χ} → proj₁ (FL I) ≤ proj₁ (FL X) → Pred (LatTerm X) (ι ⊔ χ)
-copy e = IsInRange (proj₁ (proj₁ e))
+copy : {I : Type ι} {X : Type χ} → FL I .proj₁ ≤ FL X .proj₁ → Pred (LatTerm X) (ι ⊔ χ)
+copy ((e , _) , _) = IsInRange e
 
 -- Given P ⊆ Q, the negation of Q ⊆ P is the negation of P = Q.
 ⊉⇔≠ : {P : Pred A ℓ₁} {Q : Pred A ℓ₂} → P ⊆ Q → (¬ (Q ⊆ P)) ⇔ (¬ (P ≐ Q))
-⊉⇔≠ P⊆Q = mk⇔ (λ Q⊈P P≐Q → Q⊈P (λ {x} → proj₂ P≐Q {x}))
+⊉⇔≠ P⊆Q = mk⇔ (λ Q⊈P P≐Q → Q⊈P (λ {x} → P≐Q .proj₂ {x}))
                (λ P≠Q Q⊆P → P≠Q ((λ {x} → P⊆Q {x}) , λ {x} → Q⊆P {x}))
 ```
 
@@ -121,7 +121,7 @@ A `CopyChain`{.AgdaRecord} is a sequence of embeddings `φ k` of `FL(3)` in
 -- An infinite strictly ascending chain of copies of FL(3) in FL(X).
 record CopyChain (X : Type χ) : Type χ where
   field
-    φ        : ℕ → proj₁ (FL (Fin 3)) ≤ proj₁ (FL X)
+    φ        : ℕ → FL (Fin 3) .proj₁ ≤ FL X .proj₁
     ascends  : ∀ k → copy (φ k) ⊂ copy (φ (suc k))
 ```
 
@@ -136,13 +136,13 @@ converse of `freelyGenerates→≤`{.AgdaFunction} of [Lattices.Free.Generation]
 
 ```agda
 -- An injective homomorphism out of FL(I) makes substitution by its restriction injective.
-restriction-injective : (h : hom (proj₁ (FL I)) (proj₁ (FL X))) → IsInjective (proj₁ h)
-                      → IsInjective (proj₁ (subst-hom (restriction h)))
+restriction-injective : (h : hom (FL I .proj₁) (FL X .proj₁)) → IsInjective (h .proj₁)
+  → IsInjective (subst-hom (restriction h) .proj₁)
 restriction-injective h inj {s} {t} e =
   inj (≈ʷ-trans (hom-induced h s) (≈ʷ-trans e (≈ʷ-sym (hom-induced h t))))
 
 -- The images of the generators under an embedding freely generate.
-≤→freelyGenerates : (e : proj₁ (FL I) ≤ proj₁ (FL X)) → FreelyGenerates (restriction (proj₁ e))
+≤→freelyGenerates : (e : FL I .proj₁ ≤ FL X .proj₁) → FreelyGenerates (restriction (e .proj₁))
 ≤→freelyGenerates (h , inj) = injective→freelyGenerates (restriction h) (restriction-injective h inj)
 ```
 
@@ -163,27 +163,27 @@ module _ (c : CopyChain X) where
 
   -- The k-th embedding's underlying map.
   copy-map : ℕ → LatTerm (Fin 3) → LatTerm X
-  copy-map k a = proj₁ (proj₁ (φ k)) ⟨$⟩ a
+  copy-map k a = φ k .proj₁ .proj₁ ⟨$⟩ a
 
   -- The k-th triple: the images of the generators.
   copy-gens : ℕ → Sub (Fin 3) X
-  copy-gens k = restriction (proj₁ (φ k))
+  copy-gens k = restriction (φ k .proj₁)
 
   -- The k-th embedding is substitution by the k-th triple.
   copy-φ≈ : ∀ k a → copy-map k a ≈ʷ a [ copy-gens k ]
-  copy-φ≈ k = hom-induced (proj₁ (φ k))
+  copy-φ≈ k = hom-induced (φ k .proj₁)
 
   -- Containment, element by element.
   copy-lift : ∀ k a → Σ[ b ∈ LatTerm (Fin 3) ] copy-map (suc k) b ≈ʷ copy-map k a
-  copy-lift k a = proj₁ (ascends k) (a , ≈ʷ-refl)
+  copy-lift k a = ascends k .proj₁ (a , ≈ʷ-refl)
 
   -- The terms of the k-th step: the generators of the k-th copy, named in the next.
   copy-terms : ℕ → Sub (Fin 3) (Fin 3)
-  copy-terms k i = proj₁ (copy-lift k (ℊ i))
+  copy-terms k i = copy-lift k (ℊ i) .proj₁
 
   -- The terms express each triple in the next.
   copy-gens≈ : ∀ k i → copy-gens k i ≈ʷ copy-terms k i [ copy-gens (suc k) ]
-  copy-gens≈ k i = ≈ʷ-trans (≈ʷ-sym (proj₂ (copy-lift k (ℊ i)))) (copy-φ≈ (suc k) (copy-terms k i))
+  copy-gens≈ k i = ≈ʷ-trans (≈ʷ-sym (copy-lift k (ℊ i) .proj₂)) (copy-φ≈ (suc k) (copy-terms k i))
 ```
 
 Suppose every generator `ℊ g` of `FL(3)` is equal to one of the terms,
@@ -208,11 +208,11 @@ the next triple, and that term is `ℊ g`, so the member is the next triple's
     where
     -- The index of the term equal to each generator.
     idx : Fin 3 → Fin 3
-    idx g = proj₁ (covered g)
+    idx g = covered g .proj₁
 
     -- Each member named through idx is the next triple's member.
     member : ∀ g → copy-gens k (idx g) ≈ʷ copy-gens (suc k) g
-    member g = ≈ʷ-trans (copy-gens≈ k (idx g)) ([]-cong (copy-gens (suc k)) (≈ʷ-sym (proj₂ (covered g))))
+    member g = ≈ʷ-trans (copy-gens≈ k (idx g)) ([]-cong (copy-gens (suc k)) (≈ʷ-sym (covered g .proj₂)))
 ```
 
 So strictness makes some generator equal to none of the terms.  Which one is
@@ -229,7 +229,7 @@ generator, and a finite search finds it (`copy-misses`{.AgdaFunction}), as
     -- The search, on the decision of whether every generator is one of the terms.
     search : ∀ k → Dec (∀ g → Σ[ i ∈ Fin 3 ] ℊ g ≈ʷ copy-terms k i)
            → Σ[ g ∈ Fin 3 ] (∀ i → ¬ (ℊ g ≈ʷ copy-terms k i))
-    search k (yes covered)  = ⊥-elim (proj₂ (ascends k) (covered→⊇ k covered))
+    search k (yes covered)  = ⊥-elim (ascends k .proj₂ (covered→⊇ k covered))
     search k (no ¬covered)  =
       let (g , ¬∃) = ¬∀⟶∃¬ 3 _ (λ g → any? (λ i → ℊ g ≈ʷ? copy-terms k i)) ¬covered
       in g , λ i e → ¬∃ (i , e)
@@ -245,8 +245,8 @@ generator, and a finite search finds it (`copy-misses`{.AgdaFunction}), as
     ; gens-free  = λ k → ≤→freelyGenerates (φ k)
     ; terms      = copy-terms
     ; gens≈      = copy-gens≈
-    ; fresh      = λ k → proj₁ (copy-misses k)
-    ; fresh∉     = λ k → proj₂ (copy-misses k)
+    ; fresh      = λ k → copy-misses k .proj₁
+    ; fresh∉     = λ k → copy-misses k .proj₂
     }
 ```
 
@@ -268,7 +268,7 @@ module _ (c : Chain X) where
   open SetoidReasoning (FL-setoid X)
 
   -- The k-th embedding: substitution by the k-th triple.
-  chain-φ : ℕ → proj₁ (FL (Fin 3)) ≤ proj₁ (FL X)
+  chain-φ : ℕ → FL (Fin 3) .proj₁ ≤ FL X .proj₁
   chain-φ k = freelyGenerates→≤ (gens k) (gens-free k)
 
   -- Each copy lies in the next.

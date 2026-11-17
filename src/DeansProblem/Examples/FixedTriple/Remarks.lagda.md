@@ -125,7 +125,7 @@ and every canonical joinand with no hypothesis on it
 
 ```agda
 -- θ₁ is an embedding.
-θ₁-injective : IsInjective (proj₁ (subst-hom θ₁))
+θ₁-injective : IsInjective (subst-hom θ₁ .proj₁)
 θ₁-injective = freelyGenerates→injective θ₁ θ₁-free
 
 -- θ₁ fixes x ∨ y.
@@ -143,7 +143,7 @@ joinands-x∨y = refl
 -- Lemma 9.13's conclusion for every canonical joinand, a generator or not.
 Lemma-9-13-for-every-joinand : Type
 Lemma-9-13-for-every-joinand =
-  (τ : Sub (Fin 3) (Fin 3)) → IsInjective (proj₁ (subst-hom τ)) → (w : LatTerm (Fin 3))
+  (τ : Sub (Fin 3) (Fin 3)) → IsInjective (subst-hom τ .proj₁) → (w : LatTerm (Fin 3))
   {w₁ : LatTerm (Fin 3)} → w₁ ∈ canonicalJoinands _≟_ w
   → Any (w₁ [ τ ] ≈ʷ_) (canonicalJoinands _≟_ (w [ τ ]))
 
@@ -279,14 +279,14 @@ homomorphisms (`Ω-injective`{.AgdaFunction}), so it freely generates
 Ω = σ ⨟ Θ
 
 -- It is injective, so it freely generates a copy of FL(ω).
-Ω-injective : IsInjective (proj₁ (subst-hom Ω))
+Ω-injective : IsInjective (subst-hom Ω .proj₁)
 Ω-injective = ⨟-injective σ Θ countable-injective (freelyGenerates→injective Θ m-free)
 
 Ω-free : FreelyGenerates Ω
 Ω-free = injective→freelyGenerates Ω Ω-injective
 
 -- FL(ω) embeds in FL(3) by Ω.
-ω-embedding : proj₁ (FL ℕ) IsSubalgebraOf proj₁ (FL (Fin 3))
+ω-embedding : FL ℕ .proj₁ IsSubalgebraOf FL (Fin 3) .proj₁
 ω-embedding = subst-hom Ω , Ω-injective
 
 -- θ₁ fixes every element of the image of Ω.

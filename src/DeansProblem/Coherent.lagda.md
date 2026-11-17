@@ -148,7 +148,7 @@ bound (suc n)  f =
 
 -- A first factor of an injective composite is injective.
 first-factor-injective : (σ : Sub I X) (τ : Sub X Y) (ρ : Sub I Y) → (∀ i → ρ i ≈ʷ σ i [ τ ])
-                       → IsInjective (proj₁ (subst-hom ρ)) → IsInjective (proj₁ (subst-hom σ))
+                       → IsInjective (subst-hom ρ .proj₁) → IsInjective (subst-hom σ .proj₁)
 first-factor-injective σ τ ρ e inj {s} {t} p =
   inj (≈ʷ-trans (through s) (≈ʷ-trans ([]-cong τ p) (≈ʷ-sym (through t))))
   where

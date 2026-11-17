@@ -664,7 +664,7 @@ link-meet = interleave-all (λ σ → σ 0F ∧̇ σ 1F ≤ʷ σ 2F)
 
 -- A triple whose third member lies above the meet of the others generates no copy of FL(3).
 meet-below→no-copy : (σ : Sub (Fin 3) X) → σ 0F ∧̇ σ 1F ≤ʷ σ 2F
-                   → (e : proj₁ (FL (Fin 3)) IsSubalgebraOf proj₁ (FL X)) → ¬ (copy e ≐ ⟨ σ ⟩)
+                   → (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL X .proj₁) → ¬ (copy e ≐ ⟨ σ ⟩)
 meet-below→no-copy σ p e e≐ = not-member (proj₂ (copy≐→freelyGenerates e σ e≐) {2F} {0F ∷ 1F ∷ []} p)
   where
   -- The index of the third member is neither of the other two.
@@ -674,7 +674,7 @@ meet-below→no-copy σ p e e≐ = not-member (proj₂ (copy≐→freelyGenerate
   not-member (there (there ()))
 
 -- Theorem 4.5: no link of the ladder is a copy of FL(3).
-no-link-is-a-copy : ∀ n (e : proj₁ (FL (Fin 3)) IsSubalgebraOf proj₁ (FL (Fin 3)))
+no-link-is-a-copy : ∀ n (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL (Fin 3) .proj₁)
                   → ¬ (copy e ≐ ⟨ StrictlyAscending.links ladder n ⟩)
 no-link-is-a-copy n = meet-below→no-copy (StrictlyAscending.links ladder n) (link-meet n)
 ```
@@ -791,7 +791,7 @@ undoes it (`renaming-injective`{.AgdaFunction}), which is the earlier proof.
 ```agda
 -- Substitution by ℊ ∘ f is injective when g undoes f.
 renaming-injective : (f : Fin 3 → X) (g : X → Fin 3) → (∀ i → g (f i) ≡ i)
-                   → IsInjective (proj₁ (subst-hom (ℊ ∘ f)))
+                   → IsInjective (subst-hom (ℊ ∘ f) .proj₁)
 renaming-injective f g gf {s} {t} e = ≈ʷ-trans (≈ʷ-sym (back s)) (≈ʷ-trans ([]-cong (ℊ ∘ g) e) (back t))
   where
   -- Renaming by f and then by g returns the term.
@@ -805,7 +805,7 @@ ladder-into ι = strict-⨟ ladder (three-generators ι)
                          (freelyGenerates→injective (three-generators ι) (three-generators-free ι))
 
 -- No link of the ladder in FL(X) is a copy of FL(3).
-ladder-into-no-copy : (ι : Fin 3 ↣ X) → ∀ n (e : proj₁ (FL (Fin 3)) IsSubalgebraOf proj₁ (FL X))
+ladder-into-no-copy : (ι : Fin 3 ↣ X) → ∀ n (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL X .proj₁)
                     → ¬ (copy e ≐ ⟨ StrictlyAscending.links (ladder-into ι) n ⟩)
 ladder-into-no-copy ι n = meet-below→no-copy (StrictlyAscending.links (ladder-into ι) n)
                                              ([]-mono (three-generators ι) (link-meet n))
@@ -834,7 +834,7 @@ record Theorem-4·5 : Setω where
     part-1 : Σ[ L ∈ StrictlyAscending 3 (Fin 3) ]
                 (∀ k → StrictlyAscending.links L (2 * k) ≡ triple (E k))
               × (∀ k → StrictlyAscending.links L (suc (2 * k)) ≡ triple (A (suc k)))
-              × (∀ n (e : proj₁ (FL (Fin 3)) IsSubalgebraOf proj₁ (FL (Fin 3)))
+              × (∀ n (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL (Fin 3) .proj₁)
                  → ¬ (copy e ≐ ⟨ StrictlyAscending.links L n ⟩))
     part-2 : ∀ {χ} {X : Type χ} → Fin 3 ↣ X → StrictlyAscending 3 X
 

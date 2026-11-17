@@ -133,10 +133,10 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ}
          (θ : Sub (Fin n) (Fin n)) (τ≈ : ∀ i → τ i ≈ʷ θ i [ τ ] [ Φ ]) where
 
   private
-    τ-inj : IsInjective (proj₁ (subst-hom τ))
+    τ-inj : IsInjective (subst-hom τ .proj₁)
     τ-inj = freelyGenerates→injective τ τ-free
 
-    Φ-inj : IsInjective (proj₁ (subst-hom Φ))
+    Φ-inj : IsInjective (subst-hom Φ .proj₁)
     Φ-inj = freelyGenerates→injective Φ Φ-free
 
   -- One turn of the orbit.
@@ -155,7 +155,7 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ}
              ([]-cong Φ (orbit k (w [ θ ]))))
 
   -- θ is injective.
-  θ-injective : IsInjective (proj₁ (subst-hom θ))
+  θ-injective : IsInjective (subst-hom θ .proj₁)
   θ-injective {s} {t} e =
     τ-inj (≈ʷ-trans (orbit-step s) (≈ʷ-trans ([]-cong Φ ([]-cong τ e)) (≈ʷ-sym (orbit-step t))))
 ```

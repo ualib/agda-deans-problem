@@ -116,12 +116,12 @@ finite-colors-exhausted (suc n) u E =
 
   -- Iterate those searches to omit the first color.
   skip : ℕ → ℕ
-  skip zero = proj₁ (next 0)
-  skip (suc k) = proj₁ (next (skip k))
+  skip zero = next 0 .proj₁
+  skip (suc k) = next (skip k) .proj₁
 
   -- Each search advances strictly.
   skip-step : ∀ k → skip k < skip (suc k)
-  skip-step k = proj₁ (proj₂ (next (skip k)))
+  skip-step k = next (skip k) .proj₂ .proj₁
 
   -- The selected positions form a subsequence.
   skip-increasing : Increasing skip
@@ -129,8 +129,8 @@ finite-colors-exhausted (suc n) u E =
 
   -- The first color is absent from every selected position.
   skip-avoids : ∀ k → u 0 ≢ u (skip k)
-  skip-avoids zero = proj₂ (proj₂ (next 0))
-  skip-avoids (suc k) = proj₂ (proj₂ (next (skip k)))
+  skip-avoids zero = next 0 .proj₂ .proj₂
+  skip-avoids (suc k) = next (skip k) .proj₂ .proj₂
 
   -- Delete the omitted color from the finite carrier.
   reduced : ℕ → Fin n
@@ -219,11 +219,11 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
 
   -- A common complexity bound for the generators at one link.
   generator-bound : ℕ → ℕ
-  generator-bound j = proj₁ (bound 3 (λ v → complexity _≟ˣ_ (gens j v)))
+  generator-bound j = bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₁
 
   -- Each generator satisfies that common bound.
   generators-bounded : ∀ j v → complexity _≟ˣ_ (gens j v) ≤ generator-bound j
-  generators-bounded j = proj₂ (bound 3 (λ v → complexity _≟ˣ_ (gens j v)))
+  generators-bounded j = bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₂
 
   -- The number of codes for the transitions from j, a computable upper bound
   -- for the number of their values.
@@ -239,16 +239,19 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
 
   -- Encode the transitions from the bottom in one fixed finite carrier.
   bottom-color : ℕ → Fin (code-count 0)
-  bottom-color k = tuple-code (bounded (generator-bound 0)) 3 (transition c 0 k)
-                              (transition-covered 0 k)
+  bottom-color k =
+    tuple-code  (bounded (generator-bound 0))
+                3
+                (transition c 0 k)
+                (transition-covered 0 k)
 
   -- A repeated color is a componentwise equivalent bottom transition.
   bottom-color-sound : ∀ {j k} → bottom-color j ≡ bottom-color k
-                    → ∀ v → transition c 0 j v ≈ʷ transition c 0 k v
+    → ∀ v → transition c 0 j v ≈ʷ transition c 0 k v
   bottom-color-sound {j} {k} =
-    tuple-code-sound (bounded (generator-bound 0)) 3
-                     (transition c 0 j) (transition c 0 k)
-                     (transition-covered 0 j) (transition-covered 0 k)
+    tuple-code-sound  (bounded (generator-bound 0)) 3
+                      (transition c 0 j) (transition c 0 k)
+                      (transition-covered 0 j) (transition-covered 0 k)
 
   -- Too many later recurrences give the forbidden four links.
   recurrences-bounded : (j : ℕ) (links : Fin (suc (code-count j)) → ℕ)
@@ -257,10 +260,11 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
     → (∀ i → bottom-color j ≡ bottom-color (links i)) → ⊥
   recurrences-bounded j links later inc same =
     let (i , k , i<k , E) =
-          finite-pigeonhole-≈ⁿ (bounded (generator-bound j)) 3
-            (n<1+n (code-count j))
-            (λ i → transition c j (links i ∸ j))
-            (λ i → transition-covered j (links i ∸ j))
+          finite-pigeonhole-≈ⁿ  (bounded (generator-bound j))
+                                3
+                                (n<1+n (code-count j))
+                                (λ i → transition c j (links i ∸ j))
+                                (λ i → transition-covered j (links i ∸ j))
     in no-repeated-transitions _≟ˣ_ c j (links i) (links k)
          (later i) (inc i<k) (bottom-color-sound {j} {links k} (same k)) E
 
@@ -268,12 +272,12 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
   chain-escapes : Escapes bottom-color
   chain-escapes h inc j m =
     let (i , different) =
-          ¬∀⟶∃¬ (suc (code-count (h j)))
-            (λ i → bottom-color (h j) ≡ bottom-color (h (position i)))
-            (λ i → bottom-color (h j) ≟ bottom-color (h (position i)))
-            (recurrences-bounded (h j) (λ i → h (position i))
-              (λ i → inc (after-base i))
-              (λ p → inc (s≤s (+-monoˡ-< (j + m) p))))
+          ¬∀⟶∃¬  (suc (code-count (h j)))
+                 (λ i → bottom-color (h j) ≡ bottom-color (h (position i)))
+                 (λ i → bottom-color (h j) ≟ bottom-color (h (position i)))
+                 (recurrences-bounded (h j) (λ i → h (position i))
+                 (λ i → inc (after-base i))
+                 (λ p → inc (s≤s (+-monoˡ-< (j + m) p))))
     in position i , after-bound i , different
     where
     -- A finite window lying strictly after both j and m.
@@ -307,10 +311,11 @@ lattice `FL(X)`.
 
 ```agda
 -- No free lattice over generators with decidable equality admits such a chain.
-no-chain : (_≟ˣ_ : DecidableEquality X) → Chain X → ⊥
+no-chain : DecidableEquality X → Chain X → ⊥
 no-chain _≟ˣ_ c =
-  finite-colors-exhausted (code-count _≟ˣ_ c 0) (bottom-color _≟ˣ_ c)
-                        (chain-escapes _≟ˣ_ c)
+  finite-colors-exhausted  (code-count _≟ˣ_ c 0)
+                           (bottom-color _≟ˣ_ c)
+                           (chain-escapes _≟ˣ_ c)
 ```
 
 #### Theorem H for chains of copies
@@ -329,7 +334,7 @@ hypothesis, and it enters only through `no-chain`{.AgdaFunction}.
 ```agda
 -- Theorem H: no free lattice over generators with decidable equality contains
 -- an infinite strictly ascending chain of copies of FL(3).
-no-copy-chain : (_≟ˣ_ : DecidableEquality X) → CopyChain X → ⊥
+no-copy-chain : DecidableEquality X → CopyChain X → ⊥
 no-copy-chain _≟ˣ_ c = no-chain _≟ˣ_ (copyChain→chain c)
 ```
 

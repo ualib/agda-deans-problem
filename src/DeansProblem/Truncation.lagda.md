@@ -219,7 +219,7 @@ nothing for a generator, and for a meet the theorem itself, for every canonical
 child of `D` equal to its image.
 
 ```agda
-module _ {I : Type ι} {Y : Type υ} (τ : Sub I Y) (inj : IsInjective (proj₁ (subst-hom τ))) where
+module _ {I : Type ι} {Y : Type υ} (τ : Sub I Y) (inj : IsInjective (subst-hom τ .proj₁)) where
   open Truncates τ
   open Antichains {A = CJand I} (λ u v → ⌊ u ⌋ᴶ ≤ʷ ⌊ v ⌋ᴶ) ≤ʷ-trans
     using () renaming ( antichain-no-max to no-maxᴶ )
@@ -457,7 +457,7 @@ setting, `I` is the three generators of `FL(3)`, `τ` is the triple `a'`, `b'`,
 
 ```agda
 module _ {I : Type ι} {Y : Type υ} (_≟ᴵ_ : DecidableEquality I) (_≟ʸ_ : DecidableEquality Y)
-         (τ : Sub I Y) (inj : IsInjective (proj₁ (subst-hom τ))) where
+         (τ : Sub I Y) (inj : IsInjective (subst-hom τ .proj₁)) where
   open Truncates τ
   open Canonicalization _≟ᴵ_ using () renaming ( canonical to canonicalᴵ ; canonical-sound to soundᴵ
                                                ; canonical-isCanonical to isCanonicalᴵ )
@@ -480,7 +480,7 @@ canonical term naming it; no decidable equality is needed.
 ```agda
 -- Theorem 9.1: the canonical form of p truncates that of its image under an embedding.
 Theorem-9·1 : Setω
-Theorem-9·1 =  ∀ {ι υ} {I : Type ι} {Y : Type υ} (τ : Sub I Y) → IsInjective (proj₁ (subst-hom τ))
+Theorem-9·1 =  ∀ {ι υ} {I : Type ι} {Y : Type υ} (τ : Sub I Y) → IsInjective (subst-hom τ .proj₁)
                → (p : LatTerm I) (C : CTerm I) (D : CTerm Y)
                → IsCanonical C → ⌊ C ⌋ ≈ʷ p → IsCanonical D → ⌊ D ⌋ ≈ʷ p [ τ ]
                → Truncates._⊑_ τ C D

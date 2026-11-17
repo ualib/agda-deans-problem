@@ -396,7 +396,7 @@ module Orbit {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (
              (cover : (B : ℕ) → Σ[ L ∈ List (LatTerm X) ]
                         ((t : LatTerm (Fin n)) → complexity _≟ˣ_ (t [ σ ]) ≤ B
                                                → Any (t [ σ ] ≈ʷ_) L))
-             (Φ : Sub X X) (Φ-inj : IsInjective (proj₁ (subst-hom Φ)))
+             (Φ : Sub X X) (Φ-inj : IsInjective (subst-hom Φ .proj₁))
              (σ⊆Φσ : ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩) where
 
   private
@@ -609,7 +609,7 @@ module Local {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (
                 ([]-congʳ s (λ i → ≡→≈ʷ (cong ℊ (position-lookup i (lookup gens i ∈? gens)))))
 
   -- Reading back is injective.
-  ν-inj : IsInjective (proj₁ (subst-hom ν))
+  ν-inj : IsInjective (subst-hom ν .proj₁)
   ν-inj {s} {t} e = ≈ʷ-trans (≈ʷ-sym (νρ s)) (≈ʷ-trans ([]-cong ρ e) (νρ t))
 ```
 
@@ -790,13 +790,13 @@ in every free lattice that contains a copy of `FL(3)`.
   let (t , e) = h (gen∈ σ i) in t , subst (_≈ʷ _) (sym ([]-⨟ t τ ι)) ([]-cong ι e)
 
 -- An injective substitution reflects containment of generated sublattices.
-⊆-⨟⁻ : {σ : Sub I X} {τ : Sub J X} (ι : Sub X Y) → IsInjective (proj₁ (subst-hom ι))
+⊆-⨟⁻ : {σ : Sub I X} {τ : Sub J X} (ι : Sub X Y) → IsInjective (subst-hom ι .proj₁)
      → ⟨ σ ⨟ ι ⟩ ⊆ ⟨ τ ⨟ ι ⟩ → ⟨ σ ⟩ ⊆ ⟨ τ ⟩
 ⊆-⨟⁻ {σ = σ} {τ} ι inj h = gens⊆ λ i →
   let (t , e) = h (gen∈ (σ ⨟ ι) i) in t , inj (subst (_≈ʷ _) ([]-⨟ t τ ι) e)
 
 -- A strictly ascending chain carried along an injective substitution.
-strict-⨟ : StrictlyAscending n X → (ι : Sub X Y) → IsInjective (proj₁ (subst-hom ι))
+strict-⨟ : StrictlyAscending n X → (ι : Sub X Y) → IsInjective (subst-hom ι .proj₁)
          → StrictlyAscending n Y
 strict-⨟ c ι inj = record
   { links    = λ k → links k ⨟ ι
@@ -845,14 +845,14 @@ some `ρ (π i)`.  Distinct generators are unequal, so `π` is injective, hence
 onto, and `σ k = r (π⁻¹ k)`: the family `σ` is `r` re-indexed by a bijection.
 
 ```agda
-module _ {X : Type χ} {n : ℕ} (e : proj₁ (FL (Fin n)) IsSubalgebraOf proj₁ (FL X))
+module _ {X : Type χ} {n : ℕ} (e : FL (Fin n) .proj₁ IsSubalgebraOf FL X .proj₁)
          (σ : Sub (Fin n) X) (e≐ : copy e ≐ ⟨ σ ⟩) where
   private
     -- The images of the generators, which freely generate.
     r : Sub (Fin n) X
     r = restriction (proj₁ e)
 
-    r-inj : IsInjective (proj₁ (subst-hom r))
+    r-inj : IsInjective (subst-hom r .proj₁)
     r-inj = freelyGenerates→injective r (≤→freelyGenerates e)
 
     -- A term over the generators naming each σ j in the copy.

@@ -172,14 +172,14 @@ injectivity composes.
 
 ```agda
 -- Every iterate of an injective substitution is injective.
-iter-injective : (σ : Sub X X) → IsInjective (proj₁ (subst-hom σ))
-               → (k : ℕ) → IsInjective (proj₁ (subst-hom (iter σ k)))
+iter-injective : (σ : Sub X X) → IsInjective (subst-hom σ .proj₁)
+               → (k : ℕ) → IsInjective (subst-hom (iter σ k) .proj₁)
 iter-injective σ inj zero     {s} {t} e = subst₂ _≈ʷ_ ([]-ℊ s) ([]-ℊ t) e
 iter-injective σ inj (suc k)          = ⨟-injective σ (iter σ k) inj (iter-injective σ inj k)
 
 -- Free generation transfers along an injective substitution.
 freelyGenerates-⨟ : (σ : Sub I X) (ρ : Sub X Y) → FreelyGenerates σ
-                  → IsInjective (proj₁ (subst-hom ρ)) → FreelyGenerates (σ ⨟ ρ)
+                  → IsInjective (subst-hom ρ .proj₁) → FreelyGenerates (σ ⨟ ρ)
 freelyGenerates-⨟ σ ρ fg inj =
   injective→freelyGenerates (σ ⨟ ρ) (⨟-injective σ ρ (freelyGenerates→injective σ fg) inj)
 ```

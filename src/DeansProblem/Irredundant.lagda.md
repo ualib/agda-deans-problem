@@ -1,4 +1,4 @@
----
+n---
 layout: default
 file: "src/DeansProblem/Irredundant.lagda.md"
 title: "DeansProblem.Irredundant module"
@@ -63,11 +63,12 @@ open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl )
 open import Relation.Nullary                       using ( ¬_ )
 
 -- Imports from the Agda Universal Algebra Library --------------------------------
-open import Classical.Properties.Lattice        using ( module Lattice-Order )
-open import Classical.Structures.Lattice.Basic  using ( Lattice ; module Lattice-Op )
-open import Lattices.Breadth                     using ( other₁ ; other₂ ; others )
-open import Lattices.Free.Term                  using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; module Evaluation )
-open import Setoid.Algebras.Basic               using ( 𝔻[_] ; 𝕌[_] )
+open import Classical.Properties.Lattice        using  ( module Lattice-Order )
+open import Classical.Structures.Lattice.Basic  using  ( Lattice ; module Lattice-Op )
+open import Lattices.Breadth                    using  ( other₁ ; other₂ ; others )
+open import Lattices.Free.Term                  using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_
+                                                       ; module Evaluation )
+open import Setoid.Algebras.Basic               using  ( 𝔻[_] ; 𝕌[_] )
 
 private variable
   α ρ ι : Level
@@ -84,22 +85,22 @@ other member lies below `r`" is stated without a decidable equality on `I`: for
 each index `j`, either `j` is `i` or `η j ≤ r`.
 
 ```agda
-module _ (𝑳 : Lattice α ρ) where
-  open Lattice-Op 𝑳          using ( _∧_ ; _∨_ )
-  open Lattice-Order 𝑳       using ( _≤_ ; ≤-refl ; ≤-trans ; ≤-antisym ; ∧-greatest ; ∧-lowerˡ
-                                   ; ∧-lowerʳ ; ∨-least ; ∨-upperˡ ; ∨-upperʳ )
-  open Setoid 𝔻[ proj₁ 𝑳 ]   using ( _≈_ )
-  open Evaluation 𝑳          using ( ⟦_⟧ )
+module _ (𝓛@(𝑳 , _) : Lattice α ρ) where
+  open Lattice-Op 𝓛     using  ( _∧_ ; _∨_ )
+  open Lattice-Order 𝓛  using  ( _≤_ ; ≤-refl ; ≤-trans ; ≤-antisym ; ∧-greatest
+                                ; ∧-lowerˡ ; ∧-lowerʳ ; ∨-least ; ∨-upperˡ ; ∨-upperʳ )
+  open Setoid 𝔻[ 𝑳 ]    using  ( _≈_ )
+  open Evaluation 𝓛     using  ( ⟦_⟧ )
 
   private
     L : Type α
-    L = 𝕌[ proj₁ 𝑳 ]
+    L = 𝕌[ 𝑳 ]
 
   module _ {I : Type ι} (η : I → L) (i : I) where
 
     -- Every element of the generated sublattice lies above η i or below r.
     above-or-below : {r : L} → (∀ j → j ≡ i ⊎ η j ≤ r)
-                   → (t : LatTerm I) → η i ≤ ⟦ t ⟧ η ⊎ ⟦ t ⟧ η ≤ r
+      → (t : LatTerm I) → η i ≤ ⟦ t ⟧ η ⊎ ⟦ t ⟧ η ≤ r
     above-or-below others≤r (ℊ j) with others≤r j
     ... | inj₁ refl  = inj₁ ≤-refl
     ... | inj₂ q     = inj₂ q
@@ -116,7 +117,7 @@ module _ (𝑳 : Lattice α ρ) where
 
     -- Dually, every element lies below η i or above m.
     below-or-above : {m : L} → (∀ j → j ≡ i ⊎ m ≤ η j)
-                   → (t : LatTerm I) → ⟦ t ⟧ η ≤ η i ⊎ m ≤ ⟦ t ⟧ η
+      → (t : LatTerm I) → ⟦ t ⟧ η ≤ η i ⊎ m ≤ ⟦ t ⟧ η
     below-or-above m≤others (ℊ j) with m≤others j
     ... | inj₁ refl  = inj₁ ≤-refl
     ... | inj₂ q     = inj₂ q
@@ -173,18 +174,18 @@ family lies in the intervals; and dually.
 
 ```agda
 module _ (𝑳 : Lattice α ρ) where
-  open Lattice-Op 𝑳          using ( _∧_ ; _∨_ )
-  open Lattice-Order 𝑳       using ( _≤_ ; ≤-trans ; ∧-greatest ; ∧-lowerˡ ; ∧-lowerʳ ; ∨-least
-                                   ; ∨-upperˡ ; ∨-upperʳ )
-  open Setoid 𝔻[ proj₁ 𝑳 ]   using ( _≈_ )
-  open Evaluation 𝑳          using ( ⟦_⟧ )
+  open Lattice-Op 𝑳           using  ( _∧_ ; _∨_ )
+  open Lattice-Order 𝑳        using  ( _≤_ ; ≤-trans ; ∧-greatest ; ∧-lowerˡ
+                                     ; ∧-lowerʳ ; ∨-least ; ∨-upperˡ ; ∨-upperʳ )
+  open Setoid 𝔻[ 𝑳 .proj₁ ]   using  ( _≈_ )
+  open Evaluation 𝑳           using  ( ⟦_⟧ )
 
   module _ (η lo hi : Fin 3 → 𝕌[ 𝑳 .proj₁ ]) where
 
     -- Freese's conditions at one index, at all three, and the family in the intervals.
     IrredundantAt : Fin 3 → Type ρ
-    IrredundantAt i = ¬ (lo i ≤ hi (other₁ i) ∨ hi (other₂ i))
-                    × ¬ (lo (other₁ i) ∧ lo (other₂ i) ≤ hi i)
+    IrredundantAt i =  ¬ (lo i ≤ hi (other₁ i) ∨ hi (other₂ i)) ×
+                       ¬ (lo (other₁ i) ∧ lo (other₂ i) ≤ hi i)
 
     StronglyIrredundant : Type ρ
     StronglyIrredundant = ∀ i → IrredundantAt i
@@ -194,7 +195,7 @@ module _ (𝑳 : Lattice α ρ) where
 
     -- Lemma 2 at one index: η i is the only element of the sublattice in [lo i, hi i].
     lemma-2-at : (i : Fin 3) → IrredundantAt i → InIntervals
-               → (t : LatTerm (Fin 3)) → lo i ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ hi i → ⟦ t ⟧ η ≈ η i
+      → (t : LatTerm (Fin 3)) → lo i ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ hi i → ⟦ t ⟧ η ≈ η i
     lemma-2-at i (lo≰ , ≰hi) box =
       pinned 𝑳 η i others≤ ≤others (λ p → lo≰ (≤-trans p ∨-mono)) (λ p → ≰hi (≤-trans ∧-mono p))
       where
@@ -211,8 +212,8 @@ module _ (𝑳 : Lattice α ρ) where
       ... | inj₂ (inj₂ refl)      = inj₂ ∧-lowerʳ
 
       ∨-mono : η (other₁ i) ∨ η (other₂ i) ≤ hi (other₁ i) ∨ hi (other₂ i)
-      ∨-mono = ∨-least (≤-trans (proj₂ (box (other₁ i))) ∨-upperˡ)
-                       (≤-trans (proj₂ (box (other₂ i))) ∨-upperʳ)
+      ∨-mono = ∨-least (≤-trans (box (other₁ i) .proj₂) ∨-upperˡ)
+                       (≤-trans (box (other₂ i) .proj₂) ∨-upperʳ)
 
       ∧-mono : lo (other₁ i) ∧ lo (other₂ i) ≤ η (other₁ i) ∧ η (other₂ i)
       ∧-mono = ∧-greatest (≤-trans ∧-lowerˡ (proj₁ (box (other₁ i))))
@@ -220,7 +221,7 @@ module _ (𝑳 : Lattice α ρ) where
 
     -- Freese's Lemma 2.
     lemma-2 : StronglyIrredundant → InIntervals → (i : Fin 3)
-            → (t : LatTerm (Fin 3)) → lo i ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ hi i → ⟦ t ⟧ η ≈ η i
+      → (t : LatTerm (Fin 3)) → lo i ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ hi i → ⟦ t ⟧ η ≈ η i
     lemma-2 si box i = lemma-2-at i (si i) box
 ```
 

@@ -68,10 +68,11 @@ open import Relation.Binary                        using ( Setoid )
 open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; cong )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Classical.Properties.Lattice        using ( module Lattice-Order )
-open import Classical.Structures.Lattice.Basic  using ( Lattice ; module Lattice-Op )
-open import Lattices.Free.Term                  using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; module Evaluation )
-open import Setoid.Algebras.Basic               using ( 𝔻[_] ; 𝕌[_] )
+open import Classical.Properties.Lattice        using  ( module Lattice-Order )
+open import Classical.Structures.Lattice.Basic  using  ( Lattice ; module Lattice-Op )
+open import Lattices.Free.Term                  using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_
+                                                       ; module Evaluation )
+open import Setoid.Algebras.Basic               using  ( 𝔻[_] ; 𝕌[_] )
 
 private variable
   α ρ : Level
@@ -94,16 +95,16 @@ termA (suc k)  = ℊ 2F ∧̇ (ℊ 0F ∨̇ termB k)
 termB zero     = ℊ 1F ∧̇ ℊ 2F
 termB (suc k)  = ℊ 2F ∧̇ (ℊ 1F ∨̇ termA k)
 
-module _ (𝑳 : Lattice α ρ) where
-  open Lattice-Op 𝑳          using ( _∧_ ; _∨_ )
-  open Lattice-Order 𝑳       using ( _≤_ ; ≤-refl ; ≤-trans ; ≤-antisym ; ∧-greatest ; ∧-lowerˡ
-                                   ; ∧-lowerʳ ; ∨-least ; ∨-upperˡ ; ∨-upperʳ )
-  open Setoid 𝔻[ proj₁ 𝑳 ]   using ( _≈_ )
-  open Evaluation 𝑳          using ( ⟦_⟧ )
+module _ (𝓛@(𝑳 , _) : Lattice α ρ) where
+  open Lattice-Op 𝓛     using  ( _∧_ ; _∨_ )
+  open Lattice-Order 𝓛  using  ( _≤_ ; ≤-refl ; ≤-trans ; ≤-antisym ; ∧-greatest
+                                ; ∧-lowerˡ ; ∧-lowerʳ ; ∨-least ; ∨-upperˡ ; ∨-upperʳ )
+  open Setoid 𝔻[ 𝑳 ]    using  ( _≈_ )
+  open Evaluation 𝓛     using  ( ⟦_⟧ )
 
   private
     L : Type α
-    L = 𝕌[ proj₁ 𝑳 ]
+    L = 𝕌[ 𝑳 ]
 
   -- The meet is monotone in both arguments.
   ∧-mono : {s t u v : L} → s ≤ u → t ≤ v → s ∧ t ≤ u ∧ v
@@ -206,23 +207,28 @@ at every `j ≤ k`, which is Lemma 4.4's last clause as the paper states it).
     -- Below v and v below w: the rungs at k over v are those over w.
     stable-at : ∀ k → W.A k ≤ v → W.B k ≤ v → v ≤ w → V.A k ≈ W.A k × V.B k ≈ W.B k
     stable-at zero     hA hB v≤w =
-        ≤-antisym (∧-mono ≤-refl v≤w) (∧-greatest ∧-lowerˡ hA)
-      , ≤-antisym (∧-mono ≤-refl v≤w) (∧-greatest ∧-lowerˡ hB)
+      ≤-antisym (∧-mono ≤-refl v≤w) (∧-greatest ∧-lowerˡ hA) ,
+      ≤-antisym (∧-mono ≤-refl v≤w) (∧-greatest ∧-lowerˡ hB)
     stable-at (suc k)  hA hB v≤w =
-        ≤-antisym (∧-mono v≤w (∨-mono ≤-refl (≤-reflexive′ (proj₂ below))))
-                  (∧-greatest hA (≤-trans ∧-lowerʳ (∨-mono ≤-refl (≤-reflexive′ (sym′ (proj₂ below))))))
-      , ≤-antisym (∧-mono v≤w (∨-mono ≤-refl (≤-reflexive′ (proj₁ below))))
-                  (∧-greatest hB (≤-trans ∧-lowerʳ (∨-mono ≤-refl (≤-reflexive′ (sym′ (proj₁ below))))))
+      ≤-antisym
+        (∧-mono v≤w (∨-mono ≤-refl (≤-reflexive′ (proj₂ below))))
+        (∧-greatest hA (≤-trans  ∧-lowerʳ
+                                 (∨-mono ≤-refl (≤-reflexive′ (sym′ (proj₂ below)))))) ,
+      ≤-antisym
+        (∧-mono v≤w (∨-mono ≤-refl (≤-reflexive′ (proj₁ below))))
+        (∧-greatest hB (≤-trans  ∧-lowerʳ
+                                 (∨-mono ≤-refl (≤-reflexive′ (sym′ (proj₁ below))))))
       where
-      open Setoid 𝔻[ proj₁ 𝑳 ] using () renaming ( sym to sym′ )
-      open Lattice-Order 𝑳 using () renaming ( ≤-reflexive to ≤-reflexive′ )
+      open Setoid 𝔻[ 𝑳 ] using () renaming ( sym to sym′ )
+      open Lattice-Order 𝓛 using () renaming ( ≤-reflexive to ≤-reflexive′ )
 
       -- The rungs at k agree.
       below : V.A k ≈ W.A k × V.B k ≈ W.B k
       below = stable-at k (≤-trans (W.A-mono k) hA) (≤-trans (W.B-mono k) hB) v≤w
 
     -- Lemma 4.4, last clause: if A k ∨ B k ≤ v ≤ w, the rungs agree at every j ≤ k.
-    stable : ∀ k → W.A k ∨ W.B k ≤ v → v ≤ w → ∀ j → j ≤ℕ k → V.A j ≈ W.A j × V.B j ≈ W.B j
+    stable : ∀ k → W.A k ∨ W.B k ≤ v → v ≤ w → ∀ j → j ≤ℕ k
+      → V.A j ≈ W.A j × V.B j ≈ W.B j
     stable k E≤v v≤w j j≤k =
       stable-at j (≤-trans (W.A-mono-≤ j≤k) (≤-trans ∨-upperˡ E≤v))
                   (≤-trans (W.B-mono-≤ j≤k) (≤-trans ∨-upperʳ E≤v)) v≤w
@@ -238,26 +244,26 @@ bound `w` are `Rungs.A 𝑳 a b w`{.AgdaFunction} and
 ```agda
 -- Lemma 4.4: the rungs lie below the bound, ascend, interlace, and are stable.
 Lemma-4·4 : Setω
-Lemma-4·4 =
-  ∀ {α ρ} (𝑳 : Lattice α ρ) (a b w : 𝕌[ 𝑳 .proj₁ ])
-  → let open Lattice-Op 𝑳 using ( _∨_ )
-        open Lattice-Order 𝑳 using ( _≤_ )
-        open Setoid 𝔻[ proj₁ 𝑳 ] using ( _≈_ )
-        A = Rungs.A 𝑳 a b w
-        B = Rungs.B 𝑳 a b w
+Lemma-4·4 = ∀ {α ρ} (𝑳 : Lattice α ρ) (a b w : 𝕌[ 𝑳 .proj₁ ])
+  → let  open Lattice-Op 𝑳 using ( _∨_ )
+         open Lattice-Order 𝑳 using ( _≤_ )
+         open Setoid 𝔻[ proj₁ 𝑳 ] using ( _≈_ )
+         A = Rungs.A 𝑳 a b w
+         B = Rungs.B 𝑳 a b w
     in  (∀ k → A k ≤ w × B k ≤ w)
-      × (∀ k → A k ≤ A (suc k) × B k ≤ B (suc k))
-      × (∀ k → B k ≤ A (suc k) × A k ≤ B (suc k))
-      × (∀ v k → A k ∨ B k ≤ v → v ≤ w
-         → ∀ j → j ≤ℕ k → Rungs.A 𝑳 a b v j ≈ A j × Rungs.B 𝑳 a b v j ≈ B j)
+        × (∀ k → A k ≤ A (suc k)
+        × B k ≤ B (suc k))
+        × (∀ k → B k ≤ A (suc k) × A k ≤ B (suc k))
+        × (∀ v k → A k ∨ B k ≤ v → v ≤ w
+        → ∀ j → j ≤ℕ k → Rungs.A 𝑳 a b v j ≈ A j × Rungs.B 𝑳 a b v j ≈ B j)
 
 -- The proof of Lemma 4.4.
 lemma-4·4 : Lemma-4·4
 lemma-4·4 𝑳 a b w =
-    (λ k → A≤w k , B≤w k)
-  , (λ k → A-mono k , B-mono k)
-  , (λ k → B≤A k , A≤B k)
-  , (λ v → stable 𝑳 a b w v)
+  (λ k → A≤w k , B≤w k) ,
+  (λ k → A-mono k , B-mono k) ,
+  (λ k → B≤A k , A≤B k) ,
+  (λ v → stable 𝑳 a b w v)
   where open Rungs 𝑳 a b w using ( A≤w ; B≤w ; A-mono ; B-mono ; B≤A ; A≤B )
 ```
 

@@ -25,7 +25,8 @@ joins, and has the bounds `x ≤ Φ(x) ≤ (x ∨ y) ∧ (x ∨ z)` and
 
 module DeansProblem.Shape where
 
-open import Agda.Primitive                         using  () renaming ( Set to Type )
+open import Agda.Primitive                         using  ()
+                                                   renaming ( Set to Type )
 open import Data.Empty                             using  ( ⊥-elim )
 open import Data.Fin.Base                          using  ( Fin )
 open import Data.Fin.Patterns                      using  ( 0F ; 1F ; 2F )
@@ -36,36 +37,37 @@ open import Data.List.Relation.Unary.Any           using  ( here ; there )
 open import Data.Nat.Base                          using  ( ℕ ; zero ; suc )
 open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
                                                           ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using  ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
+open import Data.Sum.Base                          using  ( _⊎_ ; inj₁
+                                                          ; inj₂ ; [_,_]′ )
 open import Function                               using  ( id )
 open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; _≢_ ; sym
                                                           ; trans ; subst )
 open import Relation.Nullary                       using  ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using  ( Dec ; yes ; no )
 
-open import Lattices.Free.Canonical.Basic          using  ( ≈ʷ-sym )
-open import DeansProblem.Chain                     using  ( iter ; []-iter-suc
-                                                          ; []-iter-sucʳ )
-open import Lattices.Free.Duality                  using  ( dual-cong )
-open import DeansProblem.Fixed                     using  ( iter-free ; fixed→image )
-open import DeansProblem.FixedGenerator            using  ( dualˢ ; dual-free
-                                                          ; fixes-generator
-                                                          ; inflationary-power )
-open import Lattices.Free.Generation               using  ( FreelyGenerates
-                                                          ; freelyGenerates→injective )
-open import DeansProblem.Inflationary              using  ( Inflationary
-                                                          ; inflationary-term
-                                                          ; fixes-join )
-open import DeansProblem.Partition                 using  ( other ; other' ; cover₃
-                                                          ; ∉others₃ ; module Partition
-                                                          ; fix-two-generators )
-open import Lattices.Free.Substitution             using  ( Sub ; _[_] ; []-ℊ ; []-mono
-                                                          ; injective→reflects )
-open import Lattices.Free.Term                     using  ( LatTerm ; ℊ ; _∨̇_ ; _∧̇_ )
-open import Lattices.Free.Whitman                  using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl
-                                                          ; ∨≤ ; ≤∧ ; ≤ʷ-trans
-                                                          ; ≤∨ʳ ; ∨̇-upperˡ
-                                                          ; ∨̇-upperʳ ; ℊ≤ℊ-inv )
+open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-sym )
+open import DeansProblem.Chain             using  ( iter ; []-iter-suc
+                                                  ; []-iter-sucʳ )
+open import Lattices.Free.Duality          using  ( dual-cong )
+open import DeansProblem.Fixed             using  ( iter-free ; fixed→image )
+open import DeansProblem.FixedGenerator    using  ( dualˢ ; dual-free
+                                                  ; fixes-generator
+                                                  ; inflationary-power )
+open import Lattices.Free.Generation       using  ( FreelyGenerates
+                                                  ; freelyGenerates→injective )
+open import DeansProblem.Inflationary      using  ( Inflationary
+                                                  ; inflationary-term
+                                                  ; fixes-join )
+open import DeansProblem.Partition         using  ( other ; other' ; cover₃
+                                                  ; ∉others₃ ; module Partition
+                                                  ; fix-two-generators )
+open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-ℊ ; []-mono
+                                                  ; injective→reflects )
+open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∨̇_ ; _∧̇_ )
+open import Lattices.Free.Whitman          using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl
+                                                  ; ∨≤ ; ≤∧ ; ≤ʷ-trans
+                                                  ; ≤∨ʳ ; ∨̇-upperˡ
+                                                  ; ∨̇-upperʳ ; ℊ≤ℊ-inv )
 ```
 
 #### The statement
@@ -104,8 +106,10 @@ record InflationaryShape (Φ : Sub (Fin 3) (Fin 3)) (z : Fin 3) : Type where
     fixes-xy : (ℊ (other z) ∨̇ ℊ (other' z)) [ Φ ] ≈ʷ ℊ (other z) ∨̇ ℊ (other' z)
     fixes-xz : (ℊ (other z) ∨̇ ℊ z) [ Φ ] ≈ʷ ℊ (other z) ∨̇ ℊ z
     fixes-yz : (ℊ (other' z) ∨̇ ℊ z) [ Φ ] ≈ʷ ℊ (other' z) ∨̇ ℊ z
-    bound-x : Φ (other z) ≤ʷ (ℊ (other z) ∨̇ ℊ (other' z)) ∧̇ (ℊ (other z) ∨̇ ℊ z)
-    bound-y : Φ (other' z) ≤ʷ (ℊ (other z) ∨̇ ℊ (other' z)) ∧̇ (ℊ (other' z) ∨̇ ℊ z)
+    bound-x : Φ (other z)
+      ≤ʷ (ℊ (other z) ∨̇ ℊ (other' z)) ∧̇ (ℊ (other z) ∨̇ ℊ z)
+    bound-y : Φ (other' z)
+      ≤ʷ (ℊ (other z) ∨̇ ℊ (other' z)) ∧̇ (ℊ (other' z) ∨̇ ℊ z)
 
 -- The full conclusion, including uniqueness and both original inequalities.
 record Shape (Θ : Sub (Fin 3) (Fin 3)) : Type where
@@ -113,10 +117,12 @@ record Shape (Θ : Sub (Fin 3) (Fin 3)) : Type where
     fixed-generator : Fin 3
     generator-fixed : Θ fixed-generator ≈ʷ ℊ fixed-generator
     generator-unique : ∀ g → Θ g ≈ʷ ℊ g → g ≡ fixed-generator
-    join-decreases :  (ℊ (other fixed-generator) ∨̇ ℊ (other' fixed-generator)) [ Θ ]
-                      ≤ʷ ℊ (other fixed-generator) ∨̇ ℊ (other' fixed-generator)
-    meet-increases :  ℊ (other fixed-generator) ∧̇ ℊ (other' fixed-generator)
-                      ≤ʷ (ℊ (other fixed-generator) ∧̇ ℊ (other' fixed-generator)) [ Θ ]
+    join-decreases :
+      (ℊ (other fixed-generator) ∨̇ ℊ (other' fixed-generator)) [ Θ ]
+      ≤ʷ ℊ (other fixed-generator) ∨̇ ℊ (other' fixed-generator)
+    meet-increases :
+      ℊ (other fixed-generator) ∧̇ ℊ (other' fixed-generator)
+      ≤ʷ (ℊ (other fixed-generator) ∧̇ ℊ (other' fixed-generator)) [ Θ ]
     choice : Member
     member-shape : InflationaryShape (member Θ choice) fixed-generator
 ```
@@ -130,15 +136,16 @@ generator.  The dual partition gives the meet inequality in the same way.
 
 ```agda
 module _
-  (Θ : Sub (Fin 3) (Fin 3))
-  (Θ-free : FreelyGenerates Θ)
-  (z : Fin 3)
-  (fixz : Θ z ≈ʷ ℊ z)
+  (Θ       : Sub (Fin 3) (Fin 3))
+  (Θ-free  : FreelyGenerates Θ)
+  (z       : Fin 3)
+  (fixz    : Θ z ≈ʷ ℊ z)
   where
   open Partition z (other z) (other' z ∷ []) (cover₃ z) (∉others₃ z)
 
   -- The image of the join of the other two generators lies below that join.
-  fixed-generator-join : (ℊ (other z) ∨̇ ℊ (other' z)) [ Θ ] ≤ʷ ℊ (other z) ∨̇ ℊ (other' z)
+  fixed-generator-join : (ℊ (other z) ∨̇ ℊ (other' z)) [ Θ ]
+    ≤ʷ ℊ (other z) ∨̇ ℊ (other' z)
 
   fixed-generator-join = [ id , impossible ]′ (partition (⋁others [ Θ ]))
     where
@@ -149,8 +156,9 @@ module _
 
   -- The image of the meet of the other two lies above that meet.
   fixed-generator-meet : ℊ (other z) ∧̇ ℊ (other' z)
-                          ≤ʷ (ℊ (other z) ∧̇ ℊ (other' z)) [ Θ ]
-  fixed-generator-meet = [ (λ p → p) , impossible ]′ (partitionᵈ (⋀others [ Θ ]))
+    ≤ʷ (ℊ (other z) ∧̇ ℊ (other' z)) [ Θ ]
+  fixed-generator-meet =
+    [ (λ p → p) , impossible ]′ (partitionᵈ (⋀others [ Θ ]))
     where
     -- The other dual partition case would put the meet below z.
     impossible : ⋀others [ Θ ] ≤ʷ ℊ z → ⋀others ≤ʷ ⋀others [ Θ ]
@@ -179,9 +187,9 @@ or meet of two generators is already part of that theorem.
 
 ```agda
 module _
-  (Θ : Sub (Fin 3) (Fin 3))
-  (t : LatTerm (Fin 3))
-  (decreases : t [ Θ ] ≤ʷ t)
+  (Θ          : Sub (Fin 3) (Fin 3))
+  (t          : LatTerm (Fin 3))
+  (decreases  : t [ Θ ] ≤ʷ t)
   where
 
   -- A decreasing orbit stays below its starting point.
@@ -196,9 +204,10 @@ module _
     ([]-mono Θ (decreasing-iterate k))
 
   -- An inflationary positive power collapses the decreasing orbit.
-  inflationary-power-fixes : (k : ℕ) → Inflationary (iter Θ (suc k)) → t [ Θ ] ≈ʷ t
-  inflationary-power-fixes k inf = decreases ,
-    ≤ʷ-trans (inflationary-term inf t) (decreasing-positive k)
+  inflationary-power-fixes : (k : ℕ) → Inflationary (iter Θ (suc k))
+    → t [ Θ ] ≈ʷ t
+  inflationary-power-fixes k inf =
+    decreases , ≤ʷ-trans (inflationary-term inf t) (decreasing-positive k)
 ```
 
 #### The bounds for an inflationary member
@@ -222,27 +231,33 @@ private
   partition-y : (z : Fin 3) (t : LatTerm (Fin 3))
     → t ≤ʷ ℊ (other z) ∨̇ ℊ z ⊎ ℊ (other' z) ≤ʷ t
 
-  partition-y 0F t = [ (λ p → inj₁ (≤ʷ-trans p (∨≤ ∨̇-upperʳ ∨̇-upperˡ))) , inj₂ ]′
-    (Partition.partition 2F 0F (1F ∷ []) (cover₃ 2F) (∉others₃ 2F) t)
-  partition-y 1F t = Partition.partition 2F 0F (1F ∷ []) (cover₃ 2F) (∉others₃ 2F) t
-  partition-y 2F t = Partition.partition 1F 0F (2F ∷ []) (cover₃ 1F) (∉others₃ 1F) t
+  partition-y 0F t =
+    [ (λ p → inj₁ (≤ʷ-trans p (∨≤ ∨̇-upperʳ ∨̇-upperˡ))) , inj₂ ]′
+      (Partition.partition 2F 0F (1F ∷ []) (cover₃ 2F) (∉others₃ 2F) t)
+  partition-y 1F t =
+    Partition.partition 2F 0F (1F ∷ []) (cover₃ 2F) (∉others₃ 2F) t
+  partition-y 2F t =
+    Partition.partition 1F 0F (2F ∷ []) (cover₃ 1F) (∉others₃ 1F) t
 
   -- The partition at x, with its complementary join written y ∨ z.
   partition-x : (z : Fin 3) (t : LatTerm (Fin 3))
     → t ≤ʷ ℊ (other' z) ∨̇ ℊ z ⊎ ℊ (other z) ≤ʷ t
-  partition-x 0F t = [ (λ p → inj₁ (≤ʷ-trans p (∨≤ ∨̇-upperʳ ∨̇-upperˡ))) , inj₂ ]′
-    (Partition.partition 1F 0F (2F ∷ []) (cover₃ 1F) (∉others₃ 1F) t)
-  partition-x 1F t = [ (λ p → inj₁ (≤ʷ-trans p (∨≤ ∨̇-upperʳ ∨̇-upperˡ))) , inj₂ ]′
-    (Partition.partition 0F 1F (2F ∷ []) (cover₃ 0F) (∉others₃ 0F) t)
-  partition-x 2F t = Partition.partition 0F 1F (2F ∷ []) (cover₃ 0F) (∉others₃ 0F) t
+  partition-x 0F t =
+    [ (λ p → inj₁ (≤ʷ-trans p (∨≤ ∨̇-upperʳ ∨̇-upperˡ))) , inj₂ ]′
+      (Partition.partition 1F 0F (2F ∷ []) (cover₃ 1F) (∉others₃ 1F) t)
+  partition-x 1F t =
+    [ (λ p → inj₁ (≤ʷ-trans p (∨≤ ∨̇-upperʳ ∨̇-upperˡ))) , inj₂ ]′
+      (Partition.partition 0F 1F (2F ∷ []) (cover₃ 0F) (∉others₃ 0F) t)
+  partition-x 2F t =
+    Partition.partition 0F 1F (2F ∷ []) (cover₃ 0F) (∉others₃ 0F) t
 
 module _
-  (Φ : Sub (Fin 3) (Fin 3))
-  (Φ-free : FreelyGenerates Φ)
-  (z : Fin 3)
-  (fixz : Φ z ≈ʷ ℊ z)
-  (inf : Inflationary Φ)
-  (fixxy : (ℊ (other z) ∨̇ ℊ (other' z)) [ Φ ] ≈ʷ ℊ (other z) ∨̇ ℊ (other' z))
+  (Φ       : Sub (Fin 3) (Fin 3))
+  (Φ-free  : FreelyGenerates Φ)
+  (z       : Fin 3)
+  (fixz    : Φ z ≈ʷ ℊ z)
+  (inf     : Inflationary Φ)
+  (fixxy   : (ℊ (other z) ∨̇ ℊ (other' z)) [ Φ ] ≈ʷ ℊ (other z) ∨̇ ℊ (other' z))
   where
 
   private
@@ -323,11 +338,11 @@ private
     (trans ([]-iter-suc (t [ Θ ]) Θ 0) ([]-ℊ (t [ Θ ] [ Θ ])))
 
 module _
-  (Θ : Sub (Fin 3) (Fin 3))
-  (Θ-free : FreelyGenerates Θ)
-  (z : Fin 3)
-  (fixz : Θ z ≈ʷ ℊ z)
-  (fixxy : (ℊ (other z) ∨̇ ℊ (other' z)) [ Θ ] ≈ʷ ℊ (other z) ∨̇ ℊ (other' z))
+  (Θ       : Sub (Fin 3) (Fin 3))
+  (Θ-free  : FreelyGenerates Θ)
+  (z       : Fin 3)
+  (fixz    : Θ z ≈ʷ ℊ z)
+  (fixxy   : (ℊ (other z) ∨̇ ℊ (other' z)) [ Θ ] ≈ʷ ℊ (other z) ∨̇ ℊ (other' z))
   where
   private
     -- Name the other generators for the two cases of Lemma 1.
@@ -347,7 +362,8 @@ module _
       where
       -- Fixed points stay fixed under the square.
       fixed-square : (t : LatTerm (Fin 3)) → t [ Θ ] ≈ʷ t → t [ iter Θ 2 ] ≈ʷ t
-      fixed-square t e = fixed→image Θ (freelyGenerates→injective Θ Θ-free) t e 2
+      fixed-square t e =
+        fixed→image Θ (freelyGenerates→injective Θ Θ-free) t e 2
 
       -- In particular the same generator is fixed.
       fixz² : iter Θ 2 z ≈ʷ ℊ z
@@ -360,8 +376,12 @@ module _
       -- Substitution of each swapped inequality gives inflation for the square.
       inf² : Inflationary (iter Θ 2)
       inf² = inflationary-of (iter Θ 2) z
-        (subst (ℊ x ≤ʷ_) (sym (square-equation Θ (ℊ x))) (≤ʷ-trans px ([]-mono Θ py)))
-        (subst (ℊ y ≤ʷ_) (sym (square-equation Θ (ℊ y))) (≤ʷ-trans py ([]-mono Θ px)))
+        (subst  (ℊ x ≤ʷ_)
+                (sym (square-equation Θ (ℊ x)))
+                (≤ʷ-trans px ([]-mono Θ py)))
+        (subst  (ℊ y ≤ʷ_)
+                (sym (square-equation Θ (ℊ y)))
+                (≤ʷ-trans py ([]-mono Θ px)))
         (fixz² .proj₂)
 
   -- A fixed join yields the full shape for exponent one or two.
@@ -380,13 +400,13 @@ of the generators.
 
 ```agda
 module _
-  (Θ : Sub (Fin 3) (Fin 3))
-  (Θ-free : FreelyGenerates Θ)
-  (m : Fin 3)
-  (m∉ : ∀ i → ¬ (ℊ m ≈ʷ Θ i))
-  (τ : Sub (Fin 3) (Fin 3))
-  (τ-free : FreelyGenerates τ)
-  (τ-fixed : ∀ i → τ i [ Θ ] ≈ʷ τ i)
+  (Θ        : Sub (Fin 3) (Fin 3))
+  (Θ-free   : FreelyGenerates Θ)
+  (m        : Fin 3)
+  (m∉       : ∀ i → ¬ (ℊ m ≈ʷ Θ i))
+  (τ        : Sub (Fin 3) (Fin 3))
+  (τ-free   : FreelyGenerates τ)
+  (τ-fixed  : ∀ i → τ i [ Θ ] ≈ʷ τ i)
   where
 
   private
@@ -410,16 +430,19 @@ module _
          ⊎ (Σ[ E ∈ ℕ ] Inflationary (iter (dualˢ Θ) (suc E)))
       →  Σ[ c ∈ Member ] InflationaryShape (member Θ c) z
     choose z fixz (inj₁ p) =
-      [ (λ s → original , s) , (λ s → square , s) ]′ (oriented Θ Θ-free z fixz p)
+      [ (λ s → original , s) , (λ s → square , s) ]′
+        (oriented Θ Θ-free z fixz p)
     choose z fixz (inj₂ p) =
       [ (λ s → dual-original , s) , (λ s → dual-square , s) ]′
         (oriented (dualˢ Θ) (dual-free Θ Θ-free) z (dual-cong fixz) p)
 
-  -- Corollary E1: the full shape of a proper embedding with a fixed free triple.
+  -- Corollary E1: the full shape of a proper embedding with a fixed free
+  -- triple.
   shape : Shape Θ
   shape =
     let (z , fixz) = generator
-        (c , shaped) = choose z fixz (inflationary-power Θ Θ-free m m∉ τ τ-free τ-fixed)
+        (c , shaped) =
+          choose z fixz (inflationary-power Θ Θ-free m m∉ τ τ-free τ-fixed)
     in record
       { fixed-generator   = z
       ; generator-fixed   = fixz
@@ -442,9 +465,11 @@ up to duality, `Θ` or `Θ²` is inflationary, fixes `x ∨ y`, `x ∨ z` and
 ```agda
 -- Corollary E1: the shape of a proper self-embedding with a fixed free triple.
 Corollary-E1 : Type
-Corollary-E1 =  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
-                → (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → (∀ i → τ i [ Θ ] ≈ʷ τ i)
-                → Shape Θ
+Corollary-E1 =
+  (Θ : Sub (Fin 3) (Fin 3)) → FreelyGenerates Θ
+  → (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
+  → (τ : Sub (Fin 3) (Fin 3)) → FreelyGenerates τ → (∀ i → τ i [ Θ ] ≈ʷ τ i)
+  → Shape Θ
 
 -- The proof of Corollary E1.
 corollary-E1 : Corollary-E1

@@ -77,42 +77,57 @@ module DeansProblem.Truncation where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥-elim )
-open import Data.List.Base                         using ( List ; [] ; _∷_ ; map )
-open import Data.List.Membership.Propositional     using ( _∈_ ; find ; lose )
+open import Data.Empty                             using  ( ⊥-elim )
+open import Data.List.Base                         using  ( List ; [] ; _∷_ ; map )
+open import Data.List.Membership.Propositional     using  ( _∈_ ; find ; lose )
 open import Data.List.Membership.Propositional.Properties
-                                                   using ( ∈-map⁺ ; ∈-map⁻ )
-open import Data.List.Relation.Unary.All           using ( All ; [] ; _∷_ ; lookup ; tabulate )
-open import Data.List.Relation.Unary.AllPairs      using ( AllPairs ; [] ; _∷_ )
-open import Data.List.Relation.Unary.Any           using ( Any ; here ; there )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ )
-open import Data.Unit.Polymorphic                  using ( ⊤ ; tt )
-open import Level                                  using ( Level ; _⊔_ )
-open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst )
-open import Relation.Nullary                       using ( ¬_ )
+                                                   using  ( ∈-map⁺ ; ∈-map⁻ )
+open import Data.List.Relation.Unary.All           using  ( All ; [] ; _∷_
+                                                          ; lookup ; tabulate )
+open import Data.List.Relation.Unary.AllPairs      using  ( AllPairs ; [] ; _∷_ )
+open import Data.List.Relation.Unary.Any           using  ( Any ; here ; there )
+open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
+                                                          ; proj₁ ; proj₂ )
+open import Data.Sum.Base                          using  ( _⊎_ ; inj₁ ; inj₂ )
+open import Data.Unit.Polymorphic                  using  ( ⊤ ; tt )
+open import Level                                  using  ( Level ; _⊔_ )
+open import Relation.Binary.Definitions            using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
+                                                          ; trans ; cong ; subst )
+open import Relation.Nullary                       using  ( ¬_ )
 
 import Data.List.Relation.Unary.All.Properties       as All
 import Data.List.Relation.Unary.AllPairs.Properties  as AllPairs
 import Data.List.Relation.Unary.Any.Properties       as Any
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Algorithm      using ( module Canonicalization )
-open import Lattices.Free.Canonical.Basic
-  using  ( CTerm ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; jgen ; jmeet ; CMand ; mgen ; mjoin ; ⌊_⌋
-         ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ ; ⋁ᴶ ; ⋀ᴹ ; ⋁⁺ ; ⋀⁺ ; ⋁ᴶ≡⋁⁺ ; ⋀ᴹ≡⋀⁺ ; ⋁ᴶ-upper ; ⋀ᴹ-lower ; ≈ʷ-refl
-         ; ≈ʷ-sym ; ≈ʷ-trans ; IsCanonical ; cjoin ; cmeet ; IsCanonicalJ ; cjmeet
-         ; IsCanonicalM ; cmjoin )
-open import Lattices.Free.Canonical.Joinands       using ( joinands-refine ; meetands-refine )
-open import Lattices.Free.Canonical.Uniqueness     using ( module Antichains ; gen≉join ; gen≉meet )
-open import Lattices.Free.Embedding                using ( joinand-image ; meetand-image )
-open import Lattices.Free.Generation               using ( generator-in-image )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; subst-hom ; injective→reflects
-                                                         ; []-mono ; []-cong ; ⋁⁺-[] ; ⋀⁺-[] )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans )
-open import Setoid.Functions                       using ( IsInjective )
+open import Lattices.Free.Canonical.Algorithm   using  ( module Canonicalization )
+open import Lattices.Free.Canonical.Basic       using  ( CTerm ; genᶜ ; joinᶜ
+                                                       ; meetᶜ ; CJand ; jgen
+                                                       ; jmeet ; CMand ; mgen
+                                                       ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ
+                                                       ; ⌊_⌋ᴹ ; ⋁ᴶ ; ⋀ᴹ ; ⋁⁺
+                                                       ; ⋀⁺ ; ⋁ᴶ≡⋁⁺ ; ⋀ᴹ≡⋀⁺
+                                                       ; ⋁ᴶ-upper ; ⋀ᴹ-lower
+                                                       ; ≈ʷ-refl ; ≈ʷ-sym
+                                                       ; ≈ʷ-trans ; IsCanonical
+                                                       ; cjoin ; cmeet
+                                                       ; IsCanonicalJ ; cjmeet
+                                                       ; IsCanonicalM ; cmjoin )
+open import Lattices.Free.Canonical.Joinands    using  ( joinands-refine
+                                                       ; meetands-refine )
+open import Lattices.Free.Canonical.Uniqueness  using  ( module Antichains
+                                                       ; gen≉join ; gen≉meet )
+open import Lattices.Free.Embedding             using  ( joinand-image
+                                                       ; meetand-image )
+open import Lattices.Free.Generation            using  ( generator-in-image )
+open import Lattices.Free.Substitution          using  ( Sub ; _[_] ; subst-hom
+                                                       ; injective→reflects
+                                                       ; []-mono ; []-cong
+                                                       ; ⋁⁺-[] ; ⋀⁺-[] )
+open import Lattices.Free.Term                  using  ( LatTerm ; ℊ )
+open import Lattices.Free.Whitman               using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans )
+open import Setoid.Functions                    using  ( IsInjective )
 
 private variable
   ι υ ζ ℓ : Level
@@ -129,12 +144,13 @@ the free lattice (`≡→≈ʷ`{.AgdaFunction}).
 
 ```agda
 -- In an antichain, a member below a member is that member.
-antichain-≡ : {R : A → A → Type ℓ} {xs : List A} → AllPairs (λ x y → ¬ R x y × ¬ R y x) xs
-            → {x y : A} → x ∈ xs → y ∈ xs → R x y → x ≡ y
-antichain-≡ (_ ∷ _)   (here refl)  (here refl)  _  = refl
-antichain-≡ (Ix ∷ _)  (here refl)  (there y∈)   p  = ⊥-elim (lookup Ix y∈ .proj₁ p)
-antichain-≡ (Iy ∷ _)  (there x∈)   (here refl)  p  = ⊥-elim (lookup Iy x∈ .proj₂ p)
-antichain-≡ (_ ∷ I)   (there x∈)   (there y∈)   p  = antichain-≡ I x∈ y∈ p
+antichain-≡ : {R : A → A → Type ℓ} {xs : List A}
+  → AllPairs (λ x y → ¬ R x y × ¬ R y x) xs
+  → {x y : A} → x ∈ xs → y ∈ xs → R x y → x ≡ y
+antichain-≡ (_ ∷ _) (here refl) (here refl) _ = refl
+antichain-≡ (Ix ∷ _) (here refl) (there y∈) p = ⊥-elim (lookup Ix y∈ .proj₁ p)
+antichain-≡ (Iy ∷ _) (there x∈) (here refl) p = ⊥-elim (lookup Iy x∈ .proj₂ p)
+antichain-≡ (_ ∷ I) (there x∈) (there y∈) p = antichain-≡ I x∈ y∈ p
 
 -- An equation of lattice terms is an equality in the free lattice.
 ≡→≈ʷ : {Z : Type ζ} {s t : LatTerm Z} → s ≡ t → s ≈ʷ t
@@ -160,28 +176,33 @@ module Truncates {I : Type ι} {Y : Type υ} (τ : Sub I Y) where
   data _⊑_ where
     -- A generator truncates the canonical form of its image.
     gen⊑   : {i : I} {D : CTerm Y} → τ i ≈ʷ ⌊ D ⌋ → genᶜ i ⊑ D
-    -- A join truncates a join: equal through τ, meet children matched, the rest cut.
-    join⊑  : {h : CJand I} {t : List (CJand I)} {h' : CJand Y} {t' : List (CJand Y)}
-           → ⋁ᴶ h t [ τ ] ≈ʷ ⋁ᴶ h' t'
-           → (∀ {mh mt} → jmeet mh mt ∈ h ∷ t → Any (jmeet mh mt ⊑ᴶ_) (h' ∷ t'))
-           → (∀ {d} → d ∈ h' ∷ t'
-                    → Any (_⊑ᴶ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] jgen i ∈ h ∷ t × ⌊ d ⌋ᴶ ≤ʷ τ i))
-           → joinᶜ h t ⊑ joinᶜ h' t'
+    -- A join truncates a join: equal through τ, meet children matched, the rest
+    -- cut.
+    join⊑  : {h : CJand I} {t : List (CJand I)}
+      {h' : CJand Y} {t' : List (CJand Y)}
+      → ⋁ᴶ h t [ τ ] ≈ʷ ⋁ᴶ h' t'
+      → (∀ {mh mt} → jmeet mh mt ∈ h ∷ t → Any (jmeet mh mt ⊑ᴶ_) (h' ∷ t'))
+      → (∀ {d} → d ∈ h' ∷ t'
+          → Any (_⊑ᴶ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] jgen i ∈ h ∷ t × ⌊ d ⌋ᴶ ≤ʷ τ i))
+      → joinᶜ h t ⊑ joinᶜ h' t'
     -- A meet truncates a meet, dually.
-    meet⊑  : {h : CMand I} {t : List (CMand I)} {h' : CMand Y} {t' : List (CMand Y)}
-           → ⋀ᴹ h t [ τ ] ≈ʷ ⋀ᴹ h' t'
-           → (∀ {jh jt} → mjoin jh jt ∈ h ∷ t → Any (mjoin jh jt ⊑ᴹ_) (h' ∷ t'))
-           → (∀ {d} → d ∈ h' ∷ t'
-                    → Any (_⊑ᴹ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] mgen i ∈ h ∷ t × τ i ≤ʷ ⌊ d ⌋ᴹ))
-           → meetᶜ h t ⊑ meetᶜ h' t'
+    meet⊑  : {h : CMand I} {t : List (CMand I)}
+      {h' : CMand Y} {t' : List (CMand Y)}
+      → ⋀ᴹ h t [ τ ] ≈ʷ ⋀ᴹ h' t'
+      → (∀ {jh jt} → mjoin jh jt ∈ h ∷ t → Any (mjoin jh jt ⊑ᴹ_) (h' ∷ t'))
+      → (∀ {d} → d ∈ h' ∷ t'
+          → Any (_⊑ᴹ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] mgen i ∈ h ∷ t × τ i ≤ʷ ⌊ d ⌋ᴹ))
+      → meetᶜ h t ⊑ meetᶜ h' t'
 
   data _⊑ᴶ_ where
-    jmeet⊑ : {mh : CMand I} {mt : List (CMand I)} {mh' : CMand Y} {mt' : List (CMand Y)}
-           → meetᶜ mh mt ⊑ meetᶜ mh' mt' → jmeet mh mt ⊑ᴶ jmeet mh' mt'
+    jmeet⊑ : {mh : CMand I} {mt : List (CMand I)}
+      {mh' : CMand Y} {mt' : List (CMand Y)}
+      → meetᶜ mh mt ⊑ meetᶜ mh' mt' → jmeet mh mt ⊑ᴶ jmeet mh' mt'
 
   data _⊑ᴹ_ where
-    mjoin⊑ : {jh : CJand I} {jt : List (CJand I)} {jh' : CJand Y} {jt' : List (CJand Y)}
-           → joinᶜ jh jt ⊑ joinᶜ jh' jt' → mjoin jh jt ⊑ᴹ mjoin jh' jt'
+    mjoin⊑ : {jh : CJand I} {jt : List (CJand I)}
+      {jh' : CJand Y} {jt' : List (CJand Y)}
+      → joinᶜ jh jt ⊑ joinᶜ jh' jt' → mjoin jh jt ⊑ᴹ mjoin jh' jt'
 ```
 
 A truncation is an equation through `τ` (`⊑-sound`{.AgdaFunction}).  At a cut
@@ -192,18 +213,20 @@ meet node (`cut-aboveᴹ`{.AgdaFunction}).
 ```agda
   -- A truncation is an equation through τ.
   ⊑-sound : {C : CTerm I} {D : CTerm Y} → C ⊑ D → ⌊ C ⌋ [ τ ] ≈ʷ ⌊ D ⌋
-  ⊑-sound (gen⊑ e)       = e
-  ⊑-sound (join⊑ e _ _)  = e
-  ⊑-sound (meet⊑ e _ _)  = e
+  ⊑-sound (gen⊑ e) = e
+  ⊑-sound (join⊑ e _ _) = e
+  ⊑-sound (meet⊑ e _ _) = e
 
   -- At a cut of a join node, the member lies below the node.
-  cut-belowᴶ : {h : CJand I} {t : List (CJand I)} {h' : CJand Y} {t' : List (CJand Y)} {i : I}
-             → ⋁ᴶ h t [ τ ] ≈ʷ ⋁ᴶ h' t' → jgen i ∈ h ∷ t → τ i ≤ʷ ⋁ᴶ h' t'
+  cut-belowᴶ : {h : CJand I} {t : List (CJand I)}
+    {h' : CJand Y} {t' : List (CJand Y)} {i : I}
+    → ⋁ᴶ h t [ τ ] ≈ʷ ⋁ᴶ h' t' → jgen i ∈ h ∷ t → τ i ≤ʷ ⋁ᴶ h' t'
   cut-belowᴶ e i∈ = ≤ʷ-trans ([]-mono τ (⋁ᴶ-upper i∈)) (e .proj₁)
 
   -- At a cut of a meet node, the member lies above the node.
-  cut-aboveᴹ : {h : CMand I} {t : List (CMand I)} {h' : CMand Y} {t' : List (CMand Y)} {i : I}
-             → ⋀ᴹ h t [ τ ] ≈ʷ ⋀ᴹ h' t' → mgen i ∈ h ∷ t → ⋀ᴹ h' t' ≤ʷ τ i
+  cut-aboveᴹ : {h : CMand I} {t : List (CMand I)}
+    {h' : CMand Y} {t' : List (CMand Y)} {i : I}
+    → ⋀ᴹ h t [ τ ] ≈ʷ ⋀ᴹ h' t' → mgen i ∈ h ∷ t → ⋀ᴹ h' t' ≤ʷ τ i
   cut-aboveᴹ e i∈ = ≤ʷ-trans (e .proj₂) ([]-mono τ (⋀ᴹ-lower i∈))
 ```
 
@@ -219,7 +242,12 @@ nothing for a generator, and for a meet the theorem itself, for every canonical
 child of `D` equal to its image.
 
 ```agda
-module _ {I : Type ι} {Y : Type υ} (τ : Sub I Y) (inj : IsInjective (subst-hom τ .proj₁)) where
+module _
+  {I    : Type ι}
+  {Y    : Type υ}
+  (τ    : Sub I Y)
+  (inj  : IsInjective (subst-hom τ .proj₁))
+  where
   open Truncates τ
   open Antichains {A = CJand I} (λ u v → ⌊ u ⌋ᴶ ≤ʷ ⌊ v ⌋ᴶ) ≤ʷ-trans
     using () renaming ( antichain-no-max to no-maxᴶ )
@@ -236,25 +264,30 @@ module _ {I : Type ι} {Y : Type υ} (τ : Sub I Y) (inj : IsInjective (subst-ho
     image-gen w e = let (x , y≈) = generator-in-image τ w (≈ʷ-sym e)
                     in x , inj {w} {ℊ x} (≈ʷ-trans e y≈)
 
-    -- The image of a join of children is the join of their images; dually for meets.
+    -- The image of a join of children is the join of their images; dually for
+    -- meets.
     image≡ᴶ : (h : CJand I) (t : List (CJand I))
-            → ⋁ᴶ h t [ τ ] ≡ ⋁⁺ (⌊ h ⌋ᴶ [ τ ]) (map (_[ τ ]) (map ⌊_⌋ᴶ t))
-    image≡ᴶ h t = trans (cong (_[ τ ]) (⋁ᴶ≡⋁⁺ h t)) (⋁⁺-[] τ ⌊ h ⌋ᴶ (map ⌊_⌋ᴶ t))
+      → ⋁ᴶ h t [ τ ] ≡ ⋁⁺ (⌊ h ⌋ᴶ [ τ ]) (map (_[ τ ]) (map ⌊_⌋ᴶ t))
+    image≡ᴶ h t =
+      trans (cong (_[ τ ]) (⋁ᴶ≡⋁⁺ h t)) (⋁⁺-[] τ ⌊ h ⌋ᴶ (map ⌊_⌋ᴶ t))
 
     image≡ᴹ : (h : CMand I) (t : List (CMand I))
-            → ⋀ᴹ h t [ τ ] ≡ ⋀⁺ (⌊ h ⌋ᴹ [ τ ]) (map (_[ τ ]) (map ⌊_⌋ᴹ t))
-    image≡ᴹ h t = trans (cong (_[ τ ]) (⋀ᴹ≡⋀⁺ h t)) (⋀⁺-[] τ ⌊ h ⌋ᴹ (map ⌊_⌋ᴹ t))
+      → ⋀ᴹ h t [ τ ] ≡ ⋀⁺ (⌊ h ⌋ᴹ [ τ ]) (map (_[ τ ]) (map ⌊_⌋ᴹ t))
+    image≡ᴹ h t =
+      trans (cong (_[ τ ]) (⋀ᴹ≡⋀⁺ h t)) (⋀⁺-[] τ ⌊ h ⌋ᴹ (map ⌊_⌋ᴹ t))
 
   -- The induction hypothesis for a child of a join, and for a child of a meet.
   Truncᴶ : CJand I → Type (ι ⊔ υ)
-  Truncᴶ (jgen _)       = ⊤
-  Truncᴶ (jmeet mh mt)  = ∀ d → IsCanonicalJ (jmeet mh mt) → IsCanonicalJ d
-                        → ⋀ᴹ mh mt [ τ ] ≈ʷ ⌊ d ⌋ᴶ → jmeet mh mt ⊑ᴶ d
+  Truncᴶ (jgen _) = ⊤
+  Truncᴶ (jmeet mh mt) =
+    ∀ d → IsCanonicalJ (jmeet mh mt) → IsCanonicalJ d
+    → ⋀ᴹ mh mt [ τ ] ≈ʷ ⌊ d ⌋ᴶ → jmeet mh mt ⊑ᴶ d
 
   Truncᴹ : CMand I → Type (ι ⊔ υ)
-  Truncᴹ (mgen _)       = ⊤
-  Truncᴹ (mjoin jh jt)  = ∀ d → IsCanonicalM (mjoin jh jt) → IsCanonicalM d
-                        → ⋁ᴶ jh jt [ τ ] ≈ʷ ⌊ d ⌋ᴹ → mjoin jh jt ⊑ᴹ d
+  Truncᴹ (mgen _) = ⊤
+  Truncᴹ (mjoin jh jt) =
+    ∀ d → IsCanonicalM (mjoin jh jt) → IsCanonicalM d
+    → ⋁ᴶ jh jt [ τ ] ≈ʷ ⌊ d ⌋ᴹ → mjoin jh jt ⊑ᴹ d
 ```
 
 The mutual induction runs over `C`: the theorem for a join (and a meet) of
@@ -264,38 +297,38 @@ subterm, as in the proof of `≈ʷ⇒≈ᶜ`{.AgdaFunction}.
 
 ```agda
   truncation       : (C : CTerm I) (D : CTerm Y) → IsCanonical C → IsCanonical D
-                   → ⌊ C ⌋ [ τ ] ≈ʷ ⌊ D ⌋ → C ⊑ D
+    → ⌊ C ⌋ [ τ ] ≈ʷ ⌊ D ⌋ → C ⊑ D
   truncation-join  : (h : CJand I) (t : List (CJand I)) (D : CTerm Y)
-                   → IsCanonical (joinᶜ h t) → IsCanonical D → ⋁ᴶ h t [ τ ] ≈ʷ ⌊ D ⌋
-                   → joinᶜ h t ⊑ D
+    → IsCanonical (joinᶜ h t) → IsCanonical D → ⋁ᴶ h t [ τ ] ≈ʷ ⌊ D ⌋
+    → joinᶜ h t ⊑ D
   truncation-meet  : (h : CMand I) (t : List (CMand I)) (D : CTerm Y)
-                   → IsCanonical (meetᶜ h t) → IsCanonical D → ⋀ᴹ h t [ τ ] ≈ʷ ⌊ D ⌋
-                   → meetᶜ h t ⊑ D
+    → IsCanonical (meetᶜ h t) → IsCanonical D → ⋀ᴹ h t [ τ ] ≈ʷ ⌊ D ⌋
+    → meetᶜ h t ⊑ D
   truncationᴶ      : (a : CJand I) → Truncᴶ a
   truncationᴹ      : (a : CMand I) → Truncᴹ a
   truncationᴶs     : (as : List (CJand I)) → All Truncᴶ as
   truncationᴹs     : (as : List (CMand I)) → All Truncᴹ as
 
-  truncation (genᶜ _)     _ _   _   e = gen⊑ e
-  truncation (joinᶜ h t)  D cC  cD  e = truncation-join h t D cC cD e
-  truncation (meetᶜ h t)  D cC  cD  e = truncation-meet h t D cC cD e
+  truncation (genᶜ _) _ _ _ e = gen⊑ e
+  truncation (joinᶜ h t) D cC cD e = truncation-join h t D cC cD e
+  truncation (meetᶜ h t) D cC cD e = truncation-meet h t D cC cD e
 
-  truncationᴶ (jgen _)                                        = tt
-  truncationᴶ (jmeet mh mt)  (jgen _)         (cjmeet cC)  _            e =
+  truncationᴶ (jgen _) = tt
+  truncationᴶ (jmeet mh mt) (jgen _) (cjmeet cC) _ e =
     let (_ , w≈) = image-gen (⋀ᴹ mh mt) e in ⊥-elim (gen≉meet cC (≈ʷ-sym w≈))
-  truncationᴶ (jmeet mh mt)  (jmeet mh' mt')  (cjmeet cC)  (cjmeet cD)  e =
+  truncationᴶ (jmeet mh mt) (jmeet mh' mt') (cjmeet cC) (cjmeet cD) e =
     jmeet⊑ (truncation-meet mh mt (meetᶜ mh' mt') cC cD e)
 
-  truncationᴹ (mgen _)                                        = tt
-  truncationᴹ (mjoin jh jt)  (mgen _)         (cmjoin cC)  _            e =
+  truncationᴹ (mgen _) = tt
+  truncationᴹ (mjoin jh jt) (mgen _) (cmjoin cC) _ e =
     let (_ , w≈) = image-gen (⋁ᴶ jh jt) e in ⊥-elim (gen≉join cC (≈ʷ-sym w≈))
-  truncationᴹ (mjoin jh jt)  (mjoin jh' jt')  (cmjoin cC)  (cmjoin cD)  e =
+  truncationᴹ (mjoin jh jt) (mjoin jh' jt') (cmjoin cC) (cmjoin cD) e =
     mjoin⊑ (truncation-join jh jt (joinᶜ jh' jt') cC cD e)
 
-  truncationᴶs []        = []
-  truncationᴶs (a ∷ as)  = truncationᴶ a ∷ truncationᴶs as
-  truncationᴹs []        = []
-  truncationᴹs (a ∷ as)  = truncationᴹ a ∷ truncationᴹs as
+  truncationᴶs [] = []
+  truncationᴶs (a ∷ as) = truncationᴶ a ∷ truncationᴶs as
+  truncationᴹs [] = []
+  truncationᴹs (a ∷ as) = truncationᴹ a ∷ truncationᴹs as
 ```
 
 The case of a join `C`.  A generator `D` and a meet `D` are ruled out as
@@ -315,11 +348,16 @@ the same child, so the meet child matches it.
   truncation-join h t (genᶜ _) cC _ e =
     let (_ , w≈) = image-gen (⋁ᴶ h t) e in ⊥-elim (gen≉join cC (≈ʷ-sym w≈))
   truncation-join h t (meetᶜ mh' mt') (cjoin ne _ ac _) cD e =
-    let (_ , a∈ , D≤a) = find (Any.map⁻ {f = ⌊_⌋ᴶ} (Any.map⁻ {f = _[ τ ]}
-                           (joinands-refine (meetᶜ mh' mt') cD (≈ʷ-trans (≈ʷ-sym e) (≡→≈ʷ (image≡ᴶ h t)))
-                                            (here refl))))
-    in ⊥-elim (no-maxᴶ ac ne a∈ λ v∈ → ≤ʷ-trans (⋁ᴶ-upper v∈) (reflect (≤ʷ-trans (e .proj₁) D≤a)))
-  truncation-join h t (joinᶜ h' t') (cjoin _ cs ac c4) cD@(cjoin _ cs' ac' _) e = join⊑ e matched covered
+    let (_ , a∈ , D≤a) =
+          find (Any.map⁻ {f = ⌊_⌋ᴶ} (Any.map⁻ {f = _[ τ ]}
+            (joinands-refine  (meetᶜ mh' mt')
+                              cD
+                              (≈ʷ-trans (≈ʷ-sym e) (≡→≈ʷ (image≡ᴶ h t)))
+                              (here refl))))
+    in ⊥-elim (no-maxᴶ ac ne a∈ λ v∈ →
+                 ≤ʷ-trans (⋁ᴶ-upper v∈) (reflect (≤ʷ-trans (e .proj₁) D≤a)))
+  truncation-join h t (joinᶜ h' t') (cjoin _ cs ac c4) cD@(cjoin _ cs' ac' _) e =
+    join⊑ e matched covered
     where
     -- The induction hypotheses for the children of C.
     ih : All Truncᴶ (h ∷ t)
@@ -334,25 +372,28 @@ the same child, so the meet child matches it.
     upperᴶ u∈ with ∈-map⁻ ⌊_⌋ᴶ u∈
     ... | _ , d∈ , refl = ≤ʷ-trans (⋁ᴶ-upper d∈) (e .proj₂)
 
-    refineᴶ : ∀ {u} → u ∈ map ⌊_⌋ᴶ (h' ∷ t') → Any (u ≤ʷ_) (map (_[ τ ]) (map ⌊_⌋ᴶ (h ∷ t)))
+    refineᴶ : ∀ {u} → u ∈ map ⌊_⌋ᴶ (h' ∷ t')
+      → Any (u ≤ʷ_) (map (_[ τ ]) (map ⌊_⌋ᴶ (h ∷ t)))
     refineᴶ u∈ with ∈-map⁻ ⌊_⌋ᴶ u∈
     ... | _ , d∈ , refl = joinands-refine (joinᶜ h' t') cD rep d∈
 
     -- Lemma 9.13: a meet child's image equals a child of D.
     image : ∀ {mh mt} → jmeet mh mt ∈ h ∷ t
-          → Σ[ d ∈ CJand Y ] d ∈ h' ∷ t' × ⋀ᴹ mh mt [ τ ] ≈ʷ ⌊ d ⌋ᴶ
+      → Σ[ d ∈ CJand Y ] d ∈ h' ∷ t' × ⋀ᴹ mh mt [ τ ] ≈ʷ ⌊ d ⌋ᴶ
     image {mh} {mt} a∈ =
       find (Any.map⁻ {f = ⌊_⌋ᴶ}
-        (subst (λ v → Any (v [ τ ] ≈ʷ_) (map ⌊_⌋ᴶ (h' ∷ t'))) (sym (⋀ᴹ≡⋀⁺ mh mt))
-          (joinand-image τ inj {W = ⋁ᴶ h t} {m₀ = ⌊ mh ⌋ᴹ} {j₀ = ⌊ h ⌋ᴶ} {ms = map ⌊_⌋ᴹ mt}
-                         {js = map ⌊_⌋ᴶ t} {u₀ = ⌊ h' ⌋ᴶ} {us = map ⌊_⌋ᴶ t'}
-            (subst (_∈ map ⌊_⌋ᴶ (h ∷ t)) (⋀ᴹ≡⋀⁺ mh mt) (∈-map⁺ ⌊_⌋ᴶ a∈))
-            (AllPairs.map⁺ ac)
-            (≡→≈ʷ (⋁ᴶ≡⋁⁺ h t))
-            (All.map⁺ (tabulate λ m∈ → c4 a∈ m∈))
-            upperᴶ
-            (subst (⋁ᴶ h t [ τ ] ≤ʷ_) (⋁ᴶ≡⋁⁺ h' t') (e .proj₁))
-            refineᴶ)))
+        (subst  (λ v → Any (v [ τ ] ≈ʷ_) (map ⌊_⌋ᴶ (h' ∷ t')))
+                (sym (⋀ᴹ≡⋀⁺ mh mt))
+                (joinand-image τ inj
+                  {W = ⋁ᴶ h t} {m₀ = ⌊ mh ⌋ᴹ} {j₀ = ⌊ h ⌋ᴶ} {ms = map ⌊_⌋ᴹ mt}
+                  {js = map ⌊_⌋ᴶ t} {u₀ = ⌊ h' ⌋ᴶ} {us = map ⌊_⌋ᴶ t'}
+                  (subst (_∈ map ⌊_⌋ᴶ (h ∷ t)) (⋀ᴹ≡⋀⁺ mh mt) (∈-map⁺ ⌊_⌋ᴶ a∈))
+                  (AllPairs.map⁺ ac)
+                  (≡→≈ʷ (⋁ᴶ≡⋁⁺ h t))
+                  (All.map⁺ (tabulate λ m∈ → c4 a∈ m∈))
+                  upperᴶ
+                  (subst (⋁ᴶ h t [ τ ] ≤ʷ_) (⋁ᴶ≡⋁⁺ h' t') (e .proj₁))
+                  refineᴶ)))
 
     -- A meet child truncates the child of D its image equals.
     matched : ∀ {mh mt} → jmeet mh mt ∈ h ∷ t → Any (jmeet mh mt ⊑ᴶ_) (h' ∷ t')
@@ -361,19 +402,25 @@ the same child, so the meet child matches it.
 
     -- Each child of D lies below the image of a child of C.
     refine : ∀ {d} → d ∈ h' ∷ t' → Any (λ a → ⌊ d ⌋ᴶ ≤ʷ ⌊ a ⌋ᴶ [ τ ]) (h ∷ t)
-    refine d∈ = Any.map⁻ {f = ⌊_⌋ᴶ} (Any.map⁻ {f = _[ τ ]} (joinands-refine (joinᶜ h' t') cD rep d∈))
+    refine d∈ =
+      Any.map⁻ {f = ⌊_⌋ᴶ}
+        (Any.map⁻ {f = _[ τ ]} (joinands-refine (joinᶜ h' t') cD rep d∈))
 
-    -- Below a generator child's image it is cut; below a meet child's image, matched.
-    cover : ∀ {d} → d ∈ h' ∷ t' → Σ[ a ∈ CJand I ] a ∈ h ∷ t × ⌊ d ⌋ᴶ ≤ʷ ⌊ a ⌋ᴶ [ τ ]
-          → Any (_⊑ᴶ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] jgen i ∈ h ∷ t × ⌊ d ⌋ᴶ ≤ʷ τ i)
+    -- Below a generator child's image it is cut; below a meet child's image,
+    -- matched.
+    cover : ∀ {d} → d ∈ h' ∷ t'
+      → Σ[ a ∈ CJand I ] a ∈ h ∷ t × ⌊ d ⌋ᴶ ≤ʷ ⌊ a ⌋ᴶ [ τ ]
+      → Any (_⊑ᴶ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] jgen i ∈ h ∷ t × ⌊ d ⌋ᴶ ≤ʷ τ i)
     cover _ (jgen i , a∈ , d≤) = inj₂ (i , a∈ , d≤)
     cover {d} d∈ (jmeet mh mt , a∈ , d≤) =
       let (d' , d'∈ , eq) = image a∈
-          d≡d' = antichain-≡ {R = λ u v → ⌊ u ⌋ᴶ ≤ʷ ⌊ v ⌋ᴶ} ac' d∈ d'∈ (≤ʷ-trans d≤ (eq .proj₁))
+          d≡d' = antichain-≡  {R = λ u v → ⌊ u ⌋ᴶ ≤ʷ ⌊ v ⌋ᴶ}
+                              ac' d∈ d'∈ (≤ʷ-trans d≤ (eq .proj₁))
       in inj₁ (lose a∈ (subst (jmeet mh mt ⊑ᴶ_) (sym d≡d')
                               (lookup ih a∈ d' (lookup cs a∈) (lookup cs' d'∈) eq)))
 
-    covered : ∀ {d} → d ∈ h' ∷ t' → Any (_⊑ᴶ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] jgen i ∈ h ∷ t × ⌊ d ⌋ᴶ ≤ʷ τ i)
+    covered : ∀ {d} → d ∈ h' ∷ t'
+      → Any (_⊑ᴶ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] jgen i ∈ h ∷ t × ⌊ d ⌋ᴶ ≤ʷ τ i)
     covered d∈ = cover d∈ (find (refine d∈))
 ```
 
@@ -385,11 +432,16 @@ The case of a meet `C` is dual, with Lemma 9.13 for meetands
   truncation-meet h t (genᶜ _) cC _ e =
     let (_ , w≈) = image-gen (⋀ᴹ h t) e in ⊥-elim (gen≉meet cC (≈ʷ-sym w≈))
   truncation-meet h t (joinᶜ jh' jt') (cmeet ne _ ac _) cD e =
-    let (_ , a∈ , a≤D) = find (Any.map⁻ {f = ⌊_⌋ᴹ} (Any.map⁻ {f = _[ τ ]}
-                           (meetands-refine (joinᶜ jh' jt') cD (≈ʷ-trans (≈ʷ-sym e) (≡→≈ʷ (image≡ᴹ h t)))
-                                            (here refl))))
-    in ⊥-elim (no-minᴹ ac ne a∈ λ v∈ → ≤ʷ-trans (reflect (≤ʷ-trans a≤D (e .proj₂))) (⋀ᴹ-lower v∈))
-  truncation-meet h t (meetᶜ h' t') (cmeet _ cs ac c4) cD@(cmeet _ cs' ac' _) e = meet⊑ e matched covered
+    let (_ , a∈ , a≤D) =
+          find (Any.map⁻ {f = ⌊_⌋ᴹ} (Any.map⁻ {f = _[ τ ]}
+            (meetands-refine  (joinᶜ jh' jt')
+                              cD
+                              (≈ʷ-trans (≈ʷ-sym e) (≡→≈ʷ (image≡ᴹ h t)))
+                              (here refl))))
+    in ⊥-elim (no-minᴹ ac ne a∈ λ v∈ →
+                 ≤ʷ-trans (reflect (≤ʷ-trans a≤D (e .proj₂))) (⋀ᴹ-lower v∈))
+  truncation-meet h t (meetᶜ h' t') (cmeet _ cs ac c4) cD@(cmeet _ cs' ac' _) e =
+    meet⊑ e matched covered
     where
     -- The induction hypotheses for the children of C.
     ih : All Truncᴹ (h ∷ t)
@@ -404,25 +456,28 @@ The case of a meet `C` is dual, with Lemma 9.13 for meetands
     lowerᴹ u∈ with ∈-map⁻ ⌊_⌋ᴹ u∈
     ... | _ , d∈ , refl = ≤ʷ-trans (e .proj₁) (⋀ᴹ-lower d∈)
 
-    refineᴹ : ∀ {u} → u ∈ map ⌊_⌋ᴹ (h' ∷ t') → Any (_≤ʷ u) (map (_[ τ ]) (map ⌊_⌋ᴹ (h ∷ t)))
+    refineᴹ : ∀ {u} → u ∈ map ⌊_⌋ᴹ (h' ∷ t')
+      → Any (_≤ʷ u) (map (_[ τ ]) (map ⌊_⌋ᴹ (h ∷ t)))
     refineᴹ u∈ with ∈-map⁻ ⌊_⌋ᴹ u∈
     ... | _ , d∈ , refl = meetands-refine (meetᶜ h' t') cD rep d∈
 
     -- Lemma 9.13, dually: a join child's image equals a child of D.
     image : ∀ {jh jt} → mjoin jh jt ∈ h ∷ t
-          → Σ[ d ∈ CMand Y ] d ∈ h' ∷ t' × ⋁ᴶ jh jt [ τ ] ≈ʷ ⌊ d ⌋ᴹ
+      → Σ[ d ∈ CMand Y ] d ∈ h' ∷ t' × ⋁ᴶ jh jt [ τ ] ≈ʷ ⌊ d ⌋ᴹ
     image {jh} {jt} a∈ =
       find (Any.map⁻ {f = ⌊_⌋ᴹ}
-        (subst (λ v → Any (v [ τ ] ≈ʷ_) (map ⌊_⌋ᴹ (h' ∷ t'))) (sym (⋁ᴶ≡⋁⁺ jh jt))
-          (meetand-image τ inj {W = ⋀ᴹ h t} {j₀ = ⌊ jh ⌋ᴶ} {m₀ = ⌊ h ⌋ᴹ} {js = map ⌊_⌋ᴶ jt}
-                         {ms = map ⌊_⌋ᴹ t} {u₀ = ⌊ h' ⌋ᴹ} {us = map ⌊_⌋ᴹ t'}
-            (subst (_∈ map ⌊_⌋ᴹ (h ∷ t)) (⋁ᴶ≡⋁⁺ jh jt) (∈-map⁺ ⌊_⌋ᴹ a∈))
-            (AllPairs.map⁺ ac)
-            (≡→≈ʷ (⋀ᴹ≡⋀⁺ h t))
-            (All.map⁺ (tabulate λ j∈ → c4 a∈ j∈))
-            lowerᴹ
-            (subst (_≤ʷ ⋀ᴹ h t [ τ ]) (⋀ᴹ≡⋀⁺ h' t') (e .proj₂))
-            refineᴹ)))
+        (subst  (λ v → Any (v [ τ ] ≈ʷ_) (map ⌊_⌋ᴹ (h' ∷ t')))
+                (sym (⋁ᴶ≡⋁⁺ jh jt))
+                (meetand-image τ inj
+                  {W = ⋀ᴹ h t} {j₀ = ⌊ jh ⌋ᴶ} {m₀ = ⌊ h ⌋ᴹ} {js = map ⌊_⌋ᴶ jt}
+                  {ms = map ⌊_⌋ᴹ t} {u₀ = ⌊ h' ⌋ᴹ} {us = map ⌊_⌋ᴹ t'}
+                  (subst (_∈ map ⌊_⌋ᴹ (h ∷ t)) (⋁ᴶ≡⋁⁺ jh jt) (∈-map⁺ ⌊_⌋ᴹ a∈))
+                  (AllPairs.map⁺ ac)
+                  (≡→≈ʷ (⋀ᴹ≡⋀⁺ h t))
+                  (All.map⁺ (tabulate λ j∈ → c4 a∈ j∈))
+                  lowerᴹ
+                  (subst (_≤ʷ ⋀ᴹ h t [ τ ]) (⋀ᴹ≡⋀⁺ h' t') (e .proj₂))
+                  refineᴹ)))
 
     -- A join child truncates the child of D its image equals.
     matched : ∀ {jh jt} → mjoin jh jt ∈ h ∷ t → Any (mjoin jh jt ⊑ᴹ_) (h' ∷ t')
@@ -431,19 +486,25 @@ The case of a meet `C` is dual, with Lemma 9.13 for meetands
 
     -- Each child of D lies above the image of a child of C.
     refine : ∀ {d} → d ∈ h' ∷ t' → Any (λ a → ⌊ a ⌋ᴹ [ τ ] ≤ʷ ⌊ d ⌋ᴹ) (h ∷ t)
-    refine d∈ = Any.map⁻ {f = ⌊_⌋ᴹ} (Any.map⁻ {f = _[ τ ]} (meetands-refine (meetᶜ h' t') cD rep d∈))
+    refine d∈ =
+      Any.map⁻ {f = ⌊_⌋ᴹ}
+        (Any.map⁻ {f = _[ τ ]} (meetands-refine (meetᶜ h' t') cD rep d∈))
 
-    -- Above a generator child's image it is cut; above a join child's image, matched.
-    cover : ∀ {d} → d ∈ h' ∷ t' → Σ[ a ∈ CMand I ] a ∈ h ∷ t × ⌊ a ⌋ᴹ [ τ ] ≤ʷ ⌊ d ⌋ᴹ
-          → Any (_⊑ᴹ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] mgen i ∈ h ∷ t × τ i ≤ʷ ⌊ d ⌋ᴹ)
+    -- Above a generator child's image it is cut; above a join child's image,
+    -- matched.
+    cover : ∀ {d} → d ∈ h' ∷ t'
+      → Σ[ a ∈ CMand I ] a ∈ h ∷ t × ⌊ a ⌋ᴹ [ τ ] ≤ʷ ⌊ d ⌋ᴹ
+      → Any (_⊑ᴹ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] mgen i ∈ h ∷ t × τ i ≤ʷ ⌊ d ⌋ᴹ)
     cover _ (mgen i , a∈ , ≤d) = inj₂ (i , a∈ , ≤d)
     cover {d} d∈ (mjoin jh jt , a∈ , ≤d) =
       let (d' , d'∈ , eq) = image a∈
-          d'≡d = antichain-≡ {R = λ u v → ⌊ u ⌋ᴹ ≤ʷ ⌊ v ⌋ᴹ} ac' d'∈ d∈ (≤ʷ-trans (eq .proj₂) ≤d)
+          d'≡d = antichain-≡  {R = λ u v → ⌊ u ⌋ᴹ ≤ʷ ⌊ v ⌋ᴹ}
+                              ac' d'∈ d∈ (≤ʷ-trans (eq .proj₂) ≤d)
       in inj₁ (lose a∈ (subst (mjoin jh jt ⊑ᴹ_) d'≡d
                               (lookup ih a∈ d' (lookup cs a∈) (lookup cs' d'∈) eq)))
 
-    covered : ∀ {d} → d ∈ h' ∷ t' → Any (_⊑ᴹ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] mgen i ∈ h ∷ t × τ i ≤ʷ ⌊ d ⌋ᴹ)
+    covered : ∀ {d} → d ∈ h' ∷ t'
+      → Any (_⊑ᴹ d) (h ∷ t) ⊎ (Σ[ i ∈ I ] mgen i ∈ h ∷ t × τ i ≤ʷ ⌊ d ⌋ᴹ)
     covered d∈ = cover d∈ (find (refine d∈))
 ```
 
@@ -456,19 +517,29 @@ setting, `I` is the three generators of `FL(3)`, `τ` is the triple `a'`, `b'`,
 `c'`, and `p` is the term expressing `a` in it.
 
 ```agda
-module _ {I : Type ι} {Y : Type υ} (_≟ᴵ_ : DecidableEquality I) (_≟ʸ_ : DecidableEquality Y)
-         (τ : Sub I Y) (inj : IsInjective (subst-hom τ .proj₁)) where
+module _
+  {I     : Type ι}
+  {Y     : Type υ}
+  (_≟ᴵ_  : DecidableEquality I)
+  (_≟ʸ_  : DecidableEquality Y)
+  (τ     : Sub I Y)
+  (inj   : IsInjective (subst-hom τ .proj₁))
+  where
   open Truncates τ
-  open Canonicalization _≟ᴵ_ using () renaming ( canonical to canonicalᴵ ; canonical-sound to soundᴵ
-                                               ; canonical-isCanonical to isCanonicalᴵ )
-  open Canonicalization _≟ʸ_ using () renaming ( canonical to canonicalʸ ; canonical-sound to soundʸ
-                                               ; canonical-isCanonical to isCanonicalʸ )
+  open Canonicalization _≟ᴵ_
+    using () renaming ( canonical to canonicalᴵ ; canonical-sound to soundᴵ
+                      ; canonical-isCanonical to isCanonicalᴵ )
+  open Canonicalization _≟ʸ_
+    using () renaming ( canonical to canonicalʸ ; canonical-sound to soundʸ
+                      ; canonical-isCanonical to isCanonicalʸ )
 
   -- The canonical form of p truncates the canonical form of p [ τ ].
   truncation-canonical : (p : LatTerm I) → canonicalᴵ p ⊑ canonicalʸ (p [ τ ])
   truncation-canonical p =
-    truncation τ inj (canonicalᴵ p) (canonicalʸ (p [ τ ])) (isCanonicalᴵ p) (isCanonicalʸ (p [ τ ]))
-               (≈ʷ-trans ([]-cong τ (soundᴵ p)) (≈ʷ-sym (soundʸ (p [ τ ]))))
+    truncation  τ inj
+                (canonicalᴵ p) (canonicalʸ (p [ τ ]))
+                (isCanonicalᴵ p) (isCanonicalʸ (p [ τ ]))
+                (≈ʷ-trans ([]-cong τ (soundᴵ p)) (≈ʷ-sym (soundʸ (p [ τ ]))))
 ```
 
 **Theorem 9.1** of the paper (the truncation theorem), as one statement: for
@@ -478,12 +549,15 @@ form `C`, and the canonical form `D` of `τ(p)`, `C` truncates `D` through `τ`
 canonical term naming it; no decidable equality is needed.
 
 ```agda
--- Theorem 9.1: the canonical form of p truncates that of its image under an embedding.
+-- Theorem 9.1: the canonical form of p truncates that of its image under an
+-- embedding.
 Theorem-9·1 : Setω
-Theorem-9·1 =  ∀ {ι υ} {I : Type ι} {Y : Type υ} (τ : Sub I Y) → IsInjective (subst-hom τ .proj₁)
-               → (p : LatTerm I) (C : CTerm I) (D : CTerm Y)
-               → IsCanonical C → ⌊ C ⌋ ≈ʷ p → IsCanonical D → ⌊ D ⌋ ≈ʷ p [ τ ]
-               → Truncates._⊑_ τ C D
+Theorem-9·1 =
+  ∀ {ι υ} {I : Type ι} {Y : Type υ} (τ : Sub I Y)
+  → IsInjective (subst-hom τ .proj₁)
+  → (p : LatTerm I) (C : CTerm I) (D : CTerm Y)
+  → IsCanonical C → ⌊ C ⌋ ≈ʷ p → IsCanonical D → ⌊ D ⌋ ≈ʷ p [ τ ]
+  → Truncates._⊑_ τ C D
 
 -- The proof of Theorem 9.1.
 theorem-9·1 : Theorem-9·1

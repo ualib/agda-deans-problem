@@ -63,41 +63,57 @@ module DeansProblem.Coherent.Infinite where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.List.Base                         using ( allFin )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Fin.Properties                    using  ( _≟_ )
+open import Data.List.Base                         using  ( allFin )
 open import Data.List.Membership.Propositional.Properties
-                                                   using ( ∈-allFin )
-open import Data.List.Relation.Unary.Any           using ( Any )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _∸_ ; _≤_ ; _<_ ; pred
-                                                         ; z≤n ; s≤s )
-open import Data.Nat.Properties                    using ( ≤-refl ; ≤-reflexive ; ≤-trans ; <-trans ; <⇒≤
-                                                         ; n≤1+n ; n<1+n ; m≤n+m ; +-comm ; +-∸-assoc
-                                                         ; m∸n+n≡m ; n∸n≡0 ; m+n≤o⇒m≤o∸n
-                                                         ; m≤n⇒m<n∨m≡n ; m≤n⇒∃[o]m+o≡n )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using ( [_,_]′ )
-open import Function                               using ( _⇔_ ; mk⇔ )
-open import Level                                  using ( Level ; 0ℓ ) renaming ( suc to lsuc )
-open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst ; subst₂ )
-open import Relation.Nullary                       using ( ¬_ )
+                                                   using  ( ∈-allFin )
+open import Data.List.Relation.Unary.Any           using  ( Any )
+open import Data.Nat.Base                          using  ( ℕ ; zero ; suc
+                                                          ; _+_ ; _∸_ ; _≤_
+                                                          ; _<_ ; pred ; z≤n ; s≤s )
+open import Data.Nat.Properties                    using  ( ≤-refl ; ≤-reflexive
+                                                          ; ≤-trans ; <-trans
+                                                          ; <⇒≤ ; n≤1+n
+                                                          ; n<1+n ; m≤n+m
+                                                          ; +-comm ; +-∸-assoc
+                                                          ; m∸n+n≡m ; n∸n≡0
+                                                          ; m+n≤o⇒m≤o∸n
+                                                          ; m≤n⇒m<n∨m≡n
+                                                          ; m≤n⇒∃[o]m+o≡n )
+open import Data.Product                           using  ( Σ-syntax ; _×_
+                                                          ; _,_ ; proj₁ ; proj₂ )
+open import Data.Sum.Base                          using  ( [_,_]′ )
+open import Function                               using  ( _⇔_ ; mk⇔ )
+open import Level                                  using  ( Level ; 0ℓ )
+                                                   renaming ( suc to lsuc )
+open import Relation.Binary.Definitions            using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
+                                                          ; trans ; cong
+                                                          ; subst ; subst₂ )
+open import Relation.Nullary                       using  ( ¬_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Chain )
-open import DeansProblem.Chain.Copies              using ( CopyChain ; copyChain→chain ; chain→copyChain )
-open import DeansProblem.Coherent                  using ( bound ; first-factor-injective ; transition
-                                                         ; gens≈transition ; transition-bound′ )
-open import DeansProblem.Coherent.Finite           using ( Coherent ; Coherentω ; Recurs ; chain→coherent₃
-                                                         ; transition-⨟′ )
-open import DeansProblem.Pigeonhole                using ( InfinitePigeonhole ; constant-along )
-open import Lattices.Free.Complexity               using ( complexity ; module Bounded )
-open import Lattices.Free.Generation               using ( FreelyGenerates ; freelyGenerates→injective
-                                                         ; injective→freelyGenerates ; generator-in-image )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-cong )
-open import Lattices.Free.Term                     using ( ℊ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
+open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-sym ; ≈ʷ-trans )
+open import DeansProblem.Chain             using  ( Chain )
+open import DeansProblem.Chain.Copies      using  ( CopyChain ; copyChain→chain
+                                                  ; chain→copyChain )
+open import DeansProblem.Coherent          using  ( bound ; first-factor-injective
+                                                  ; transition ; gens≈transition
+                                                  ; transition-bound′ )
+open import DeansProblem.Coherent.Finite   using  ( Coherent ; Coherentω
+                                                  ; Recurs ; chain→coherent₃
+                                                  ; transition-⨟′ )
+open import DeansProblem.Pigeonhole        using  ( InfinitePigeonhole
+                                                  ; constant-along )
+open import Lattices.Free.Complexity       using  ( complexity ; module Bounded )
+open import Lattices.Free.Generation       using  ( FreelyGenerates
+                                                  ; freelyGenerates→injective
+                                                  ; injective→freelyGenerates
+                                                  ; generator-in-image )
+open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-cong )
+open import Lattices.Free.Term             using  ( ℊ )
+open import Lattices.Free.Whitman          using  ( _≈ʷ_ )
 
 private variable
   χ : Level
@@ -123,12 +139,14 @@ to `l ∸ j` (`∸-split`{.AgdaFunction}).
 ```agda
 -- The offset from j to l splits at k, for j ≤ k ≤ l.
 ∸-split : {j k l : ℕ} → j ≤ k → k ≤ l → l ∸ j ≡ (l ∸ k) + (k ∸ j)
-∸-split {j} {k} {l} j≤k k≤l = trans (cong (_∸ j) (sym (m∸n+n≡m k≤l))) (+-∸-assoc (l ∸ k) j≤k)
+∸-split {j} {k} {l} j≤k k≤l =
+  trans (cong (_∸ j) (sym (m∸n+n≡m k≤l))) (+-∸-assoc (l ∸ k) j≤k)
 
 module _ {X : Type χ} (c : Chain X) where
   open Chain c
 
-  -- The transition θ_{j,k} between links j ≤ k: the transition from j over k ∸ j steps.
+  -- The transition θ_{j,k} between links j ≤ k: the transition from j over
+  -- k ∸ j steps.
   between : ℕ → ℕ → Sub (Fin 3) (Fin 3)
   between j k = transition c j (k ∸ j)
 
@@ -139,34 +157,46 @@ module _ {X : Type χ} (c : Chain X) where
   -- It expresses link j in link k.
   gens≈between : ∀ {j k} → j ≤ k → ∀ i → gens j i ≈ʷ between j k i [ gens k ]
   gens≈between {j} {k} j≤k i =
-    subst (λ m → gens j i ≈ʷ between j k i [ gens m ]) (m∸n+n≡m j≤k) (gens≈transition c j (k ∸ j) i)
+    subst  (λ m → gens j i ≈ʷ between j k i [ gens m ])
+           (m∸n+n≡m j≤k)
+           (gens≈transition c j (k ∸ j) i)
 
   -- It freely generates, as a first factor of the injective gens j.
   between-free : ∀ j k → FreelyGenerates (between j k)
   between-free j k =
     injective→freelyGenerates _
-      (first-factor-injective (between j k) (gens (k ∸ j + j)) (gens j) (gens≈transition c j (k ∸ j))
-                              (freelyGenerates→injective (gens j) (gens-free j)))
+      (first-factor-injective
+        (between j k) (gens (k ∸ j + j)) (gens j)
+        (gens≈transition c j (k ∸ j))
+        (freelyGenerates→injective (gens j) (gens-free j)))
 
   private
-    -- The transition from a over e + 1 steps misses the fresh generator of its last step.
-    transition-misses : ∀ a e i → ¬ (ℊ (fresh (e + a)) ≈ʷ transition c a (suc e) i)
+    -- The transition from a over e + 1 steps misses the fresh generator of its
+    -- last step.
+    transition-misses : ∀ a e i
+      → ¬ (ℊ (fresh (e + a)) ≈ʷ transition c a (suc e) i)
     transition-misses a e i p =
       let (i′ , p′) = generator-in-image (terms (e + a)) (transition c a e i) p
       in fresh∉ (e + a) i′ p′
 
   -- For j < k it misses the fresh generator of the step from k - 1 to k.
-  between-misses : ∀ {j k} → j < k → ∀ i → ¬ (ℊ (fresh (pred k)) ≈ʷ between j k i)
+  between-misses : ∀ {j k} → j < k
+    → ∀ i → ¬ (ℊ (fresh (pred k)) ≈ʷ between j k i)
   between-misses {j} (s≤s {n = k} j≤k) i p =
     transition-misses j (k ∸ j) i
-      (subst₂ (λ m e → ℊ (fresh m) ≈ʷ transition c j e i) (sym (m∸n+n≡m j≤k)) (+-∸-assoc 1 j≤k) p)
+      (subst₂  (λ m e → ℊ (fresh m) ≈ʷ transition c j e i)
+               (sym (m∸n+n≡m j≤k))
+               (+-∸-assoc 1 j≤k)
+               p)
 
   -- The cocycle identity between links j ≤ k ≤ l.
-  between-cocycle : ∀ {j k l} → j ≤ k → k ≤ l → ∀ i → between j l i ≡ between j k i [ between k l ]
+  between-cocycle : ∀ {j k l} → j ≤ k → k ≤ l
+    → ∀ i → between j l i ≡ between j k i [ between k l ]
   between-cocycle {j} {k} {l} j≤k k≤l i =
-    trans (cong (λ e → transition c j e i) (∸-split j≤k k≤l))
-          (trans (transition-⨟′ c j (k ∸ j) (l ∸ k) i)
-                 (cong (λ m → between j k i [ transition c m (l ∸ k) ]) (m∸n+n≡m j≤k)))
+    trans  (cong (λ e → transition c j e i) (∸-split j≤k k≤l))
+           (trans  (transition-⨟′ c j (k ∸ j) (l ∸ k) i)
+                   (cong  (λ m → between j k i [ transition c m (l ∸ k) ])
+                          (m∸n+n≡m j≤k)))
 ```
 
 #### Subsequences of a chain
@@ -186,21 +216,29 @@ private
   module _ {h : ℕ → ℕ} (h-inc : ∀ t → h t < h (suc t)) where
     -- A selection moves every index forward.
     increasing-id : ∀ t → t ≤ h t
-    increasing-id zero     = z≤n
-    increasing-id (suc t)  = ≤-trans (s≤s (increasing-id t)) (h-inc t)
+    increasing-id zero = z≤n
+    increasing-id (suc t) = ≤-trans (s≤s (increasing-id t)) (h-inc t)
 
     -- It preserves the strict order.
     increasing-< : ∀ {a b} → a < b → h a < h b
-    increasing-< (s≤s {n = b} a≤b) = [ (λ a<b → <-trans (increasing-< a<b) (h-inc b))
-                                     , (λ a≡b → subst (λ a → h a < h (suc b)) (sym a≡b) (h-inc b))
-                                     ]′ (m≤n⇒m<n∨m≡n a≤b)
+    increasing-< (s≤s {n = b} a≤b) =
+      [ (λ a<b → <-trans (increasing-< a<b) (h-inc b))
+      , (λ a≡b → subst (λ a → h a < h (suc b)) (sym a≡b) (h-inc b))
+      ]′ (m≤n⇒m<n∨m≡n a≤b)
 
     -- And the weak order.
     increasing-≤ : ∀ {a b} → a ≤ b → h a ≤ h b
-    increasing-≤ a≤b = [ (λ a<b → <⇒≤ (increasing-< a<b)) , (λ a≡b → ≤-reflexive (cong h a≡b)) ]′
-                         (m≤n⇒m<n∨m≡n a≤b)
+    increasing-≤ a≤b =
+      [ (λ a<b → <⇒≤ (increasing-< a<b))
+      , (λ a≡b → ≤-reflexive (cong h a≡b))
+      ]′ (m≤n⇒m<n∨m≡n a≤b)
 
-module _ {X : Type χ} (c : Chain X) (h : ℕ → ℕ) (h-inc : ∀ t → h t < h (suc t)) where
+module _
+  {X      : Type χ}
+  (c      : Chain X)
+  (h      : ℕ → ℕ)
+  (h-inc  : ∀ t → h t < h (suc t))
+  where
   open Chain c
 
   -- The links h 0 < h 1 < ⋯ of the chain, as a chain.
@@ -215,11 +253,14 @@ module _ {X : Type χ} (c : Chain X) (h : ℕ → ℕ) (h-inc : ∀ t → h t < 
     }
 
   -- Its transitions are the transitions between the selected links.
-  subchain-transition : ∀ j e i → transition subchain j e i ≡ between c (h j) (h (e + j)) i
-  subchain-transition j zero     i = sym (between-refl c (h j) i)
-  subchain-transition j (suc e)  i =
-    trans (cong (_[ between c (h (e + j)) (h (suc (e + j))) ]) (subchain-transition j e i))
-          (sym (between-cocycle c (increasing-≤ h-inc (m≤n+m j e)) (<⇒≤ (h-inc (e + j))) i))
+  subchain-transition : ∀ j e i
+    → transition subchain j e i ≡ between c (h j) (h (e + j)) i
+  subchain-transition j zero i = sym (between-refl c (h j) i)
+  subchain-transition j (suc e) i =
+    trans  (cong  (_[ between c (h (e + j)) (h (suc (e + j))) ])
+                  (subchain-transition j e i))
+           (sym (between-cocycle  c (increasing-≤ h-inc (m≤n+m j e))
+                                  (<⇒≤ (h-inc (e + j))) i))
 ```
 
 #### The statements
@@ -231,7 +272,8 @@ the bottom triple in the `k`-th by the same three terms
 (`expresses`{.AgdaFunction}), since `θ_{0,k}` does.
 
 ```agda
--- Remark 5.1: one proper self-embedding of FL(3) is the transition from the bottom to infinitely many links.
+-- Remark 5.1: one proper self-embedding of FL(3) is the transition from the
+-- bottom to infinitely many links.
 record BottomRecurrence {X : Type χ} (c : Chain X) : Type where
   field
     Θ        : Sub (Fin 3) (Fin 3)
@@ -240,11 +282,14 @@ record BottomRecurrence {X : Type χ} (c : Chain X) : Type where
     missed∉  : ∀ i → ¬ (ℊ missed ≈ʷ Θ i)
     recurs   : ∀ m → Σ[ k ∈ ℕ ] m < k × (∀ i → transition c 0 k i ≈ʷ Θ i)
 
-  -- So Θ expresses the bottom triple in each of those links, by the same three terms.
-  expresses : ∀ m → Σ[ k ∈ ℕ ] m < k × (∀ i → Chain.gens c 0 i ≈ʷ Θ i [ Chain.gens c k ])
+  -- So Θ expresses the bottom triple in each of those links, by the same three
+  -- terms.
+  expresses : ∀ m
+    → Σ[ k ∈ ℕ ] m < k × (∀ i → Chain.gens c 0 i ≈ʷ Θ i [ Chain.gens c k ])
   expresses m =
     let (k , m<k , e) = recurs m
-    in k , m<k , λ i → ≈ʷ-trans (gens≈between c {k = k} z≤n i) ([]-cong (Chain.gens c k) (e i))
+    in k , m<k , λ i → ≈ʷ-trans  (gens≈between c {k = k} z≤n i)
+                                 ([]-cong (Chain.gens c k) (e i))
 ```
 
 The coherent form of Theorem C is a record too (`CoherentForm`{.AgdaRecord}):
@@ -257,24 +302,28 @@ subsequence of the chain, the transition `θ_{j,k}` depends only on `j`, as
 the paper states it.
 
 ```agda
--- Theorem C, the coherent form: a subsequence of the chain whose transitions from each link are one
--- proper self-embedding, and those embeddings form an infinite coherent chain.
+-- Theorem C, the coherent form: a subsequence of the chain whose transitions
+-- from each link are one proper self-embedding, and those embeddings form an
+-- infinite coherent chain.
 record CoherentForm {X : Type χ} (c : Chain X) : Type where
   field
     select          : ℕ → ℕ
     ascends         : ∀ j → select j < select (suc j)
     coherent-chain  : Coherentω
-    depends         : ∀ {j l} → j < l → ∀ i → between c (select j) (select l) i ≈ʷ Coherentω.Θ coherent-chain j i
+    depends         : ∀ {j l} → j < l → ∀ i
+      → between c (select j) (select l) i ≈ʷ Coherentω.Θ coherent-chain j i
 
   -- The subsequence, as a chain.
   subsequence : Chain X
   subsequence = subchain c select ascends
 
   -- Its transition from link j to any later one is Θ j.
-  subsequence-depends : ∀ j e i → transition subsequence j (suc e) i ≈ʷ Coherentω.Θ coherent-chain j i
+  subsequence-depends : ∀ j e i
+    → transition subsequence j (suc e) i ≈ʷ Coherentω.Θ coherent-chain j i
   subsequence-depends j e i =
-    subst (_≈ʷ Coherentω.Θ coherent-chain j i) (sym (subchain-transition c select ascends j (suc e) i))
-          (depends (s≤s (m≤n+m j e)) i)
+    subst  (_≈ʷ Coherentω.Θ coherent-chain j i)
+           (sym (subchain-transition c select ascends j (suc e) i))
+           (depends (s≤s (m≤n+m j e)) i)
 ```
 
 #### Remark 5.1, and the length-three form without its hypothesis
@@ -295,18 +344,22 @@ the remark's link `k > m + j` has `θ_{0,k} = Θ = θ_{0,j}`, so the offset
 ```agda
 module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
   open Chain c
-  open Bounded (_≟_ {3}) (allFin 3) ∈-allFin using ( bounded ; bounded-complete )
+  open Bounded (_≟_ {3}) (allFin 3) ∈-allFin
+    using ( bounded ; bounded-complete )
 
   private
     -- A common complexity bound for the generators at link j.
     generator-bound : ℕ → ℕ
     generator-bound j = bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₁
 
-    -- Every transition from link j has a representative in the list of elements under that bound.
-    transition-covered : ∀ j e v → Any (transition c j e v ≈ʷ_) (bounded (generator-bound j))
+    -- Every transition from link j has a representative in the list of
+    -- elements under that bound.
+    transition-covered : ∀ j e v
+      → Any (transition c j e v ≈ʷ_) (bounded (generator-bound j))
     transition-covered j e v =
       bounded-complete (generator-bound j) (transition c j e v)
-        (≤-trans (transition-bound′ _≟ˣ_ c j e v) (bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₂ v))
+        (≤-trans  (transition-bound′ _≟ˣ_ c j e v)
+                  (bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₂ v))
 
   -- Remark 5.1, from the principle.
   bottom-recurrence : InfinitePigeonhole → BottomRecurrence c
@@ -322,7 +375,9 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
     -- A selection along which the transitions from the bottom are constant.
     constancy : Σ[ h ∈ (ℕ → ℕ) ] (∀ t → h t < h (suc t))
                 × (∀ t i → transition c 0 (h t) i ≈ʷ transition c 0 (h 0) i)
-    constancy = constant-along P (bounded (generator-bound 0)) 3 (transition c 0) (transition-covered 0)
+    constancy =
+      constant-along  P (bounded (generator-bound 0)) 3
+                      (transition c 0) (transition-covered 0)
 
     -- The selection, its steps, and the constancy.
     h : ℕ → ℕ
@@ -334,7 +389,8 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
     h-const : ∀ t i → transition c 0 (h t) i ≈ʷ transition c 0 (h 0) i
     h-const = constancy .proj₂ .proj₂
 
-  -- Some link's transition from the bottom recurs beyond every bound, from the principle.
+  -- Some link's transition from the bottom recurs beyond every bound, from the
+  -- principle.
   some-link-recurs : InfinitePigeonhole → Σ[ j ∈ ℕ ] Recurs _≟ˣ_ c j
   some-link-recurs P = j , R
     where
@@ -348,7 +404,8 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
     j-recurs : ∀ v → transition c 0 j v ≈ʷ Θ v
     j-recurs = recurs 0 .proj₂ .proj₂
 
-    -- Every later link the remark gives beyond m + j is a recurrence of θ_{0,j}.
+    -- Every later link the remark gives beyond m + j is a recurrence of
+    -- θ_{0,j}.
     R : Recurs _≟ˣ_ c j
     R m =
       let (k , m+j<k , e) = recurs (m + j)
@@ -356,12 +413,15 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
           j≤k : j ≤ k
           j≤k = ≤-trans (m≤n+m j m) (<⇒≤ m+j<k)
       in k ∸ j , m+n≤o⇒m≤o∸n (suc m) m+j<k
-       , λ v → subst (λ n → transition c 0 n v ≈ʷ transition c 0 j v) (sym (m∸n+n≡m j≤k))
-                     (≈ʷ-trans (e v) (≈ʷ-sym (j-recurs v)))
+       , λ v → subst  (λ n → transition c 0 n v ≈ʷ transition c 0 j v)
+                      (sym (m∸n+n≡m j≤k))
+                      (≈ʷ-trans (e v) (≈ʷ-sym (j-recurs v)))
 
-  -- Theorem C, the length-three form, with its hypothesis from the principle (Remark 6.5).
+  -- Theorem C, the length-three form, with its hypothesis from the principle
+  -- (Remark 6.5).
   pigeonhole→coherent₃ : InfinitePigeonhole → Coherent 3
-  pigeonhole→coherent₃ P = let (j , R) = some-link-recurs P in chain→coherent₃ _≟ˣ_ c j R
+  pigeonhole→coherent₃ P =
+    let (j , R) = some-link-recurs P in chain→coherent₃ _≟ˣ_ c j R
 ```
 
 #### Theorem C, the coherent form
@@ -392,11 +452,16 @@ coherent chain.
 ```agda
   module _ (P : InfinitePigeonhole) where
     private
-      -- From a selection's first member, a selection of its later members on which the transitions are constant.
-      constancy : (g : ℕ → ℕ) → Σ[ s ∈ (ℕ → ℕ) ] (∀ t → s t < s (suc t))
-                  × (∀ t i → between c (g 0) (g (suc (s t))) i ≈ʷ between c (g 0) (g (suc (s 0))) i)
-      constancy g = constant-along P (bounded (generator-bound (g 0))) 3 (λ t → between c (g 0) (g (suc t)))
-                                   (λ t → transition-covered (g 0) (g (suc t) ∸ g 0))
+      -- From a selection's first member, a selection of its later members on
+      -- which the transitions are constant.
+      constancy : (g : ℕ → ℕ)
+        → Σ[ s ∈ (ℕ → ℕ) ] (∀ t → s t < s (suc t))
+          × (∀ t i →  between c (g 0) (g (suc (s t))) i
+                      ≈ʷ between c (g 0) (g (suc (s 0))) i)
+      constancy g =
+        constant-along  P (bounded (generator-bound (g 0))) 3
+                        (λ t → between c (g 0) (g (suc t)))
+                        (λ t → transition-covered (g 0) (g (suc t) ∸ g 0))
 
       -- One level of the diagonal argument: those later members.
       next-set : (ℕ → ℕ) → ℕ → ℕ
@@ -404,8 +469,8 @@ coherent chain.
 
       -- The selections: every index, then S₀ ⊇ S₁ ⊇ ⋯.
       sets : ℕ → ℕ → ℕ
-      sets zero     t = t
-      sets (suc j)  = next-set (sets j)
+      sets zero t = t
+      sets (suc j) = next-set (sets j)
 
       -- The links of the subsequence: k₀ = 0, and k_{j+1} = min Sⱼ.
       chosen : ℕ → ℕ
@@ -413,8 +478,10 @@ coherent chain.
 
       -- Each selection is strictly increasing.
       sets-increasing : ∀ j t → sets j t < sets j (suc t)
-      sets-increasing zero     t = ≤-refl
-      sets-increasing (suc j)  t = increasing-< (sets-increasing j) (s≤s (constancy (sets j) .proj₂ .proj₁ t))
+      sets-increasing zero t = ≤-refl
+      sets-increasing (suc j) t =
+        increasing-<  (sets-increasing j)
+                      (s≤s (constancy (sets j) .proj₂ .proj₁ t))
 
       -- So are the links.
       chosen-increasing : ∀ j → chosen j < chosen (suc j)
@@ -425,28 +492,35 @@ coherent chain.
       Θ j = between c (chosen j) (chosen (suc j))
 
       -- From kⱼ, the transitions to the members of Sⱼ are all Θⱼ.
-      first-constant : ∀ j t i → between c (chosen j) (sets (suc j) t) i ≈ʷ Θ j i
+      first-constant : ∀ j t i
+        → between c (chosen j) (sets (suc j) t) i ≈ʷ Θ j i
       first-constant j = constancy (sets j) .proj₂ .proj₂
 
       -- And to the members of every later selection, which selects from Sⱼ.
-      later-constant : ∀ j d t i → between c (chosen j) (sets (d + suc j) t) i ≈ʷ Θ j i
-      later-constant j zero     = first-constant j
-      later-constant j (suc d)  t = later-constant j d (suc (constancy (sets (d + suc j)) .proj₁ t))
+      later-constant : ∀ j d t i
+        → between c (chosen j) (sets (d + suc j) t) i ≈ʷ Θ j i
+      later-constant j zero = first-constant j
+      later-constant j (suc d) t =
+        later-constant j d (suc (constancy (sets (d + suc j)) .proj₁ t))
 
       -- So θ_{kⱼ,k_l} is Θⱼ for every l > j.
-      chosen-depends : ∀ {j l} → j < l → ∀ i → between c (chosen j) (chosen l) i ≈ʷ Θ j i
+      chosen-depends : ∀ {j l} → j < l
+        → ∀ i → between c (chosen j) (chosen l) i ≈ʷ Θ j i
       chosen-depends {j} {l} j<l i =
         let (d , e) = m≤n⇒∃[o]m+o≡n j<l
-        in subst (λ m → between c (chosen j) (chosen m) i ≈ʷ Θ j i) (trans (+-comm d (suc j)) e)
-                 (later-constant j d 0 i)
+        in subst  (λ m → between c (chosen j) (chosen m) i ≈ʷ Θ j i)
+                  (trans (+-comm d (suc j)) e)
+                  (later-constant j d 0 i)
 
       -- The cocycle identity reads as coherence: Θ_l ∘ Θⱼ = Θⱼ for j < l.
       Θ-coherent : ∀ {j l} → j < l → ∀ i → Θ j i [ Θ l ] ≈ʷ Θ j i
       Θ-coherent {j} {l} j<l i =
-        ≈ʷ-trans ([]-cong (Θ l) (≈ʷ-sym (chosen-depends j<l i)))
-                 (subst (_≈ʷ Θ j i)
-                        (between-cocycle c (<⇒≤ (increasing-< chosen-increasing j<l)) (<⇒≤ (chosen-increasing l)) i)
-                        (chosen-depends (≤-trans j<l (n≤1+n l)) i))
+        ≈ʷ-trans  ([]-cong (Θ l) (≈ʷ-sym (chosen-depends j<l i)))
+                  (subst  (_≈ʷ Θ j i)
+                          (between-cocycle c
+                            (<⇒≤ (increasing-< chosen-increasing j<l))
+                            (<⇒≤ (chosen-increasing l)) i)
+                          (chosen-depends (≤-trans j<l (n≤1+n l)) i))
 
       -- The Θⱼ form an infinite coherent chain.
       diagonal-chain : Coherentω
@@ -500,23 +574,27 @@ coherentω→chain C = record
   }
   where open Coherentω C
 
--- The same as a chain of copies of FL(3): the images Mₖ = Θₖ(FL(3)) ascend strictly.
+-- The same as a chain of copies of FL(3): the images Mₖ = Θₖ(FL(3)) ascend
+-- strictly.
 coherentω→copyChain : Coherentω → CopyChain (Fin 3)
 coherentω→copyChain C = chain→copyChain (coherentω→chain C)
 
--- A positive answer to Dean's problem: a chain of copies of FL(3) in FL(X), X with decidable equality.
+-- A positive answer to Dean's problem: a chain of copies of FL(3) in FL(X), X
+-- with decidable equality.
 PositiveAnswer : Type (lsuc 0ℓ)
 PositiveAnswer = Σ[ X ∈ Type ] DecidableEquality X × CopyChain X
 
 -- From a positive answer, an infinite coherent chain, from the principle.
 positive→coherentω : InfinitePigeonhole → PositiveAnswer → Coherentω
-positive→coherentω P (X , _≟ˣ_ , c) = CoherentForm.coherent-chain (coherent-form _≟ˣ_ (copyChain→chain c) P)
+positive→coherentω P (X , _≟ˣ_ , c) =
+  CoherentForm.coherent-chain (coherent-form _≟ˣ_ (copyChain→chain c) P)
 
 -- From an infinite coherent chain, a positive answer, with no hypothesis.
 coherentω→positive : Coherentω → PositiveAnswer
 coherentω→positive C = Fin 3 , _≟_ , coherentω→copyChain C
 
--- Corollary 6.4: Dean's problem has a positive answer if and only if an infinite coherent chain exists.
+-- Corollary 6.4: Dean's problem has a positive answer if and only if an
+-- infinite coherent chain exists.
 positive⇔coherentω : InfinitePigeonhole → PositiveAnswer ⇔ Coherentω
 positive⇔coherentω P = mk⇔ (positive→coherentω P) coherentω→positive
 ```
@@ -533,13 +611,15 @@ any infinite coherent chain form a chain inside `FL(3)`, whose `j`-th triple is
 as hypotheses; the second takes neither.
 
 ```agda
--- Theorem C (coherent form): a subsequence of a chain whose transitions form an infinite
--- coherent chain, from the principle; and the images of an infinite coherent chain form a chain.
+-- Theorem C (coherent form): a subsequence of a chain whose transitions form an
+-- infinite coherent chain, from the principle; and the images of an infinite
+-- coherent chain form a chain.
 record Theorem-C-coherent : Setω where
   field
-    part-1 : ∀ {χ} {X : Type χ} → DecidableEquality X → (c : Chain X) → InfinitePigeonhole
-             → CoherentForm c
-    part-2 : (C : Coherentω) → Σ[ c ∈ Chain (Fin 3) ] (∀ k i → Chain.gens c k i ≡ Coherentω.Θ C k i)
+    part-1 : ∀ {χ} {X : Type χ} → DecidableEquality X → (c : Chain X)
+      → InfinitePigeonhole → CoherentForm c
+    part-2 : (C : Coherentω)
+      → Σ[ c ∈ Chain (Fin 3) ] (∀ k i → Chain.gens c k i ≡ Coherentω.Θ C k i)
 
 -- The proof of Theorem C (coherent form).
 theorem-C-coherent : Theorem-C-coherent
@@ -560,11 +640,12 @@ both directions, though the proof of the reverse direction takes no
 hypothesis (`coherentω→positive`{.AgdaFunction}).
 
 ```agda
--- Corollary 6.4: from the principle, Dean's problem has a positive answer if and only if an
--- infinite coherent chain exists.
+-- Corollary 6.4: from the principle, Dean's problem has a positive answer if
+-- and only if an infinite coherent chain exists.
 Corollary-6·4 : Type (lsuc 0ℓ)
-Corollary-6·4 =  InfinitePigeonhole
-                 → (Σ[ X ∈ Type ] DecidableEquality X × CopyChain X) ⇔ Coherentω
+Corollary-6·4 =
+  InfinitePigeonhole
+  → (Σ[ X ∈ Type ] DecidableEquality X × CopyChain X) ⇔ Coherentω
 
 -- The proof of Corollary 6.4.
 corollary-6·4 : Corollary-6·4

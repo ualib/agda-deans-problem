@@ -36,20 +36,22 @@ The other half of the paragraph, the box of a generator inside a link read as
 module DeansProblem.Examples.FreeseGap where
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
-open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.Product                           using ( _,_ ; proj₂ )
-open import Relation.Nullary                       using ( ¬_ )
-open import Relation.Nullary.Decidable.Core        using ( from-yes ; from-no )
+open import Data.Fin.Base                    using  ( Fin )
+open import Data.Fin.Patterns                using  ( 0F ; 1F ; 2F )
+open import Data.Fin.Properties              using  ( _≟_ )
+open import Data.Product                     using  ( _,_ ; proj₂ )
+open import Relation.Nullary                 using  ( ¬_ )
+open import Relation.Nullary.Decidable.Core  using  ( from-yes ; from-no )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain.Condition           using ( ⟨_⟩ )
-open import DeansProblem.Examples.FreeseStep       using ( a₁ ; a' ; a″ ; abc' ; abc″ ; a'≈a″ ; abc'≈abc″ )
-open import Lattices.Free.Generation               using ( generator-in-image )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans )
-open import Lattices.Free.Whitman.Polynomial       using ( module Decisionᵖ )
+open import Lattices.Free.Canonical.Basic     using  ( ≈ʷ-sym ; ≈ʷ-trans )
+open import DeansProblem.Chain.Condition      using  ( ⟨_⟩ )
+open import DeansProblem.Examples.FreeseStep  using  ( a₁ ; a' ; a″ ; abc'
+                                                     ; abc″ ; a'≈a″
+                                                     ; abc'≈abc″ )
+open import Lattices.Free.Generation          using  ( generator-in-image )
+open import Lattices.Free.Whitman             using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans )
+open import Lattices.Free.Whitman.Polynomial  using  ( module Decisionᵖ )
 ```
 -->
 
@@ -68,7 +70,9 @@ a₁≉ 2F e = from-no (a₁ ≈ᵖ? abc″ 2F) (≈ʷ-trans e (abc'≈abc″ 2F
 
 -- Section 9.3: a₁ lies outside the link ⟨a', b', c'⟩ (Corollary 2.4).
 a₁∉⟨a',b',c'⟩ : ¬ ⟨ abc' ⟩ a₁
-a₁∉⟨a',b',c'⟩ (t , e) = let (i , e′) = generator-in-image abc' t (≈ʷ-sym e) in a₁≉ i e′
+a₁∉⟨a',b',c'⟩ (t , e) =
+  let (i , e′) = generator-in-image abc' t (≈ʷ-sym e)
+  in a₁≉ i e′
 ```
 
 --------------------------------------

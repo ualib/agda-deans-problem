@@ -86,40 +86,48 @@ module DeansProblem.Coherent where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥-elim )
-open import Data.Fin.Base                          using ( Fin ; zero ; suc )
-open import Data.Fin.Properties                    using ( _≟_ ; any? ; all? ; ¬∀⟶∃¬ )
-open import Data.List.Base                         using ( allFin ; length )
-open import Data.List.Relation.Unary.Any           using ( Any )
+open import Data.Empty                             using  ( ⊥-elim )
+open import Data.Fin.Base                          using  ( Fin ; zero ; suc )
+open import Data.Fin.Properties                    using  ( _≟_ ; any? ; all?
+                                                          ; ¬∀⟶∃¬ )
+open import Data.List.Base                         using  ( allFin ; length )
+open import Data.List.Relation.Unary.Any           using  ( Any )
 open import Data.List.Membership.Propositional.Properties
-                                                   using ( ∈-allFin )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _^_ ; _≤_ ; _<_ ; _⊔_ )
-open import Data.Nat.Properties                    using ( ≤-trans ; ≤-reflexive ; +-comm ; +-identityʳ
-                                                         ; m≤m⊔n ; m≤n⊔m ; m≤n⇒∃[o]m+o≡n )
-open import Data.Product                           using ( Σ-syntax ; ∃ ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Function                               using ( _∘_ )
-open import Level                                  using ( Level )
-open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; sym ; trans ; cong ; subst
-                                                         ; subst₂ )
-open import Relation.Nullary                       using ( ¬_ )
-open import Relation.Nullary.Decidable.Core        using ( Dec ; yes ; no )
+                                                   using  ( ∈-allFin )
+open import Data.Nat.Base                          using  ( ℕ ; zero ; suc
+                                                          ; _+_ ; _^_ ; _≤_
+                                                          ; _<_ ; _⊔_ )
+open import Data.Nat.Properties                    using  ( ≤-trans ; ≤-reflexive
+                                                          ; +-comm ; +-identityʳ
+                                                          ; m≤m⊔n ; m≤n⊔m
+                                                          ; m≤n⇒∃[o]m+o≡n )
+open import Data.Product                           using  ( Σ-syntax ; ∃ ; _×_
+                                                          ; _,_ ; proj₁ ; proj₂ )
+open import Function                               using  ( _∘_ )
+open import Level                                  using  ( Level )
+open import Relation.Binary.Definitions            using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; sym ; trans
+                                                          ; cong ; subst ; subst₂ )
+open import Relation.Nullary                       using  ( ¬_ )
+open import Relation.Nullary.Decidable.Core        using  ( Dec ; yes ; no )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Step ; Chain )
-open import Lattices.Free.Complexity               using ( complexity ; complexity-resp
-                                                         ; complexity-mono ; module Bounded
-                                                         ; pigeonhole-≈ⁿ ; tuple-code ; tuple-code-sound )
-open import Lattices.Free.Generation               using ( FreelyGenerates
-                                                         ; freelyGenerates→injective
-                                                         ; injective→freelyGenerates
-                                                         ; generator-in-image )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong
-                                                         ; []-congʳ ; subst-hom )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ ; module Decision )
-open import Setoid.Functions                       using ( IsInjective )
+open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
+open import DeansProblem.Chain             using  ( Step ; Chain )
+open import Lattices.Free.Complexity       using  ( complexity ; complexity-resp
+                                                  ; complexity-mono ; module Bounded
+                                                  ; pigeonhole-≈ⁿ ; tuple-code
+                                                  ; tuple-code-sound )
+open import Lattices.Free.Generation       using  ( FreelyGenerates
+                                                  ; freelyGenerates→injective
+                                                  ; injective→freelyGenerates
+                                                  ; generator-in-image )
+open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; _⨟_ ; []-ℊ
+                                                  ; []-⨟ ; []-cong ; []-congʳ
+                                                  ; subst-hom )
+open import Lattices.Free.Term             using  ( LatTerm ; ℊ )
+open import Lattices.Free.Whitman          using  ( _≈ʷ_ ; module Decision )
+open import Setoid.Functions               using  ( IsInjective )
 
 private variable
   ι χ υ : Level
@@ -141,14 +149,15 @@ have equal images under `ρ`.  The identity substitution freely generates
 ```agda
 -- A common bound for finitely many natural numbers.
 bound : (n : ℕ) (f : Fin n → ℕ) → Σ[ C ∈ ℕ ] (∀ i → f i ≤ C)
-bound zero     f = 0 , λ ()
-bound (suc n)  f =
+bound zero f = 0 , λ ()
+bound (suc n) f =
   let (C , b) = bound n (f ∘ suc)
   in f zero ⊔ C , λ { zero → m≤m⊔n _ _ ; (suc i) → ≤-trans (b i) (m≤n⊔m _ _) }
 
 -- A first factor of an injective composite is injective.
-first-factor-injective : (σ : Sub I X) (τ : Sub X Y) (ρ : Sub I Y) → (∀ i → ρ i ≈ʷ σ i [ τ ])
-                       → IsInjective (subst-hom ρ .proj₁) → IsInjective (subst-hom σ .proj₁)
+first-factor-injective : (σ : Sub I X) (τ : Sub X Y) (ρ : Sub I Y)
+  → (∀ i → ρ i ≈ʷ σ i [ τ ])
+  → IsInjective (subst-hom ρ .proj₁) → IsInjective (subst-hom σ .proj₁)
 first-factor-injective σ τ ρ e inj {s} {t} p =
   inj (≈ʷ-trans (through s) (≈ʷ-trans ([]-cong τ p) (≈ʷ-sym (through t))))
   where
@@ -158,7 +167,8 @@ first-factor-injective σ τ ρ e inj {s} {t} p =
 
 -- The identity substitution freely generates.
 ℊ-free : FreelyGenerates (ℊ {X = X})
-ℊ-free = injective→freelyGenerates ℊ λ {s} {t} e → subst₂ _≈ʷ_ ([]-ℊ s) ([]-ℊ t) e
+ℊ-free =
+  injective→freelyGenerates ℊ λ {s} {t} e → subst₂ _≈ʷ_ ([]-ℊ s) ([]-ℊ t) e
 ```
 
 #### The transitions of a chain
@@ -176,27 +186,31 @@ over `d` steps followed by the one from `d` over `e`
 module _ {X : Type χ} (c : Chain X) where
   open Chain c
 
-  -- The terms expressing gens j in gens (e + j): the composite of e consecutive steps.
+  -- The terms expressing gens j in gens (e + j): the composite of e
+  -- consecutive steps.
   transition : ℕ → ℕ → Sub (Fin 3) (Fin 3)
-  transition j zero     = ℊ
-  transition j (suc e)  = transition j e ⨟ terms (e + j)
+  transition j zero = ℊ
+  transition j (suc e) = transition j e ⨟ terms (e + j)
 
   -- The transition expresses the earlier family in the later one.
   gens≈transition : ∀ j e i → gens j i ≈ʷ transition j e i [ gens (e + j) ]
-  gens≈transition j zero     i = ≈ʷ-refl
-  gens≈transition j (suc e)  i =
+  gens≈transition j zero i = ≈ʷ-refl
+  gens≈transition j (suc e) i =
     ≈ʷ-trans (gens≈transition j e i)
       (subst (transition j e i [ gens (e + j) ] ≈ʷ_)
              ([]-⨟ (transition j e i) (terms (e + j)) (gens (suc (e + j))))
              ([]-congʳ (transition j e i) (gens≈ (e + j))))
 
-  -- Transitions compose: from the bottom over e + d steps is over d steps, then from d over e.
-  transition-⨟ : ∀ d e i → transition 0 (e + d) i ≡ transition 0 d i [ transition d e ]
-  transition-⨟ d zero     i = sym ([]-ℊ (transition 0 d i))
-  transition-⨟ d (suc e)  i =
-    trans (cong (λ m → transition 0 (e + d) i [ terms m ]) (+-identityʳ (e + d)))
-          (trans (cong (_[ terms (e + d) ]) (transition-⨟ d e i))
-                 (sym ([]-⨟ (transition 0 d i) (transition d e) (terms (e + d)))))
+  -- Transitions compose: from the bottom over e + d steps is over d steps, then
+  -- from d over e.
+  transition-⨟ : ∀ d e i
+    → transition 0 (e + d) i ≡ transition 0 d i [ transition d e ]
+  transition-⨟ d zero i = sym ([]-ℊ (transition 0 d i))
+  transition-⨟ d (suc e) i =
+    trans
+      (cong (λ m → transition 0 (e + d) i [ terms m ]) (+-identityʳ (e + d)))
+      (trans  (cong (_[ terms (e + d) ]) (transition-⨟ d e i))
+              (sym ([]-⨟ (transition 0 d i) (transition d e) (terms (e + d)))))
 ```
 
 #### Bounded complexity and a repeat
@@ -215,7 +229,8 @@ tuples gives two equal triples (`transition-repeats`{.AgdaFunction}).
 ```agda
 module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
   open Chain c
-  open Bounded (_≟_ {3}) (allFin 3) ∈-allFin using ( bounded ; bounded-complete )
+  open Bounded (_≟_ {3}) (allFin 3) ∈-allFin
+    using ( bounded ; bounded-complete )
 
   private
     -- The complexities in FL(3) and in FL(X).
@@ -228,21 +243,25 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
   -- The transitions from any link are bounded by its generators' complexities.
   transition-bound′ : ∀ j e i → κ (transition c j e i) ≤ κˣ (gens j i)
   transition-bound′ j e i =
-    ≤-trans (complexity-mono _≟_ _≟ˣ_ (gens (e + j))
-                             (freelyGenerates→injective (gens (e + j)) (gens-free (e + j)))
-                             (transition c j e i))
-            (≤-reflexive (sym (complexity-resp _≟ˣ_ (gens≈transition c j e i))))
+    ≤-trans
+      (complexity-mono _≟_ _≟ˣ_ (gens (e + j))
+        (freelyGenerates→injective (gens (e + j)) (gens-free (e + j)))
+        (transition c j e i))
+      (≤-reflexive (sym (complexity-resp _≟ˣ_ (gens≈transition c j e i))))
 
   -- The transitions from the bottom have bounded complexity.
   transition-bound : ∀ k i → κ (transition c 0 k i) ≤ κˣ (gens 0 i)
   transition-bound = transition-bound′ 0
 
   -- Two transitions from the bottom agree on every generator.
-  transition-repeats : Σ[ j ∈ ℕ ] Σ[ k ∈ ℕ ] j < k × (∀ i → transition c 0 j i ≈ʷ transition c 0 k i)
+  transition-repeats :
+    Σ[ j ∈ ℕ ] Σ[ k ∈ ℕ ] j < k
+    × (∀ i → transition c 0 j i ≈ʷ transition c 0 k i)
   transition-repeats =
     let (C , C-bound) = bound 3 (λ i → κˣ (gens 0 i))
     in pigeonhole-≈ⁿ (bounded C) 3 (transition c 0)
-         (λ k i → bounded-complete C (transition c 0 k i) (≤-trans (transition-bound k i) (C-bound i)))
+         (λ k i → bounded-complete C (transition c 0 k i)
+                    (≤-trans (transition-bound k i) (C-bound i)))
 ```
 
 **Lemma 6.1** of [the paper][], as one statement: for every link `j`, every
@@ -258,13 +277,16 @@ of its three values (`tuple-code`{.AgdaFunction}).  The hypothesis beyond the
 paper's is decidable equality on the generators, which complexity needs.
 
 ```agda
--- Lemma 6.1: the transitions from a link are bounded in complexity by its members, and take
--- finitely many values.
+-- Lemma 6.1: the transitions from a link are bounded in complexity by its
+-- members, and take finitely many values.
 Lemma-6·1 : Setω
-Lemma-6·1 =  ∀ {χ} {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) (j : ℕ)
-             → (∀ e i → complexity (_≟_ {3}) (transition c j e i) ≤ complexity _≟ˣ_ (Chain.gens c j i))
-             × Σ[ N ∈ ℕ ] Σ[ code ∈ (ℕ → Fin N) ]
-                 (∀ e e′ → code e ≡ code e′ → ∀ i → transition c j e i ≈ʷ transition c j e′ i)
+Lemma-6·1 =
+  ∀ {χ} {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) (j : ℕ)
+  → ( ∀ e i → complexity (_≟_ {3}) (transition c j e i)
+              ≤ complexity _≟ˣ_ (Chain.gens c j i) )
+    × Σ[ N ∈ ℕ ] Σ[ code ∈ (ℕ → Fin N) ]
+      ( ∀ e e′ → code e ≡ code e′
+        → ∀ i → transition c j e i ≈ʷ transition c j e′ i )
 
 -- The proof of Lemma 6.1.
 lemma-6·1 : Lemma-6·1
@@ -272,7 +294,8 @@ lemma-6·1 _≟ˣ_ c j =
   transition-bound′ _≟ˣ_ c j , length (bounded B) ^ 3 , code , sound
   where
   open Chain c
-  open Bounded (_≟_ {3}) (allFin 3) ∈-allFin using ( bounded ; bounded-complete )
+  open Bounded (_≟_ {3}) (allFin 3) ∈-allFin
+    using ( bounded ; bounded-complete )
 
   -- A common bound for the complexities of link j's members.
   B : ℕ
@@ -280,17 +303,22 @@ lemma-6·1 _≟ˣ_ c j =
 
   -- Every value of every transition from j is equal to a member of the list.
   covered : ∀ e i → Any (transition c j e i ≈ʷ_) (bounded B)
-  covered e i = bounded-complete B (transition c j e i)
-                  (≤-trans (transition-bound′ _≟ˣ_ c j e i)
-                           (bound 3 (λ i → complexity _≟ˣ_ (gens j i)) .proj₂ i))
+  covered e i =
+    bounded-complete B (transition c j e i)
+      (≤-trans  (transition-bound′ _≟ˣ_ c j e i)
+                (bound 3 (λ i → complexity _≟ˣ_ (gens j i)) .proj₂ i))
 
   -- The code of the transition over e steps.
   code : ℕ → Fin (length (bounded B) ^ 3)
   code e = tuple-code (bounded B) 3 (transition c j e) (covered e)
 
   -- Equal codes, equal transitions.
-  sound : ∀ e e′ → code e ≡ code e′ → ∀ i → transition c j e i ≈ʷ transition c j e′ i
-  sound e e′ = tuple-code-sound (bounded B) 3 (transition c j e) (transition c j e′) (covered e) (covered e′)
+  sound : ∀ e e′ → code e ≡ code e′
+    → ∀ i → transition c j e i ≈ʷ transition c j e′ i
+  sound e e′ =
+    tuple-code-sound  (bounded B) 3
+                      (transition c j e) (transition c j e′)
+                      (covered e) (covered e′)
 ```
 
 #### The fixed-sublattice configuration
@@ -351,9 +379,11 @@ module _ (F : FixedSublattice) where
       in ≈ʷ-trans ([]-cong θ e) (≈ʷ-trans (fixes i) (≈ʷ-sym e))
 
     -- The search, on the decision of whether every generator is some Θ i.
-    search : Dec (∀ f → ∃ λ i → ℊ f ≈ʷ Θ i) → Σ[ f ∈ Fin 3 ] (∀ i → ¬ (ℊ f ≈ʷ Θ i))
-    search (yes all)   = ⊥-elim (missed∉θ missed (≈ʷ-sym (fixed-generator all missed)))
-    search (no ¬all)   =
+    search : Dec (∀ f → ∃ λ i → ℊ f ≈ʷ Θ i)
+      → Σ[ f ∈ Fin 3 ] (∀ i → ¬ (ℊ f ≈ʷ Θ i))
+    search (yes all) =
+      ⊥-elim (missed∉θ missed (≈ʷ-sym (fixed-generator all missed)))
+    search (no ¬all) =
       let (f , ¬∃) = ¬∀⟶∃¬ 3 _ (λ f → any? (λ i → ℊ f ≈ʷ? Θ i)) ¬all
       in f , λ i e → ¬∃ (i , e)
 
@@ -389,7 +419,8 @@ before `k`, is none of the `θ i`, by Corollary 1.6 applied to the last factor
 module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
   open Chain c
 
-  -- Every chain has a transition that is a proper self-embedding fixing a copy of FL(3).
+  -- Every chain has a transition that is a proper self-embedding fixing a copy
+  -- of FL(3).
   chain→fixed-sublattice : FixedSublattice
   chain→fixed-sublattice =
     let (j , k , j<k , e) = transition-repeats _≟ˣ_ c
@@ -399,21 +430,28 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
     in record
       { θ         = transition c j (suc o)
       ; θ-free    = injective→freelyGenerates _
-                      (first-factor-injective (transition c j (suc o)) (gens (suc o + j)) (gens j)
-                                              (gens≈transition c j (suc o))
-                                              (freelyGenerates→injective (gens j) (gens-free j)))
+                      (first-factor-injective
+                        (transition c j (suc o))
+                        (gens (suc o + j)) (gens j)
+                        (gens≈transition c j (suc o))
+                        (freelyGenerates→injective (gens j) (gens-free j)))
       ; missed    = fresh (o + j)
       ; missed∉θ  = λ i e' →
-                      let (i' , e″) = generator-in-image (terms (o + j)) (transition c j o i) e'
+                      let (i' , e″) = generator-in-image  (terms (o + j))
+                                                          (transition c j o i)
+                                                          e'
                       in fresh∉ (o + j) i' e″
       ; Θ         = transition c 0 j
       ; Θ-free    = injective→freelyGenerates _
-                      (first-factor-injective (transition c 0 j) (gens (j + 0)) (gens 0)
-                                              (gens≈transition c 0 j)
-                                              (freelyGenerates→injective (gens 0) (gens-free 0)))
-      ; fixes     = λ i → subst (_≈ʷ transition c 0 j i)
-                                (trans (cong (λ m → transition c 0 m i) k≡) (transition-⨟ c j (suc o) i))
-                                (≈ʷ-sym (e i))
+                      (first-factor-injective
+                        (transition c 0 j)
+                        (gens (j + 0)) (gens 0)
+                        (gens≈transition c 0 j)
+                        (freelyGenerates→injective (gens 0) (gens-free 0)))
+      ; fixes     = λ i → subst  (_≈ʷ transition c 0 j i)
+                                 (trans  (cong (λ m → transition c 0 m i) k≡)
+                                         (transition-⨟ c j (suc o) i))
+                                 (≈ʷ-sym (e i))
       }
 ```
 
@@ -429,18 +467,21 @@ it.  The hypothesis beyond the paper's is decidable equality on the
 generators, which the first sentence needs; the second needs none.
 
 ```agda
--- Theorem C (one step): two transitions from the bottom coincide, and when θ_{0,j} = θ_{0,k}
--- with j < k, θ_{j,k} is a proper self-embedding fixing the proper copy θ_{0,j}(FL(3)) pointwise.
+-- Theorem C (one step): two transitions from the bottom coincide, and when
+-- θ_{0,j} = θ_{0,k} with j < k, θ_{j,k} is a proper self-embedding fixing the
+-- proper copy θ_{0,j}(FL(3)) pointwise.
 Theorem-C-one-step : Setω
 Theorem-C-one-step =
   ∀ {χ} {X : Type χ} → DecidableEquality X → (c : Chain X)
-  → (Σ[ j ∈ ℕ ] Σ[ k ∈ ℕ ] j < k × (∀ i → transition c 0 j i ≈ʷ transition c 0 k i))
-  × (∀ j e → (∀ i → transition c 0 j i ≈ʷ transition c 0 (suc e + j) i)
-     →  (FreelyGenerates (transition c j (suc e))
-         × Σ[ g ∈ Fin 3 ] (∀ i → ¬ (ℊ g ≈ʷ transition c j (suc e) i)))
-      × (∀ t → t [ transition c 0 j ] [ transition c j (suc e) ] ≈ʷ t [ transition c 0 j ])
-      × FreelyGenerates (transition c 0 j)
-      × Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g)))
+  → ( Σ[ j ∈ ℕ ] Σ[ k ∈ ℕ ]
+      j < k × (∀ i → transition c 0 j i ≈ʷ transition c 0 k i) )
+    × ( ∀ j e → (∀ i → transition c 0 j i ≈ʷ transition c 0 (suc e + j) i)
+        → ( FreelyGenerates (transition c j (suc e))
+            × Σ[ g ∈ Fin 3 ] (∀ i → ¬ (ℊ g ≈ʷ transition c j (suc e) i)) )
+          × ( ∀ t →  t [ transition c 0 j ] [ transition c j (suc e) ]
+                     ≈ʷ t [ transition c 0 j ] )
+          × FreelyGenerates (transition c 0 j)
+          × Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g)) )
 
 -- The proof of Theorem C (one step).
 theorem-C-one-step : Theorem-C-one-step
@@ -448,14 +489,18 @@ theorem-C-one-step _≟ˣ_ c = transition-repeats _≟ˣ_ c , second
   where
   open Chain c
 
-  -- The transition from a over e steps freely generates, as a first factor of gens a.
+  -- The transition from a over e steps freely generates, as a first factor of
+  -- gens a.
   free : ∀ a e → FreelyGenerates (transition c a e)
   free a e =
     injective→freelyGenerates _
-      (first-factor-injective (transition c a e) (gens (e + a)) (gens a) (gens≈transition c a e)
-                              (freelyGenerates→injective (gens a) (gens-free a)))
+      (first-factor-injective
+        (transition c a e) (gens (e + a)) (gens a)
+        (gens≈transition c a e)
+        (freelyGenerates→injective (gens a) (gens-free a)))
 
-  -- The transition from a over e + 1 steps misses the fresh generator of its last step.
+  -- The transition from a over e + 1 steps misses the fresh generator of its
+  -- last step.
   misses : ∀ a e i → ¬ (ℊ (fresh (e + a)) ≈ʷ transition c a (suc e) i)
   misses a e i p =
     let (i' , p') = generator-in-image (terms (e + a)) (transition c a e i) p
@@ -463,16 +508,17 @@ theorem-C-one-step _≟ˣ_ c = transition-repeats _≟ˣ_ c , second
 
   -- No generator that a family misses is the value of a term at it.
   outside : (σ : Sub (Fin 3) (Fin 3)) (g : Fin 3) → (∀ i → ¬ (ℊ g ≈ʷ σ i))
-          → ∀ t → ¬ (t [ σ ] ≈ʷ ℊ g)
+    → ∀ t → ¬ (t [ σ ] ≈ʷ ℊ g)
   outside σ g g∉ t p = let (i , q) = generator-in-image σ t (≈ʷ-sym p) in g∉ i q
 
   -- The second sentence.
   second : ∀ j e → (∀ i → transition c 0 j i ≈ʷ transition c 0 (suc e + j) i)
-         →  (FreelyGenerates (transition c j (suc e))
-             × Σ[ g ∈ Fin 3 ] (∀ i → ¬ (ℊ g ≈ʷ transition c j (suc e) i)))
-          × (∀ t → t [ transition c 0 j ] [ transition c j (suc e) ] ≈ʷ t [ transition c 0 j ])
-          × FreelyGenerates (transition c 0 j)
-          × Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g))
+    → ( FreelyGenerates (transition c j (suc e))
+        × Σ[ g ∈ Fin 3 ] (∀ i → ¬ (ℊ g ≈ʷ transition c j (suc e) i)) )
+      × ( ∀ t →  t [ transition c 0 j ] [ transition c j (suc e) ]
+                 ≈ʷ t [ transition c 0 j ] )
+      × FreelyGenerates (transition c 0 j)
+      × Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g))
   second j e H =
       (free j (suc e) , fresh (e + j) , misses j e)
     , FixedSublattice.fixes-⟨Θ⟩ F
@@ -488,15 +534,20 @@ theorem-C-one-step _≟ˣ_ c = transition-repeats _≟ˣ_ c , second
       ; missed∉θ  = misses j e
       ; Θ         = transition c 0 j
       ; Θ-free    = free 0 j
-      ; fixes     = λ i → subst (_≈ʷ transition c 0 j i) (transition-⨟ c j (suc e) i) (≈ʷ-sym (H i))
+      ; fixes     = λ i → subst  (_≈ʷ transition c 0 j i)
+                                 (transition-⨟ c j (suc e) i)
+                                 (≈ʷ-sym (H i))
       }
 
-    -- θ_{0,j} misses a generator: j is positive, since θ_{0,0} is the identity and
-    -- θ_{0,k} misses one.
+    -- θ_{0,j} misses a generator: j is positive, since θ_{0,0} is the identity
+    -- and θ_{0,k} misses one.
     proper : ∀ j → (∀ i → transition c 0 j i ≈ʷ transition c 0 (suc e + j) i)
-           → Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g))
-    proper zero     H′ = ⊥-elim (misses 0 (e + 0) (fresh (e + 0 + 0)) (H′ (fresh (e + 0 + 0))))
-    proper (suc j′) H′ = fresh (j′ + 0) , outside (transition c 0 (suc j′)) (fresh (j′ + 0)) (misses 0 j′)
+      → Σ[ g ∈ Fin 3 ] (∀ t → ¬ (t [ transition c 0 j ] ≈ʷ ℊ g))
+    proper zero H′ =
+      ⊥-elim (misses 0 (e + 0) (fresh (e + 0 + 0)) (H′ (fresh (e + 0 + 0))))
+    proper (suc j′) H′ =
+      fresh (j′ + 0) ,
+      outside (transition c 0 (suc j′)) (fresh (j′ + 0)) (misses 0 j′)
 ```
 
 --------------------------------------

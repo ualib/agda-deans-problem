@@ -52,26 +52,29 @@ cheap.
 module DeansProblem.Examples.FreeseEquations where
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥ )
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F ; 3F ; 4F ; 5F ; 6F
-                                                         ; 7F ; 8F )
-open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.List.Base                         using ( [] ; _∷_ )
-open import Data.List.Membership.Propositional     using ( _∈_ )
-open import Data.List.Relation.Unary.Any           using ( here ; there )
-open import Data.Product                           using ( _,_ ; proj₁ )
-open import Relation.Nullary                       using ( ¬_ )
+open import Data.Empty                          using  ( ⊥ )
+open import Data.Fin.Base                       using  ( Fin )
+open import Data.Fin.Patterns                   using  ( 0F ; 1F ; 2F ; 3F ; 4F
+                                                       ; 5F ; 6F ; 7F ; 8F )
+open import Data.Fin.Properties                 using  ( _≟_ )
+open import Data.List.Base                      using  ( [] ; _∷_ )
+open import Data.List.Membership.Propositional  using  ( _∈_ )
+open import Data.List.Relation.Unary.Any        using  ( here ; there )
+open import Data.Product                        using  ( _,_ ; proj₁ )
+open import Relation.Nullary                    using  ( ¬_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
 open import DeansProblem.Examples.FreeseStep
-  using  ( a ; b ; c ; a' ; b' ; c' ; π ; ā₁ ; ā₂₁ ; ā₂₂ ; b̄₁ ; b̄₂₁ ; b̄₂₂ ; c̄₁ ; c̄₂₁ ; c̄₂₂
-         ; abc ; abc' ; abc-free ; abc'-free ; ρ ; abc≈ ; x∉ρ ; relation-1 )
-open import DeansProblem.Chain                     using ( Step ; Chain ; selfSimilar→chain )
-open import Lattices.Free.Generation               using ( FreelyGenerates )
-open import DeansProblem.SelfSimilar               using ( no-self-similar-step )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans ; ∧̇-lowerˡ )
+  using  ( a ; b ; c ; a' ; b' ; c' ; π ; ā₁ ; ā₂₁ ; ā₂₂ ; b̄₁ ; b̄₂₁ ; b̄₂₂ ; c̄₁
+         ; c̄₂₁ ; c̄₂₂ ; abc ; abc' ; abc-free ; abc'-free ; ρ ; abc≈ ; x∉ρ
+         ; relation-1 )
+open import DeansProblem.Chain          using  ( Step ; Chain
+                                               ; selfSimilar→chain )
+open import Lattices.Free.Generation    using  ( FreelyGenerates )
+open import DeansProblem.SelfSimilar    using  ( no-self-similar-step )
+open import Lattices.Free.Substitution  using  ( Sub ; _[_] )
+open import Lattices.Free.Whitman       using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans
+                                               ; ∧̇-lowerˡ )
 
 open import Agda.Primitive  using () renaming ( Set to Type )
 ```
@@ -196,10 +199,12 @@ bar-not-free (jc , _) = 6F∉[1F] (jc {6F} {1F ∷ []} relation-1)
 endomorphisms of `FL(9)`, the substitutions that freely generate.
 
 ```agda
--- Corollary A2: Freese's equations have no injective solution in the endomorphisms of FL(9).
+-- Corollary A2: Freese's equations have no injective solution in the
+-- endomorphisms of FL(9).
 Corollary-A2 : Type
-Corollary-A2 =  (Φ : Sub (Fin 9) (Fin 9)) → FreelyGenerates Φ
-                → a [ Φ ] ≈ʷ a' → b [ Φ ] ≈ʷ b' → c [ Φ ] ≈ʷ c' → ⊥
+Corollary-A2 =
+  (Φ : Sub (Fin 9) (Fin 9)) → FreelyGenerates Φ
+  → a [ Φ ] ≈ʷ a' → b [ Φ ] ≈ʷ b' → c [ Φ ] ≈ʷ c' → ⊥
 
 -- The proof of Corollary A2.
 corollary-A2 : Corollary-A2

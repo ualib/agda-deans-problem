@@ -87,50 +87,61 @@ module DeansProblem.Examples.ChainCondition where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥-elim )
-open import Data.List.Base                         using ( List ; [] ; _∷_ )
-open import Data.List.Relation.Unary.Any           using ( Any ; here ; there )
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
-open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _*_ ; _<_ ; z≤n )
+open import Data.Empty                             using  ( ⊥-elim )
+open import Data.List.Base                         using  ( List ; [] ; _∷_ )
+open import Data.List.Relation.Unary.Any           using  ( Any ; here ; there )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Fin.Patterns                      using  ( 0F ; 1F ; 2F )
+open import Data.Fin.Properties                    using  ( _≟_ )
+open import Data.Nat.Base                          using  ( ℕ ; zero ; suc ; _*_
+                                                          ; _<_ ; z≤n )
                                                    renaming ( _≤_ to _≤ℕ_ )
-open import Data.Nat.Properties                    using ( ≤-refl ; <-cmp )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using ( inj₁ ; inj₂ )
-open import Function                               using ( _∘_ ; _↣_ ; mk↣ )
-open import Level                                  using ( Level )
-open import Relation.Binary                        using ( Tri ; tri< ; tri≈ ; tri> )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst
-                                                         ; subst₂ )
-open import Relation.Nullary                       using ( ¬_ )
-open import Relation.Nullary.Decidable.Core        using ( from-no )
-open import Relation.Unary                         using ( _⊆_ ; _⊂_ ; _≐_ )
+open import Data.Nat.Properties                    using  ( ≤-refl ; <-cmp )
+open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
+                                                          ; proj₁ ; proj₂ )
+open import Data.Sum.Base                          using  ( inj₁ ; inj₂ )
+open import Function                               using  ( _∘_ ; _↣_ ; mk↣ )
+open import Level                                  using  ( Level )
+open import Relation.Binary                        using  ( Tri ; tri< ; tri≈
+                                                          ; tri> )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
+                                                          ; trans ; cong ; subst
+                                                          ; subst₂ )
+open import Relation.Nullary                       using  ( ¬_ )
+open import Relation.Nullary.Decidable.Core        using  ( from-no )
+open import Relation.Unary                         using  ( _⊆_ ; _⊂_ ; _≐_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ∨̇-cong )
-open import DeansProblem.Chain.Condition           using ( ⟨_⟩ ; gen∈ ; gens⊆ ; StrictlyAscending
-                                                         ; ChainCondition ; Stabilizes
-                                                         ; strict→ascending ; interleaved-chain
-                                                         ; strict-⨟ ; interleave-all
-                                                         ; interleave-even ; interleave-odd
-                                                         ; copy≐→freelyGenerates )
-open import DeansProblem.Chain.Copies              using ( copy )
-open import DeansProblem.Ladder                    using ( module Rungs )
+open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
+                                                  ; ∨̇-cong )
+open import DeansProblem.Chain.Condition   using  ( ⟨_⟩ ; gen∈ ; gens⊆
+                                                  ; StrictlyAscending
+                                                  ; ChainCondition ; Stabilizes
+                                                  ; strict→ascending
+                                                  ; interleaved-chain ; strict-⨟
+                                                  ; interleave-all
+                                                  ; interleave-even
+                                                  ; interleave-odd
+                                                  ; copy≐→freelyGenerates )
+open import DeansProblem.Chain.Copies      using  ( copy )
+open import DeansProblem.Ladder            using  ( module Rungs )
 import DeansProblem.Ladder
-open import Lattices.Free.Complexity               using ( pigeonhole-≈ )
-open import Lattices.Free.Countable                using ( three-generators ; three-generators-free )
-open import Lattices.Free.Generation               using ( freelyGenerates→injective )
-open import Lattices.Free.Universal                using ( FL ; ≤ʷ→≤ ; ≤→≤ʷ )
-open import Setoid.Subalgebras.Basic               using ( _IsSubalgebraOf_ )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-⨟ ; []-cong
-                                                         ; []-congʳ ; []-mono ; subst-hom )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤ʷ-refl ; ≤ʷ-trans
-                                                         ; ≤∧ ; ≤∧-inv ; ≤∨ˡ ; ≤∨ʳ ; ∧ˡ≤ ; ∧ʳ≤
-                                                         ; ∨≤-inv ; ℊ≤∨-inv ; ∧≤∨-inv
-                                                         ; module Decision )
-open import Setoid.Functions                       using ( IsInjective )
+open import Lattices.Free.Complexity       using  ( pigeonhole-≈ )
+open import Lattices.Free.Countable        using  ( three-generators
+                                                  ; three-generators-free )
+open import Lattices.Free.Generation       using  ( freelyGenerates→injective )
+open import Lattices.Free.Universal        using  ( FL ; ≤ʷ→≤ ; ≤→≤ʷ )
+open import Setoid.Subalgebras.Basic       using  ( _IsSubalgebraOf_ )
+open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-ℊ ; []-⨟
+                                                  ; []-cong ; []-congʳ ; []-mono
+                                                  ; subst-hom )
+open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
+open import Lattices.Free.Whitman          using  ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤ʷ-refl
+                                                  ; ≤ʷ-trans ; ≤∧ ; ≤∧-inv ; ≤∨ˡ
+                                                  ; ≤∨ʳ ; ∧ˡ≤ ; ∧ʳ≤ ; ∨≤-inv
+                                                  ; ℊ≤∨-inv ; ∧≤∨-inv
+                                                  ; module Decision )
+open import Setoid.Functions               using  ( IsInjective )
 
 private variable
   χ υ : Level
@@ -154,10 +165,10 @@ module Ladder {X : Type χ} (a b w : LatTerm X) where
 
   -- The two sides of the ladder over a, b and the bound w.
   A B : ℕ → LatTerm X
-  A zero     = a ∧̇ w
-  A (suc k)  = w ∧̇ (a ∨̇ B k)
-  B zero     = b ∧̇ w
-  B (suc k)  = w ∧̇ (b ∨̇ A k)
+  A zero = a ∧̇ w
+  A (suc k) = w ∧̇ (a ∨̇ B k)
+  B zero = b ∧̇ w
+  B (suc k) = w ∧̇ (b ∨̇ A k)
 
   -- The join of the k-th rungs.
   E : ℕ → LatTerm X
@@ -165,13 +176,13 @@ module Ladder {X : Type χ} (a b w : LatTerm X) where
 
   -- Every rung lies below the bound.
   A≤w : ∀ k → A k ≤ʷ w
-  A≤w zero     = ∧ʳ≤ ≤ʷ-refl
-  A≤w (suc k)  = ∧ˡ≤ ≤ʷ-refl
+  A≤w zero = ∧ʳ≤ ≤ʷ-refl
+  A≤w (suc k) = ∧ˡ≤ ≤ʷ-refl
 
   -- Every rung lies below the bound.
   B≤w : ∀ k → B k ≤ʷ w
-  B≤w zero     = ∧ʳ≤ ≤ʷ-refl
-  B≤w (suc k)  = ∧ˡ≤ ≤ʷ-refl
+  B≤w zero = ∧ʳ≤ ≤ʷ-refl
+  B≤w (suc k) = ∧ˡ≤ ≤ʷ-refl
 
   -- A rung of one side lies below the next rung of the other.
   B≤A : ∀ k → B k ≤ʷ A (suc k)
@@ -184,20 +195,20 @@ module Ladder {X : Type χ} (a b w : LatTerm X) where
   -- The sides ascend.
   A-mono : ∀ k → A k ≤ʷ A (suc k)
   B-mono : ∀ k → B k ≤ʷ B (suc k)
-  A-mono zero     = ≤∧ (∧ʳ≤ ≤ʷ-refl) (∧ˡ≤ (≤∨ˡ ≤ʷ-refl))
-  A-mono (suc k)  = ≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (B-mono k)))
-  B-mono zero     = ≤∧ (∧ʳ≤ ≤ʷ-refl) (∧ˡ≤ (≤∨ˡ ≤ʷ-refl))
-  B-mono (suc k)  = ≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (A-mono k)))
+  A-mono zero = ≤∧ (∧ʳ≤ ≤ʷ-refl) (∧ˡ≤ (≤∨ˡ ≤ʷ-refl))
+  A-mono (suc k) = ≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (B-mono k)))
+  B-mono zero = ≤∧ (∧ʳ≤ ≤ʷ-refl) (∧ˡ≤ (≤∨ˡ ≤ʷ-refl))
+  B-mono (suc k) = ≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (A-mono k)))
 
   -- The first rung of each side lies below every rung of it.
   A₀≤A : ∀ k → A zero ≤ʷ A k
-  A₀≤A zero     = ≤ʷ-refl
-  A₀≤A (suc k)  = ≤ʷ-trans (A₀≤A k) (A-mono k)
+  A₀≤A zero = ≤ʷ-refl
+  A₀≤A (suc k) = ≤ʷ-trans (A₀≤A k) (A-mono k)
 
   -- The first rung of each side lies below every rung of it.
   B₀≤B : ∀ k → B zero ≤ʷ B k
-  B₀≤B zero     = ≤ʷ-refl
-  B₀≤B (suc k)  = ≤ʷ-trans (B₀≤B k) (B-mono k)
+  B₀≤B zero = ≤ʷ-refl
+  B₀≤B (suc k) = ≤ʷ-trans (B₀≤B k) (B-mono k)
 ```
 
 Substitution commutes with the construction (`ladder-[]`{.AgdaFunction}): the
@@ -213,9 +224,10 @@ module _ {X : Type χ} {Y : Type υ} (a b w : LatTerm X) (σ : Sub X Y) where
 
   -- Substitution commutes with the ladder.
   ladder-[] : ∀ k → L.A k [ σ ] ≡ M.A k × L.B k [ σ ] ≡ M.B k
-  ladder-[] zero     = refl , refl
-  ladder-[] (suc k)  = cong (λ v → w [ σ ] ∧̇ (a [ σ ] ∨̇ v)) (ladder-[] k .proj₂)
-                     , cong (λ v → w [ σ ] ∧̇ (b [ σ ] ∨̇ v)) (ladder-[] k .proj₁)
+  ladder-[] zero = refl , refl
+  ladder-[] (suc k) =
+    cong (λ v → w [ σ ] ∧̇ (a [ σ ] ∨̇ v)) (ladder-[] k .proj₂) ,
+    cong (λ v → w [ σ ] ∧̇ (b [ σ ] ∨̇ v)) (ladder-[] k .proj₁)
 
 module _ {X : Type χ} (a b c w : LatTerm X) where
   private
@@ -223,14 +235,15 @@ module _ {X : Type χ} (a b c w : LatTerm X) where
     module V = Ladder a b w
 
   -- Between the k-th rungs and c, the bound w gives the same rungs up to k.
-  stable : ∀ k → C.A k ≤ʷ w → C.B k ≤ʷ w → w ≤ʷ c → V.A k ≈ʷ C.A k × V.B k ≈ʷ C.B k
-  stable zero     hA hB w≤c = (≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ w≤c) , ≤∧ (∧ˡ≤ ≤ʷ-refl) hA)
-                            , (≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ w≤c) , ≤∧ (∧ˡ≤ ≤ʷ-refl) hB)
-  stable (suc k)  hA hB w≤c =
-      (≤∧ (∧ˡ≤ w≤c) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₂ .proj₁)))
-      , ≤∧ hA (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₂ .proj₂))))
-    , (≤∧ (∧ˡ≤ w≤c) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₁ .proj₁)))
-      , ≤∧ hB (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₁ .proj₂))))
+  stable : ∀ k → C.A k ≤ʷ w → C.B k ≤ʷ w → w ≤ʷ c
+    → V.A k ≈ʷ C.A k × V.B k ≈ʷ C.B k
+  stable zero hA hB w≤c =  (≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ w≤c) , ≤∧ (∧ˡ≤ ≤ʷ-refl) hA) ,
+                           (≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ w≤c) , ≤∧ (∧ˡ≤ ≤ʷ-refl) hB)
+  stable (suc k) hA hB w≤c =
+    ( ≤∧ (∧ˡ≤ w≤c) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₂ .proj₁))) ,
+      ≤∧ hA (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₂ .proj₂))) ) ,
+    ( ≤∧ (∧ˡ≤ w≤c) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₁ .proj₁))) ,
+      ≤∧ hB (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₁ .proj₂))) )
     where
     -- The rungs up to k agree.
     below : V.A k ≈ʷ C.A k × V.B k ≈ʷ C.B k
@@ -255,13 +268,15 @@ module _ {X : Type χ} (a b w : LatTerm X) where
 
   -- The ladder of terms is the ladder of Lemma 4.4 in the lattice FL(X).
   ladder≡rungs : ∀ k → L.A k ≡ R.A k × L.B k ≡ R.B k
-  ladder≡rungs zero     = refl , refl
-  ladder≡rungs (suc k)  = cong (λ v → w ∧̇ (a ∨̇ v)) (ladder≡rungs k .proj₂)
-                        , cong (λ v → w ∧̇ (b ∨̇ v)) (ladder≡rungs k .proj₁)
+  ladder≡rungs zero = refl , refl
+  ladder≡rungs (suc k) =  cong (λ v → w ∧̇ (a ∨̇ v)) (ladder≡rungs k .proj₂) ,
+                          cong (λ v → w ∧̇ (b ∨̇ v)) (ladder≡rungs k .proj₁)
 
   -- Each side ascends over any distance (Lemma 4.4 in FL(X)).
   A-mono-≤ : ∀ {j k} → j ≤ℕ k → L.A j ≤ʷ L.A k
-  A-mono-≤ {j} {k} j≤k = subst₂ _≤ʷ_ (sym (ladder≡rungs j .proj₁)) (sym (ladder≡rungs k .proj₁))
+  A-mono-≤ {j} {k} j≤k = subst₂  _≤ʷ_
+                                 (sym (ladder≡rungs j .proj₁))
+                                 (sym (ladder≡rungs k .proj₁))
                                  (≤→≤ʷ (R.A-mono-≤ j≤k))
 
 module _ {X : Type χ} (a b w v : LatTerm X) where
@@ -269,21 +284,33 @@ module _ {X : Type χ} (a b w v : LatTerm X) where
     module W = Ladder a b w
     module V = Ladder a b v
 
-  -- Lemma 4.4, last clause, in FL(X): if E k ≤ v ≤ w, the rungs agree at every j ≤ k.
-  stable≤ : ∀ k → W.E k ≤ʷ v → v ≤ʷ w → ∀ j → j ≤ℕ k → V.A j ≈ʷ W.A j × V.B j ≈ʷ W.B j
+  -- Lemma 4.4, last clause, in FL(X): if E k ≤ v ≤ w, the rungs agree at every
+  -- j ≤ k.
+  stable≤ : ∀ k → W.E k ≤ʷ v → v ≤ʷ w
+    → ∀ j → j ≤ℕ k → V.A j ≈ʷ W.A j × V.B j ≈ʷ W.B j
   stable≤ k E≤v v≤w j j≤k =
-      subst₂ _≈ʷ_ (sym (ladder≡rungs a b v j .proj₁)) (sym (ladder≡rungs a b w j .proj₁)) (general .proj₁)
-    , subst₂ _≈ʷ_ (sym (ladder≡rungs a b v j .proj₂)) (sym (ladder≡rungs a b w j .proj₂)) (general .proj₂)
+    subst₂  _≈ʷ_
+            (sym (ladder≡rungs a b v j .proj₁))
+            (sym (ladder≡rungs a b w j .proj₁))
+            (general .proj₁) ,
+    subst₂  _≈ʷ_
+            (sym (ladder≡rungs a b v j .proj₂))
+            (sym (ladder≡rungs a b w j .proj₂))
+            (general .proj₂)
     where
     -- The rungs at k, as the lattice's rungs, lie below v.
     E≤v′ : Rungs.A (FL X) a b w k ∨̇ Rungs.B (FL X) a b w k ≤ʷ v
-    E≤v′ = subst₂ (λ s t → s ∨̇ t ≤ʷ v) (ladder≡rungs a b w k .proj₁) (ladder≡rungs a b w k .proj₂)
-                  E≤v
+    E≤v′ = subst₂  (λ s t → s ∨̇ t ≤ʷ v)
+                   (ladder≡rungs a b w k .proj₁)
+                   (ladder≡rungs a b w k .proj₂)
+                   E≤v
 
     -- Lemma 4.4 in the lattice FL(X).
-    general : Rungs.A (FL X) a b v j ≈ʷ Rungs.A (FL X) a b w j
-            × Rungs.B (FL X) a b v j ≈ʷ Rungs.B (FL X) a b w j
-    general = DeansProblem.Ladder.stable (FL X) a b w v k (≤ʷ→≤ E≤v′) (≤ʷ→≤ v≤w) j j≤k
+    general :  Rungs.A (FL X) a b v j ≈ʷ Rungs.A (FL X) a b w j ×
+               Rungs.B (FL X) a b v j ≈ʷ Rungs.B (FL X) a b w j
+    general = DeansProblem.Ladder.stable  (FL X) a b w v k
+                                          (≤ʷ→≤ E≤v′) (≤ʷ→≤ v≤w)
+                                          j j≤k
 ```
 
 #### The links ascend, in any free lattice
@@ -308,41 +335,48 @@ module Ascent {X : Type χ} (a b c : LatTerm X) where
     module G = Ladder {X = Fin 3} (ℊ 0F) (ℊ 1F) (ℊ 2F)
 
     -- The witness rungs, read through a triple, are the rungs over (a, b, w).
-    rungs : ∀ w k → G.A k [ triple w ] ≡ Ladder.A a b w k × G.B k [ triple w ] ≡ Ladder.B a b w k
+    rungs : ∀ w k →  G.A k [ triple w ] ≡ Ladder.A a b w k ×
+                     G.B k [ triple w ] ≡ Ladder.B a b w k
     rungs w = ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple w)
 
     -- The k-th rungs are those over (a, b, A (k + 1)).
-    even-rungs : ∀ k → Ladder.A a b (A (suc k)) k ≈ʷ A k × Ladder.B a b (A (suc k)) k ≈ʷ B k
+    even-rungs : ∀ k →  Ladder.A a b (A (suc k)) k ≈ʷ A k ×
+                        Ladder.B a b (A (suc k)) k ≈ʷ B k
     even-rungs k = stable a b c (A (suc k)) k (A-mono k) (B≤A k) (A≤w (suc k))
 
     -- The (k + 1)-st rungs are those over (a, b, E (k + 1)).
-    odd-rungs : ∀ k → Ladder.A a b (E (suc k)) (suc k) ≈ʷ A (suc k)
-                    × Ladder.B a b (E (suc k)) (suc k) ≈ʷ B (suc k)
-    odd-rungs k = stable a b c (E (suc k)) (suc k) (≤∨ˡ ≤ʷ-refl) (≤∨ʳ ≤ʷ-refl)
-                         (∨≤ (A≤w (suc k)) (B≤w (suc k)))
+    odd-rungs : ∀ k →  Ladder.A a b (E (suc k)) (suc k) ≈ʷ A (suc k) ×
+                       Ladder.B a b (E (suc k)) (suc k) ≈ʷ B (suc k)
+    odd-rungs k = stable  a b c (E (suc k)) (suc k) (≤∨ˡ ≤ʷ-refl) (≤∨ʳ ≤ʷ-refl)
+                          (∨≤ (A≤w (suc k)) (B≤w (suc k)))
 
   -- The link of E k lies in the link of A (k + 1).
   ascend-even : ∀ k → ⟨ triple (E k) ⟩ ⊆ ⟨ triple (A (suc k)) ⟩
   ascend-even k = gens⊆ λ where
     0F → gen∈ (triple (A (suc k))) 0F
     1F → gen∈ (triple (A (suc k))) 1F
-    2F → G.A k ∨̇ G.B k
-       , subst₂ (λ u v → u ∨̇ v ≈ʷ E k) (sym (rungs (A (suc k)) k .proj₁))
-                (sym (rungs (A (suc k)) k .proj₂))
-                (∨̇-cong (even-rungs k .proj₁) (even-rungs k .proj₂))
+    2F → G.A k ∨̇ G.B k ,
+         subst₂  (λ u v → u ∨̇ v ≈ʷ E k)
+                 (sym (rungs (A (suc k)) k .proj₁))
+                 (sym (rungs (A (suc k)) k .proj₂))
+                 (∨̇-cong (even-rungs k .proj₁) (even-rungs k .proj₂))
 
   -- The link of A (k + 1) lies in the link of E (k + 1).
   ascend-odd : ∀ k → ⟨ triple (A (suc k)) ⟩ ⊆ ⟨ triple (E (suc k)) ⟩
   ascend-odd k = gens⊆ λ where
     0F → gen∈ (triple (E (suc k))) 0F
     1F → gen∈ (triple (E (suc k))) 1F
-    2F → G.A (suc k) , subst (_≈ʷ A (suc k)) (sym (rungs (E (suc k)) (suc k) .proj₁))
-                             (odd-rungs k .proj₁)
+    2F → G.A (suc k) ,
+         subst  (_≈ʷ A (suc k))
+                (sym (rungs (E (suc k)) (suc k) .proj₁))
+                (odd-rungs k .proj₁)
 
   -- B (k + 1) lies in the link of E (k + 1).
   B-in-odd : ∀ k → ⟨ triple (E (suc k)) ⟩ (B (suc k))
-  B-in-odd k = G.B (suc k) , subst (_≈ʷ B (suc k)) (sym (rungs (E (suc k)) (suc k) .proj₂))
-                                   (odd-rungs k .proj₂)
+  B-in-odd k =  G.B (suc k) ,
+                subst  (_≈ʷ B (suc k))
+                       (sym (rungs (E (suc k)) (suc k) .proj₂))
+                       (odd-rungs k .proj₂)
 ```
 
 #### The ladder in FL(3)
@@ -410,10 +444,10 @@ lie above `B₀`, hence not below `x`; dually for the `B` side.
 -- Every rung lies below x ∨ y.
 A≤x∨y : ∀ k → A k ≤ʷ x ∨̇ y
 B≤x∨y : ∀ k → B k ≤ʷ x ∨̇ y
-A≤x∨y zero     = ∧ˡ≤ (≤∨ˡ ≤ʷ-refl)
-A≤x∨y (suc k)  = ∧ʳ≤ (∨≤ (≤∨ˡ ≤ʷ-refl) (B≤x∨y k))
-B≤x∨y zero     = ∧ˡ≤ (≤∨ʳ ≤ʷ-refl)
-B≤x∨y (suc k)  = ∧ʳ≤ (∨≤ (≤∨ʳ ≤ʷ-refl) (A≤x∨y k))
+A≤x∨y zero = ∧ˡ≤ (≤∨ˡ ≤ʷ-refl)
+A≤x∨y (suc k) = ∧ʳ≤ (∨≤ (≤∨ˡ ≤ʷ-refl) (B≤x∨y k))
+B≤x∨y zero = ∧ˡ≤ (≤∨ʳ ≤ʷ-refl)
+B≤x∨y (suc k) = ∧ʳ≤ (∨≤ (≤∨ʳ ≤ʷ-refl) (A≤x∨y k))
 
 -- The join x ∨ B k lies below x ∨ y.
 xB≤ : ∀ k → x ∨̇ B k ≤ʷ x ∨̇ y
@@ -497,15 +531,15 @@ step: `Aₖ₊₂ ≤ Aₖ₊₁ = c ∧ (x ∨ Bₖ)` would give `Bₖ₊₁ �
 -- The sides ascend strictly.
 A-strict : ∀ k → ¬ (A (suc k) ≤ʷ A k)
 B-strict : ∀ k → ¬ (B (suc k) ≤ʷ B k)
-A-strict zero     h = A'≰x zero (≤∧-inv h .proj₁)
-A-strict (suc k)  h = B-strict k (B≤x∨B k k (A''≤→B'≤ k (≤∧-inv h .proj₂)))
-B-strict zero     h = B'≰y zero (≤∧-inv h .proj₁)
-B-strict (suc k)  h = A-strict k (A≤y∨A k k (B''≤→A'≤ k (≤∧-inv h .proj₂)))
+A-strict zero h = A'≰x zero (≤∧-inv h .proj₁)
+A-strict (suc k) h = B-strict k (B≤x∨B k k (A''≤→B'≤ k (≤∧-inv h .proj₂)))
+B-strict zero h = B'≰y zero (≤∧-inv h .proj₁)
+B-strict (suc k) h = A-strict k (A≤y∨A k k (B''≤→A'≤ k (≤∧-inv h .proj₂)))
 
 -- A (k + 1) does not lie below B k.
 A'≰B : ∀ k → ¬ (A (suc k) ≤ʷ B k)
-A'≰B zero     h = A≰y (suc zero) (≤∧-inv h .proj₁)
-A'≰B (suc k)  h =
+A'≰B zero h = A≰y (suc zero) (≤∧-inv h .proj₁)
+A'≰B (suc k) h =
   A-strict k (≤ʷ-trans (A-mono (suc k)) (A≤y∨A (suc k) k (≤∧-inv h .proj₂)))
 
 -- A (k + 1) does not lie below A k ∨ B k.
@@ -532,43 +566,49 @@ lies below `x ∨ y`, and above `y ∨ Aₖ` whenever it lies above `Bₖ₊₁`
 top.
 
 ```agda
--- Every element of ⟨x, y, E k⟩ lies below x ∨ y, and above x ∨ B k if above A (k + 1).
+-- Every element of ⟨x, y, E k⟩ lies below x ∨ y, and above x ∨ B k if above
+-- A (k + 1).
 inv-A : ∀ k (t : LatTerm (Fin 3))
-      → t [ triple (E k) ] ≤ʷ x ∨̇ y × (A (suc k) ≤ʷ t [ triple (E k) ] → x ∨̇ B k ≤ʷ t [ triple (E k) ])
-inv-A k (ℊ 0F)   = ≤∨ˡ ≤ʷ-refl , λ h → ⊥-elim (A'≰x k h)
-inv-A k (ℊ 1F)   = ≤∨ʳ ≤ʷ-refl , λ h → ⊥-elim (A≰y (suc k) h)
-inv-A k (ℊ 2F)   = ∨≤ (A≤x∨y k) (B≤x∨y k) , λ h → ⊥-elim (A'≰E k h)
-inv-A k (s ∧̇ t)  = ∧ˡ≤ (inv-A k s .proj₁)
-                 , λ h → ≤∧ (inv-A k s .proj₂ (≤∧-inv h .proj₁))
-                            (inv-A k t .proj₂ (≤∧-inv h .proj₂))
-inv-A k (s ∨̇ t)  = ∨≤ (inv-A k s .proj₁) (inv-A k t .proj₁) , join
+  →  t [ triple (E k) ] ≤ʷ x ∨̇ y ×
+     (A (suc k) ≤ʷ t [ triple (E k) ] → x ∨̇ B k ≤ʷ t [ triple (E k) ])
+inv-A k (ℊ 0F) = ≤∨ˡ ≤ʷ-refl , λ h → ⊥-elim (A'≰x k h)
+inv-A k (ℊ 1F) = ≤∨ʳ ≤ʷ-refl , λ h → ⊥-elim (A≰y (suc k) h)
+inv-A k (ℊ 2F) = ∨≤ (A≤x∨y k) (B≤x∨y k) , λ h → ⊥-elim (A'≰E k h)
+inv-A k (s ∧̇ t) =  ∧ˡ≤ (inv-A k s .proj₁) ,
+                   λ h → ≤∧  (inv-A k s .proj₂ (≤∧-inv h .proj₁))
+                             (inv-A k t .proj₂ (≤∧-inv h .proj₂))
+inv-A k (s ∨̇ t) = ∨≤ (inv-A k s .proj₁) (inv-A k t .proj₁) , join
   where
   -- Whitman's condition for A (k + 1) below a join.
   join : A (suc k) ≤ʷ s [ triple (E k) ] ∨̇ t [ triple (E k) ]
-       → x ∨̇ B k ≤ʷ s [ triple (E k) ] ∨̇ t [ triple (E k) ]
+    → x ∨̇ B k ≤ʷ s [ triple (E k) ] ∨̇ t [ triple (E k) ]
   join h with ∧≤∨-inv h
-  ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (∨≤ (inv-A k s .proj₁) (inv-A k t .proj₁))))
+  ... | inj₁ (inj₁ p) =
+    ⊥-elim (c≰x∨y (≤ʷ-trans p (∨≤ (inv-A k s .proj₁) (inv-A k t .proj₁))))
   ... | inj₁ (inj₂ p) = p
   ... | inj₂ (inj₁ p) = ≤ʷ-trans (inv-A k s .proj₂ p) (≤∨ˡ ≤ʷ-refl)
   ... | inj₂ (inj₂ p) = ≤ʷ-trans (inv-A k t .proj₂ p) (≤∨ʳ ≤ʷ-refl)
 
--- Every element of ⟨x, y, A (k + 1)⟩ lies below x ∨ y, and above y ∨ A k if above B (k + 1).
+-- Every element of ⟨x, y, A (k + 1)⟩ lies below x ∨ y, and above y ∨ A k if
+-- above B (k + 1).
 inv-B : ∀ k (t : LatTerm (Fin 3))
-      → t [ triple (A (suc k)) ] ≤ʷ x ∨̇ y
-      × (B (suc k) ≤ʷ t [ triple (A (suc k)) ] → y ∨̇ A k ≤ʷ t [ triple (A (suc k)) ])
-inv-B k (ℊ 0F)   = ≤∨ˡ ≤ʷ-refl , λ h → ⊥-elim (B≰x (suc k) h)
-inv-B k (ℊ 1F)   = ≤∨ʳ ≤ʷ-refl , λ h → ⊥-elim (B'≰y k h)
-inv-B k (ℊ 2F)   = A≤x∨y (suc k) , λ h → ⊥-elim (B'≰A' k h)
-inv-B k (s ∧̇ t)  = ∧ˡ≤ (inv-B k s .proj₁)
-                 , λ h → ≤∧ (inv-B k s .proj₂ (≤∧-inv h .proj₁))
-                            (inv-B k t .proj₂ (≤∧-inv h .proj₂))
-inv-B k (s ∨̇ t)  = ∨≤ (inv-B k s .proj₁) (inv-B k t .proj₁) , join
+  →  t [ triple (A (suc k)) ] ≤ʷ x ∨̇ y ×
+     ( B (suc k) ≤ʷ t [ triple (A (suc k)) ]
+       → y ∨̇ A k ≤ʷ t [ triple (A (suc k)) ] )
+inv-B k (ℊ 0F) = ≤∨ˡ ≤ʷ-refl , λ h → ⊥-elim (B≰x (suc k) h)
+inv-B k (ℊ 1F) = ≤∨ʳ ≤ʷ-refl , λ h → ⊥-elim (B'≰y k h)
+inv-B k (ℊ 2F) = A≤x∨y (suc k) , λ h → ⊥-elim (B'≰A' k h)
+inv-B k (s ∧̇ t) =  ∧ˡ≤ (inv-B k s .proj₁) ,
+                   λ h → ≤∧  (inv-B k s .proj₂ (≤∧-inv h .proj₁))
+                             (inv-B k t .proj₂ (≤∧-inv h .proj₂))
+inv-B k (s ∨̇ t) = ∨≤ (inv-B k s .proj₁) (inv-B k t .proj₁) , join
   where
   -- Whitman's condition for B (k + 1) below a join.
   join : B (suc k) ≤ʷ s [ triple (A (suc k)) ] ∨̇ t [ triple (A (suc k)) ]
-       → y ∨̇ A k ≤ʷ s [ triple (A (suc k)) ] ∨̇ t [ triple (A (suc k)) ]
+    → y ∨̇ A k ≤ʷ s [ triple (A (suc k)) ] ∨̇ t [ triple (A (suc k)) ]
   join h with ∧≤∨-inv h
-  ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (∨≤ (inv-B k s .proj₁) (inv-B k t .proj₁))))
+  ... | inj₁ (inj₁ p) =
+    ⊥-elim (c≰x∨y (≤ʷ-trans p (∨≤ (inv-B k s .proj₁) (inv-B k t .proj₁))))
   ... | inj₁ (inj₂ p) = p
   ... | inj₂ (inj₁ p) = ≤ʷ-trans (inv-B k s .proj₂ p) (≤∨ˡ ≤ʷ-refl)
   ... | inj₂ (inj₂ p) = ≤ʷ-trans (inv-B k t .proj₂ p) (≤∨ʳ ≤ʷ-refl)
@@ -583,12 +623,16 @@ so `x ≤ Aₖ₊₁ ≤ c` (`A'∉`{.AgdaFunction}); dually for `Bₖ₊₁`
 -- A (k + 1) is not in ⟨x, y, E k⟩.
 A'∉ : ∀ k → ¬ ⟨ triple (E k) ⟩ (A (suc k))
 A'∉ k (t , e) =
-  x≰c (≤ʷ-trans (∨≤-inv (≤ʷ-trans (inv-A k t .proj₂ (e .proj₂)) (e .proj₁)) .proj₁) (A≤w (suc k)))
+  x≰c (≤ʷ-trans  (∨≤-inv (≤ʷ-trans  (inv-A k t .proj₂ (e .proj₂))
+                                    (e .proj₁)) .proj₁)
+                 (A≤w (suc k)))
 
 -- B (k + 1) is not in ⟨x, y, A (k + 1)⟩.
 B'∉ : ∀ k → ¬ ⟨ triple (A (suc k)) ⟩ (B (suc k))
 B'∉ k (t , e) =
-  y≰c (≤ʷ-trans (∨≤-inv (≤ʷ-trans (inv-B k t .proj₂ (e .proj₂)) (e .proj₁)) .proj₁) (B≤w (suc k)))
+  y≰c (≤ʷ-trans  (∨≤-inv (≤ʷ-trans  (inv-B k t .proj₂ (e .proj₂))
+                                    (e .proj₁)) .proj₁)
+                 (B≤w (suc k)))
 
 -- E (k + 1) is not in ⟨x, y, A (k + 1)⟩.
 E'∉ : ∀ k → ¬ ⟨ triple (A (suc k)) ⟩ (E (suc k))
@@ -620,7 +664,9 @@ odd-step k = ascend-odd k , λ h → E'∉ k (h (gen∈ (triple (E (suc k))) 2F)
 
 -- An infinite strictly ascending chain of 3-generated sublattices of FL(3).
 ladder : StrictlyAscending 3 (Fin 3)
-ladder = interleaved-chain (λ k → triple (E k)) (λ k → triple (A (suc k))) even-step odd-step
+ladder = interleaved-chain  (λ k → triple (E k))
+                            (λ k → triple (A (suc k)))
+                            even-step odd-step
 
 -- The chain condition for 3-generated sublattices fails in FL(3).
 chain-condition-fails : ¬ ChainCondition 3 (Fin 3)
@@ -628,7 +674,8 @@ chain-condition-fails cc = cc ladder
 
 -- The ladder, read as an ascending chain, never stabilizes.
 ladder-never-stabilizes : ¬ Stabilizes (strict→ascending ladder)
-ladder-never-stabilizes (N , st) = StrictlyAscending.ascends ladder N .proj₂ (st N ≤-refl)
+ladder-never-stabilizes (N , st) =
+  StrictlyAscending.ascends ladder N .proj₂ (st N ≤-refl)
 ```
 
 #### No link is a copy of FL(3)
@@ -656,16 +703,20 @@ x∧y≤A : ∀ k → x ∧̇ y ≤ʷ A k
 x∧y≤A k = ≤ʷ-trans (≤∧ (∧ˡ≤ ≤ʷ-refl) x∧y≤c) (A₀≤A k)
 
 -- The third member of every link lies above the meet of the first two.
-link-meet : ∀ n → StrictlyAscending.links ladder n 0F ∧̇ StrictlyAscending.links ladder n 1F
-                  ≤ʷ StrictlyAscending.links ladder n 2F
-link-meet = interleave-all (λ σ → σ 0F ∧̇ σ 1F ≤ʷ σ 2F)
-                           (λ k → triple (E k)) (λ k → triple (A (suc k)))
-                           (λ k → ≤ʷ-trans (x∧y≤A k) (≤∨ˡ ≤ʷ-refl)) (λ k → x∧y≤A (suc k))
+link-meet : ∀ n
+  →  StrictlyAscending.links ladder n 0F ∧̇ StrictlyAscending.links ladder n 1F
+     ≤ʷ StrictlyAscending.links ladder n 2F
+link-meet = interleave-all  (λ σ → σ 0F ∧̇ σ 1F ≤ʷ σ 2F)
+                            (λ k → triple (E k)) (λ k → triple (A (suc k)))
+                            (λ k → ≤ʷ-trans (x∧y≤A k) (≤∨ˡ ≤ʷ-refl))
+                            (λ k → x∧y≤A (suc k))
 
--- A triple whose third member lies above the meet of the others generates no copy of FL(3).
+-- A triple whose third member lies above the meet of the others generates no
+-- copy of FL(3).
 meet-below→no-copy : (σ : Sub (Fin 3) X) → σ 0F ∧̇ σ 1F ≤ʷ σ 2F
-                   → (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL X .proj₁) → ¬ (copy e ≐ ⟨ σ ⟩)
-meet-below→no-copy σ p e e≐ = not-member (copy≐→freelyGenerates e σ e≐ .proj₂ {2F} {0F ∷ 1F ∷ []} p)
+  → (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL X .proj₁) → ¬ (copy e ≐ ⟨ σ ⟩)
+meet-below→no-copy σ p e e≐ =
+  not-member (copy≐→freelyGenerates e σ e≐ .proj₂ {2F} {0F ∷ 1F ∷ []} p)
   where
   -- The index of the third member is neither of the other two.
   not-member : ¬ Any (2F ≡_) (0F ∷ 1F ∷ [])
@@ -675,8 +726,9 @@ meet-below→no-copy σ p e e≐ = not-member (copy≐→freelyGenerates e σ e�
 
 -- Theorem 4.5: no link of the ladder is a copy of FL(3).
 no-link-is-a-copy : ∀ n (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL (Fin 3) .proj₁)
-                  → ¬ (copy e ≐ ⟨ StrictlyAscending.links ladder n ⟩)
-no-link-is-a-copy n = meet-below→no-copy (StrictlyAscending.links ladder n) (link-meet n)
+  → ¬ (copy e ≐ ⟨ StrictlyAscending.links ladder n ⟩)
+no-link-is-a-copy n =
+  meet-below→no-copy (StrictlyAscending.links ladder n) (link-meet n)
 ```
 
 #### The sublattice ⟨x, y, c⟩
@@ -701,11 +753,17 @@ private
 
 -- Every rung of the A side is a member of ⟨x, y, c⟩.
 A∈ : ∀ k → ⟨ triple c ⟩ (A k)
-A∈ k = G.A k , subst (_≈ʷ A k) (sym (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k .proj₁)) ≈ʷ-refl
+A∈ k =  G.A k ,
+        subst  (_≈ʷ A k)
+               (sym (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k .proj₁))
+               ≈ʷ-refl
 
 -- Every rung of the B side is a member of ⟨x, y, c⟩.
 B∈ : ∀ k → ⟨ triple c ⟩ (B k)
-B∈ k = G.B k , subst (_≈ʷ B k) (sym (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k .proj₂)) ≈ʷ-refl
+B∈ k =  G.B k ,
+        subst  (_≈ʷ B k)
+               (sym (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k .proj₂))
+               ≈ʷ-refl
 
 -- The sublattice ⟨x, y, w⟩ lies in ⟨x, y, c⟩ when w does.
 triple⊆ : ∀ {w} → ⟨ triple c ⟩ w → ⟨ triple w ⟩ ⊆ ⟨ triple c ⟩
@@ -716,9 +774,10 @@ triple⊆ w∈ = gens⊆ λ where
 
 -- ⟨x, y, c⟩ contains every link.
 links⊆⟨x,y,c⟩ : ∀ n → ⟨ StrictlyAscending.links ladder n ⟩ ⊆ ⟨ triple c ⟩
-links⊆⟨x,y,c⟩ = interleave-all (λ σ → ⟨ σ ⟩ ⊆ ⟨ triple c ⟩)
-                               (λ k → triple (E k)) (λ k → triple (A (suc k)))
-                               (λ k → triple⊆ (E∈ k)) (λ k → triple⊆ (A∈ (suc k)))
+links⊆⟨x,y,c⟩ = interleave-all  (λ σ → ⟨ σ ⟩ ⊆ ⟨ triple c ⟩)
+                                (λ k → triple (E k)) (λ k → triple (A (suc k)))
+                                (λ k → triple⊆ (E∈ k))
+                                (λ k → triple⊆ (A∈ (suc k)))
   where
   -- The join of the k-th rungs is a member.
   E∈ : ∀ k → ⟨ triple c ⟩ (E k)
@@ -734,14 +793,16 @@ A-injective {j} {k} e = compare (<-cmp j k)
   where
   -- By the order of j and k.
   compare : Tri (j < k) (j ≡ k) (k < j) → j ≡ k
-  compare (tri< j<k _ _)  = ⊥-elim (A-later≰ j<k (e .proj₂))
-  compare (tri≈ _ j≡k _)  = j≡k
-  compare (tri> _ _ k<j)  = ⊥-elim (A-later≰ k<j (e .proj₁))
+  compare (tri< j<k _ _) = ⊥-elim (A-later≰ j<k (e .proj₂))
+  compare (tri≈ _ j≡k _) = j≡k
+  compare (tri> _ _ k<j) = ⊥-elim (A-later≰ k<j (e .proj₁))
 
 -- No finite list covers ⟨x, y, c⟩: it is infinite.
-⟨x,y,c⟩-infinite : ¬ (Σ[ L ∈ List (LatTerm (Fin 3)) ] (∀ {w} → ⟨ triple c ⟩ w → Any (w ≈ʷ_) L))
+⟨x,y,c⟩-infinite : ¬ (Σ[ L ∈ List (LatTerm (Fin 3)) ]
+                      (∀ {w} → ⟨ triple c ⟩ w → Any (w ≈ʷ_) L))
 ⟨x,y,c⟩-infinite (L , covers) =
-  let (j , k , j<k , e) = pigeonhole-≈ L A (λ k → covers (A∈ k)) in A-later≰ j<k (e .proj₂)
+  let (j , k , j<k , e) = pigeonhole-≈ L A (λ k → covers (A∈ k))
+  in A-later≰ j<k (e .proj₂)
 ```
 
 #### The bottom link's term recurs
@@ -759,15 +820,22 @@ E₀≤A' : ∀ k → E zero ≤ʷ A (suc k)
 E₀≤A' k = ∨≤ (A₀≤A (suc k)) (≤ʷ-trans (B₀≤B k) (B≤A k))
 
 -- The term t₀ gives w₀ from (x, y, w) for any w between A₀ ∨ B₀ and c.
-t₀-at : ∀ w → E zero ≤ʷ w → w ≤ʷ c → (G.A zero ∨̇ G.B zero) [ triple w ] ≈ʷ E zero
-t₀-at w E≤w w≤c = let (eA , eB) = stable≤ x y c w zero E≤w w≤c zero z≤n in ∨̇-cong eA eB
+t₀-at : ∀ w → E zero ≤ʷ w → w ≤ʷ c
+  → (G.A zero ∨̇ G.B zero) [ triple w ] ≈ʷ E zero
+t₀-at w E≤w w≤c =
+  let (eA , eB) = stable≤ x y c w zero E≤w w≤c zero z≤n
+  in ∨̇-cong eA eB
 
--- The term t₀ = A₀ ∨ B₀ over the generators gives w₀ from every link's generators.
-t₀-recurs : ∀ n → (G.A zero ∨̇ G.B zero) [ StrictlyAscending.links ladder n ] ≈ʷ E zero
-t₀-recurs = interleave-all (λ σ → (G.A zero ∨̇ G.B zero) [ σ ] ≈ʷ E zero)
-                           (λ k → triple (E k)) (λ k → triple (A (suc k)))
-                           (λ k → t₀-at (E k) (∨̇-mono (A₀≤A k) (B₀≤B k)) (∨≤ (A≤w k) (B≤w k)))
-                           (λ k → t₀-at (A (suc k)) (E₀≤A' k) (A≤w (suc k)))
+-- The term t₀ = A₀ ∨ B₀ over the generators gives w₀ from every link's
+-- generators.
+t₀-recurs : ∀ n
+  → (G.A zero ∨̇ G.B zero) [ StrictlyAscending.links ladder n ] ≈ʷ E zero
+t₀-recurs = interleave-all  (λ σ → (G.A zero ∨̇ G.B zero) [ σ ] ≈ʷ E zero)
+                            (λ k → triple (E k)) (λ k → triple (A (suc k)))
+                            (λ k → t₀-at  (E k)
+                                          (∨̇-mono (A₀≤A k) (B₀≤B k))
+                                          (∨≤ (A≤w k) (B≤w k)))
+                            (λ k → t₀-at (A (suc k)) (E₀≤A' k) (A≤w (suc k)))
 ```
 
 #### Every free lattice on three or more generators
@@ -791,28 +859,39 @@ undoes it (`renaming-injective`{.AgdaFunction}), which is the earlier proof.
 ```agda
 -- Substitution by ℊ ∘ f is injective when g undoes f.
 renaming-injective : (f : Fin 3 → X) (g : X → Fin 3) → (∀ i → g (f i) ≡ i)
-                   → IsInjective (subst-hom (ℊ ∘ f) .proj₁)
-renaming-injective f g gf {s} {t} e = ≈ʷ-trans (≈ʷ-sym (back s)) (≈ʷ-trans ([]-cong (ℊ ∘ g) e) (back t))
+  → IsInjective (subst-hom (ℊ ∘ f) .proj₁)
+renaming-injective f g gf {s} {t} e =
+  ≈ʷ-trans (≈ʷ-sym (back s)) (≈ʷ-trans ([]-cong (ℊ ∘ g) e) (back t))
   where
   -- Renaming by f and then by g returns the term.
   back : ∀ u → u [ ℊ ∘ f ] [ ℊ ∘ g ] ≈ʷ u
-  back u = subst₂ _≈ʷ_ ([]-⨟ u (ℊ ∘ f) (ℊ ∘ g)) ([]-ℊ u)
-                  ([]-congʳ u (λ i → subst (λ j → ℊ (g (f i)) ≈ʷ ℊ j) (gf i) ≈ʷ-refl))
+  back u =
+    subst₂  _≈ʷ_
+            ([]-⨟ u (ℊ ∘ f) (ℊ ∘ g))
+            ([]-ℊ u)
+            ([]-congʳ u (λ i → subst (λ j → ℊ (g (f i)) ≈ʷ ℊ j) (gf i) ≈ʷ-refl))
 
 -- Theorem 4.5 in every free lattice with three distinct generators.
 ladder-into : Fin 3 ↣ X → StrictlyAscending 3 X
-ladder-into ι = strict-⨟ ladder (three-generators ι)
-                         (freelyGenerates→injective (three-generators ι) (three-generators-free ι))
+ladder-into ι = strict-⨟  ladder
+                          (three-generators ι)
+                          (freelyGenerates→injective  (three-generators ι)
+                                                      (three-generators-free ι))
 
 -- No link of the ladder in FL(X) is a copy of FL(3).
-ladder-into-no-copy : (ι : Fin 3 ↣ X) → ∀ n (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL X .proj₁)
-                    → ¬ (copy e ≐ ⟨ StrictlyAscending.links (ladder-into ι) n ⟩)
-ladder-into-no-copy ι n = meet-below→no-copy (StrictlyAscending.links (ladder-into ι) n)
-                                             ([]-mono (three-generators ι) (link-meet n))
+ladder-into-no-copy : (ι : Fin 3 ↣ X)
+  → ∀ n (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL X .proj₁)
+  → ¬ (copy e ≐ ⟨ StrictlyAscending.links (ladder-into ι) n ⟩)
+ladder-into-no-copy ι n =
+  meet-below→no-copy  (StrictlyAscending.links (ladder-into ι) n)
+                      ([]-mono (three-generators ι) (link-meet n))
 
--- The ladder in any free lattice with three generators that a map back separates.
-ladder-in : (f : Fin 3 → X) (g : X → Fin 3) → (∀ i → g (f i) ≡ i) → StrictlyAscending 3 X
-ladder-in f g gf = ladder-into (mk↣ λ {i} {j} e → trans (sym (gf i)) (trans (cong g e) (gf j)))
+-- The ladder in any free lattice with three generators that a map back
+-- separates.
+ladder-in : (f : Fin 3 → X) (g : X → Fin 3) → (∀ i → g (f i) ≡ i)
+  → StrictlyAscending 3 X
+ladder-in f g gf =
+  ladder-into (mk↣ λ {i} {j} e → trans (sym (gf i)) (trans (cong g e) (gf j)))
 ```
 
 **Theorem 4.5** of the paper, as one statement.  In `FL(3)`, with
@@ -826,9 +905,10 @@ generators, `Fin 3 ↣ X`, contains an infinite strictly ascending chain of
 `(x, y, w)` and `E k` is `Aₖ ∨ Bₖ`.
 
 ```agda
--- Theorem 4.5: the ladder's links form an infinite strictly ascending chain of 3-generated
--- sublattices of FL(3), none a copy of FL(3); so every free lattice with three distinct
--- generators contains an infinite strictly ascending chain of 3-generated sublattices.
+-- Theorem 4.5: the ladder's links form an infinite strictly ascending chain of
+-- 3-generated sublattices of FL(3), none a copy of FL(3); so every free lattice
+-- with three distinct generators contains an infinite strictly ascending chain
+-- of 3-generated sublattices.
 record Theorem-4·5 : Setω where
   field
     part-1 : Σ[ L ∈ StrictlyAscending 3 (Fin 3) ]

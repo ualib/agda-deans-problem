@@ -51,40 +51,46 @@ module DeansProblem.Examples.FixedTriple.Remarks where
 open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
-open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.List.Base                         using ( List ; [] ; _∷_ )
-open import Data.List.Membership.Propositional     using ( _∈_ )
-open import Data.List.Relation.Unary.Any           using ( Any ; here ; any? )
-open import Data.Nat.Base                          using ( ℕ )
-open import Data.Nat.Properties                    using ( <-irrefl )
-open import Data.Product                           using ( _×_ ; _,_ ; proj₁ )
-open import Level                                  using ( Level )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; subst )
-open import Relation.Nullary                       using ( ¬_ )
-open import Relation.Nullary.Decidable.Core        using ( from-yes ; from-no )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Fin.Patterns                      using  ( 0F ; 1F ; 2F )
+open import Data.Fin.Properties                    using  ( _≟_ )
+open import Data.List.Base                         using  ( List ; [] ; _∷_ )
+open import Data.List.Membership.Propositional     using  ( _∈_ )
+open import Data.List.Relation.Unary.Any           using  ( Any ; here ; any? )
+open import Data.Nat.Base                          using  ( ℕ )
+open import Data.Nat.Properties                    using  ( <-irrefl )
+open import Data.Product                           using  ( _×_ ; _,_ ; proj₁ )
+open import Level                                  using  ( Level )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl
+                                                          ; sym ; subst )
+open import Relation.Nullary                       using  ( ¬_ )
+open import Relation.Nullary.Decidable.Core        using  ( from-yes ; from-no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Setoid.Functions                       using ( IsInjective )
-open import Setoid.Subalgebras.Basic               using ( _IsSubalgebraOf_ )
+-- Imports from agda-algebras ---------------------------------------------------
+open import Setoid.Functions          using  ( IsInjective )
+open import Setoid.Subalgebras.Basic  using  ( _IsSubalgebraOf_ )
 
 -- Imports from the agda-lattices library ---------------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-sym ; ≈ʷ-trans )
-open import Lattices.Free.Canonical.Joinands       using ( canonicalJoinands )
-open import Lattices.Free.Complexity               using ( pigeonhole-≈ )
-open import Lattices.Free.Countable                using ( countable-injective )
-open import Lattices.Free.Generation              using ( FreelyGenerates ; freelyGenerates→injective
-                                                         ; injective→freelyGenerates )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; _⨟_ ; []-mono ; []-congʳ ; []-⨟
-                                                         ; subst-hom ; ⨟-injective )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Universal                using ( FL )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans ; ℊ≤ℊ-inv
-                                                         ; module Decision )
-open import Lattices.Free.WhitmanPolynomials       using ( σ )
-open import DeansProblem.Examples.FixedTriple      using ( x ; y ; z ; θ₁ ; c ; p ; q ; m₃ ; Θ ; m-free
-                                                         ; θ₁-fixes ; θ₁-free )
+open import Lattices.Free.Canonical.Basic      using  ( ≈ʷ-sym ; ≈ʷ-trans )
+open import Lattices.Free.Canonical.Joinands   using  ( canonicalJoinands )
+open import Lattices.Free.Complexity           using  ( pigeonhole-≈ )
+open import Lattices.Free.Countable            using  ( countable-injective )
+open import Lattices.Free.Generation           using  ( FreelyGenerates
+                                                      ; freelyGenerates→injective
+                                                      ; injective→freelyGenerates )
+open import Lattices.Free.Substitution         using  ( Sub ; _[_] ; _⨟_
+                                                      ; []-mono ; []-congʳ
+                                                      ; []-⨟ ; subst-hom
+                                                      ; ⨟-injective )
+open import Lattices.Free.Term                 using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
+open import Lattices.Free.Universal            using  ( FL )
+open import Lattices.Free.Whitman              using  ( _≤ʷ_ ; _≈ʷ_
+                                                      ; ≤ʷ-trans ; ℊ≤ℊ-inv
+                                                      ; module Decision )
+open import Lattices.Free.WhitmanPolynomials   using  ( σ )
+open import DeansProblem.Examples.FixedTriple  using  ( x ; y ; z ; θ₁ ; c ; p
+                                                      ; q ; m₃ ; Θ ; m-free
+                                                      ; θ₁-fixes ; θ₁-free )
 
 private variable
   ι : Level
@@ -104,7 +110,7 @@ and then `θ` is applying the composite, which agrees with `τ` pointwise.
 ```agda
 -- θ fixes the sublattice generated by a family it fixes.
 fixes-generated : {I : Type ι} (τ : Sub I (Fin 3)) (θ : Sub (Fin 3) (Fin 3))
-                → (∀ i → τ i [ θ ] ≈ʷ τ i) → (t : LatTerm I) → t [ τ ] [ θ ] ≈ʷ t [ τ ]
+  → (∀ i → τ i [ θ ] ≈ʷ τ i) → (t : LatTerm I) → t [ τ ] [ θ ] ≈ʷ t [ τ ]
 fixes-generated τ θ fix t = subst (_≈ʷ t [ τ ]) ([]-⨟ t τ θ) ([]-congʳ t fix)
 ```
 
@@ -138,19 +144,23 @@ joinands-x∨y = refl
 
 -- θ₁(x) is not a canonical joinand of θ₁(x ∨ y).
 θ₁x-not-joinand : ¬ Any (θ₁ 0F ≈ʷ_) (canonicalJoinands _≟_ ((x ∨̇ y) [ θ₁ ]))
-θ₁x-not-joinand = from-no (any? (θ₁ 0F ≈ʷ?_) (canonicalJoinands _≟_ ((x ∨̇ y) [ θ₁ ])))
+θ₁x-not-joinand =
+  from-no (any? (θ₁ 0F ≈ʷ?_) (canonicalJoinands _≟_ ((x ∨̇ y) [ θ₁ ])))
 
 -- Lemma 9.13's conclusion for every canonical joinand, a generator or not.
 Lemma-9-13-for-every-joinand : Type
 Lemma-9-13-for-every-joinand =
-  (τ : Sub (Fin 3) (Fin 3)) → IsInjective (subst-hom τ .proj₁) → (w : LatTerm (Fin 3))
-  {w₁ : LatTerm (Fin 3)} → w₁ ∈ canonicalJoinands _≟_ w
+  (τ : Sub (Fin 3) (Fin 3)) → IsInjective (subst-hom τ .proj₁)
+  → (w : LatTerm (Fin 3)) {w₁ : LatTerm (Fin 3)} → w₁ ∈ canonicalJoinands _≟_ w
   → Any (w₁ [ τ ] ≈ʷ_) (canonicalJoinands _≟_ (w [ τ ]))
 
--- It is false: the hypothesis that the joinand is not a generator cannot be dropped.
+-- It is false: the hypothesis that the joinand is not a generator cannot be
+-- dropped.
 generator-joinand-not-preserved : ¬ Lemma-9-13-for-every-joinand
 generator-joinand-not-preserved lemma =
-  θ₁x-not-joinand (lemma θ₁ θ₁-injective (x ∨̇ y) (subst (x ∈_) (sym joinands-x∨y) (here refl)))
+  θ₁x-not-joinand
+    (lemma  θ₁ θ₁-injective (x ∨̇ y)
+            (subst (x ∈_) (sym joinands-x∨y) (here refl)))
 ```
 
 #### What θ₁ fixes and preserves
@@ -169,10 +179,12 @@ and not by joins with `c`, since `θ₁(x)` is not `p = x ∨ c`
 
 ```agda
 -- θ₁ fixes the three joins of two generators, and c.
-θ₁-fixes-joins : ((x ∨̇ y) [ θ₁ ] ≈ʷ x ∨̇ y) × ((x ∨̇ z) [ θ₁ ] ≈ʷ x ∨̇ z)
-               × ((y ∨̇ z) [ θ₁ ] ≈ʷ y ∨̇ z)
+θ₁-fixes-joins :  ((x ∨̇ y) [ θ₁ ] ≈ʷ x ∨̇ y) × ((x ∨̇ z) [ θ₁ ] ≈ʷ x ∨̇ z) ×
+                  ((y ∨̇ z) [ θ₁ ] ≈ʷ y ∨̇ z)
 θ₁-fixes-joins =
-  θ₁-fixes-x∨y , from-yes ((x ∨̇ z) [ θ₁ ] ≈ʷ? x ∨̇ z) , from-yes ((y ∨̇ z) [ θ₁ ] ≈ʷ? y ∨̇ z)
+  θ₁-fixes-x∨y ,
+  from-yes ((x ∨̇ z) [ θ₁ ] ≈ʷ? x ∨̇ z) ,
+  from-yes ((y ∨̇ z) [ θ₁ ] ≈ʷ? y ∨̇ z)
 
 θ₁-fixes-c : c [ θ₁ ] ≈ʷ c
 θ₁-fixes-c = from-yes (c [ θ₁ ] ≈ʷ? c)
@@ -246,7 +258,8 @@ x∨y≈p∨q = from-yes (x ∨̇ y ≈ʷ? p ∨̇ q)
 m₃≈ : m₃ ≈ʷ ((z ∨̇ (p ∧̇ q)) ∧̇ (x ∨̇ y)) ∨̇ q
 m₃≈ = from-yes (m₃ ≈ʷ? ((z ∨̇ (p ∧̇ q)) ∧̇ (x ∨̇ y)) ∨̇ q)
 
--- The terms of m₁, m₂, m₃ in p, q, z, written over the generators x, y, z of FL(3).
+-- The terms of m₁, m₂, m₃ in p, q, z, written over the generators x, y, z of
+-- FL(3).
 μ : Sub (Fin 3) (Fin 3)
 μ 0F = x
 μ 1F = z ∨̇ ((x ∨̇ z) ∧̇ y)
@@ -280,7 +293,8 @@ homomorphisms (`Ω-injective`{.AgdaFunction}), so it freely generates
 
 -- It is injective, so it freely generates a copy of FL(ω).
 Ω-injective : IsInjective (subst-hom Ω .proj₁)
-Ω-injective = ⨟-injective σ Θ countable-injective (freelyGenerates→injective Θ m-free)
+Ω-injective =
+  ⨟-injective σ Θ countable-injective (freelyGenerates→injective Θ m-free)
 
 Ω-free : FreelyGenerates Ω
 Ω-free = injective→freelyGenerates Ω Ω-injective
@@ -312,18 +326,23 @@ of `⟨p, q, z⟩` up to equality, by the pigeonhole principle on the list
 
 -- Each member of Ω is the element of ⟨p, q, z⟩ its term names.
 ω-term-in-⟨pqz⟩ : ∀ n → ω-term n [ pqz ] ≈ʷ Ω n
-ω-term-in-⟨pqz⟩ n = ≈ʷ-sym (subst (Ω n ≈ʷ_) ([]-⨟ (σ n) μ pqz) ([]-congʳ (σ n) Θ≈μ[pqz]))
+ω-term-in-⟨pqz⟩ n =
+  ≈ʷ-sym (subst (Ω n ≈ʷ_) ([]-⨟ (σ n) μ pqz) ([]-congʳ (σ n) Θ≈μ[pqz]))
 
 -- Distinct indices name distinct elements of ⟨p, q, z⟩.
 ⟨pqz⟩-infinite : ∀ m n → ω-term m [ pqz ] ≈ʷ ω-term n [ pqz ] → m ≡ n
 ⟨pqz⟩-infinite m n e =
   ℊ≤ℊ-inv (Ω-injective {ℊ m} {ℊ n}
-    (≈ʷ-trans (≈ʷ-sym (ω-term-in-⟨pqz⟩ m)) (≈ʷ-trans e (ω-term-in-⟨pqz⟩ n))) .proj₁)
+    (≈ʷ-trans  (≈ʷ-sym (ω-term-in-⟨pqz⟩ m))
+               (≈ʷ-trans e (ω-term-in-⟨pqz⟩ n))) .proj₁)
 
 -- No finite list contains every element of ⟨p, q, z⟩.
-⟨pqz⟩-not-finite : (L : List (LatTerm (Fin 3))) → ¬ (∀ t → Any (t [ pqz ] ≈ʷ_) L)
+⟨pqz⟩-not-finite : (L : List (LatTerm (Fin 3)))
+  → ¬ (∀ t → Any (t [ pqz ] ≈ʷ_) L)
 ⟨pqz⟩-not-finite L cover =
-  let (i , j , i<j , e) = pigeonhole-≈ L (λ k → ω-term k [ pqz ]) (λ k → cover (ω-term k))
+  let (i , j , i<j , e) = pigeonhole-≈  L
+                                        (λ k → ω-term k [ pqz ])
+                                        (λ k → cover (ω-term k))
   in <-irrefl (⟨pqz⟩-infinite i j e) i<j
 ```
 

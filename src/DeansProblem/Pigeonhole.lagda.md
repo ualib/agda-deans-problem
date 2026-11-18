@@ -121,8 +121,8 @@ private module _ (α : ℕ → Bool) where
   seen-false : ∀ n → seen n ≡ false → ∀ i → i ≤ n → α i ≡ false
   seen-false zero     e zero z≤n  = e
   seen-false (suc n)  e i i≤n     =
-    [ (λ i<n → seen-false n (proj₁ f) i (≤-pred i<n))
-    , (λ i≡n → subst (λ a → α a ≡ false) (sym i≡n) (proj₂ f)) ]′ (m≤n⇒m<n∨m≡n i≤n)
+    [ (λ i<n → seen-false n (f .proj₁) i (≤-pred i<n))
+    , (λ i≡n → subst (λ a → α a ≡ false) (sym i≡n) (f .proj₂)) ]′ (m≤n⇒m<n∨m≡n i≤n)
     where
     -- Neither the earlier terms nor the last one is a 1.
     f : seen n ≡ false × α (suc n) ≡ false
@@ -168,17 +168,17 @@ each, and so on.
 module _ {P : ℕ → Type ℓ} (rec : ∀ m → Σ[ n ∈ ℕ ] m ≤ n × P n) where
   -- The occurrences, in increasing order.
   occurrences : ℕ → ℕ
-  occurrences zero     = proj₁ (rec zero)
-  occurrences (suc t)  = proj₁ (rec (suc (occurrences t)))
+  occurrences zero     = rec zero .proj₁
+  occurrences (suc t)  = rec (suc (occurrences t)) .proj₁
 
   -- They form a selection.
   occurrences-increasing : ∀ t → occurrences t < occurrences (suc t)
-  occurrences-increasing t = proj₁ (proj₂ (rec (suc (occurrences t))))
+  occurrences-increasing t = rec (suc (occurrences t)) .proj₂ .proj₁
 
   -- The property holds at each of them.
   occurrences-hold : ∀ t → P (occurrences t)
-  occurrences-hold zero     = proj₂ (proj₂ (rec zero))
-  occurrences-hold (suc t)  = proj₂ (proj₂ (rec (suc (occurrences t))))
+  occurrences-hold zero     = rec zero .proj₂ .proj₂
+  occurrences-hold (suc t)  = rec (suc (occurrences t)) .proj₂ .proj₂
 ```
 
 #### Tuples covered by a finite list

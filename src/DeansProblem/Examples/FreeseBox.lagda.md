@@ -188,7 +188,7 @@ loᵍ≤lo 1F = []-mono π (loᵍ≤lo 0F)
 loᵍ≤lo 2F = []-mono π ([]-mono π (loᵍ≤lo 0F))
 
 hi≤hiᵍ : ∀ j → hi j ≤ʷ hiᵍ j
-hi≤hiᵍ 0F = ≤ʷ-trans (proj₁ a'≈a″) ∧̇-lowerʳ
+hi≤hiᵍ 0F = ≤ʷ-trans (a'≈a″ .proj₁) ∧̇-lowerʳ
 hi≤hiᵍ 1F = []-mono π (hi≤hiᵍ 0F)
 hi≤hiᵍ 2F = []-mono π ([]-mono π (hi≤hiᵍ 0F))
 
@@ -211,10 +211,10 @@ footnote, decided on the canonical form `â` (`b̄₂≤a`{.AgdaFunction},
 ```agda
 -- Freese's footnote: b̄₂ and c̄₂ lie below a.
 b̄₂≤a : b̄₂ ≤ʷ a
-b̄₂≤a = ≤ʷ-trans (from-yes (b̄₂ ≤ʷ? â)) (proj₂ a≈â)
+b̄₂≤a = ≤ʷ-trans (from-yes (b̄₂ ≤ʷ? â)) (a≈â .proj₂)
 
 c̄₂≤a : c̄₂ ≤ʷ a
-c̄₂≤a = ≤ʷ-trans (from-yes (c̄₂ ≤ʷ? â)) (proj₂ a≈â)
+c̄₂≤a = ≤ʷ-trans (from-yes (c̄₂ ≤ʷ? â)) (a≈â .proj₂)
 
 -- The lower end at the first index lies below a'.
 lo≤a' : lo 0F ≤ʷ a'
@@ -229,8 +229,8 @@ freese-in-box 1F = []-mono π lo≤a' , ≤ʷ-refl
 freese-in-box 2F = []-mono π ([]-mono π lo≤a') , ≤ʷ-refl
 
 freese-in-generator-box : InBox loᵍ hiᵍ abc'
-freese-in-generator-box j = ≤ʷ-trans (loᵍ≤lo j) (proj₁ (freese-in-box j))
-                          , ≤ʷ-trans (proj₂ (freese-in-box j)) (hi≤hiᵍ j)
+freese-in-generator-box j = ≤ʷ-trans (loᵍ≤lo j) (freese-in-box j .proj₁)
+                          , ≤ʷ-trans (freese-in-box j .proj₂) (hi≤hiᵍ j)
 ```
 
 #### Lemma 2 on Freese's step
@@ -446,13 +446,13 @@ c₁≤c : c₁ ≤ʷ c
 c₁≤c = []-mono π b₁≤b
 
 a₁≰b : ¬ (a₁ ≤ʷ b)
-a₁≰b p = from-no (a₁ ≤ʷ? ⌊ bᶜ ⌋) (≤ʷ-trans p (proj₂ bᶜ-sound))
+a₁≰b p = from-no (a₁ ≤ʷ? ⌊ bᶜ ⌋) (≤ʷ-trans p (bᶜ-sound .proj₂))
 
 b₁≰c : ¬ (b₁ ≤ʷ c)
-b₁≰c p = from-no (b₁ ≤ʷ? ⌊ cᶜ ⌋) (≤ʷ-trans p (proj₂ cᶜ-sound))
+b₁≰c p = from-no (b₁ ≤ʷ? ⌊ cᶜ ⌋) (≤ʷ-trans p (cᶜ-sound .proj₂))
 
 c₁≰a : ¬ (c₁ ≤ʷ a)
-c₁≰a p = from-no (c₁ ≤ʷ? ⌊ âᶜ ⌋) (≤ʷ-trans p (proj₂ âᶜ-sound))
+c₁≰a p = from-no (c₁ ≤ʷ? ⌊ âᶜ ⌋) (≤ʷ-trans p (âᶜ-sound .proj₂))
 
 module _ (τ : Sub (Fin 3) (Fin 9)) (inj : IsInjective (subst-hom τ .proj₁))
          (abc≈ρ : ∀ i → abc i ≈ʷ ρ i [ τ ]) where
@@ -460,19 +460,19 @@ module _ (τ : Sub (Fin 3) (Fin 9)) (inj : IsInjective (subst-hom τ .proj₁))
 
   -- The lower ends: join primality of the generators.
   a₁≤τx : a₁ ≤ʷ τ 0F
-  a₁≤τx with ℊ≤∨-inv (≤ʷ-trans a₁≤a (proj₁ (abc≈ρ 0F)))
+  a₁≤τx with ℊ≤∨-inv (≤ʷ-trans a₁≤a (abc≈ρ 0F .proj₁))
   ... | inj₁ p  = p
-  ... | inj₂ q  = ⊥-elim (a₁≰b (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (proj₂ (abc≈ρ 1F))))))
+  ... | inj₂ q  = ⊥-elim (a₁≰b (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (abc≈ρ 1F .proj₂)))))
 
   b₁≤τy : b₁ ≤ʷ τ 1F
-  b₁≤τy with ℊ≤∨-inv (≤ʷ-trans b₁≤b (proj₁ (abc≈ρ 1F)))
+  b₁≤τy with ℊ≤∨-inv (≤ʷ-trans b₁≤b (abc≈ρ 1F .proj₁))
   ... | inj₁ p  = p
-  ... | inj₂ q  = ⊥-elim (b₁≰c (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (proj₂ (abc≈ρ 2F))))))
+  ... | inj₂ q  = ⊥-elim (b₁≰c (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (abc≈ρ 2F .proj₂)))))
 
   c₁≤τz : c₁ ≤ʷ τ 2F
-  c₁≤τz with ℊ≤∨-inv (≤ʷ-trans c₁≤c (proj₁ (abc≈ρ 2F)))
+  c₁≤τz with ℊ≤∨-inv (≤ʷ-trans c₁≤c (abc≈ρ 2F .proj₁))
   ... | inj₁ p  = p
-  ... | inj₂ q  = ⊥-elim (c₁≰a (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (proj₂ (abc≈ρ 0F))))))
+  ... | inj₂ q  = ⊥-elim (c₁≰a (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (abc≈ρ 0F .proj₂)))))
 
   -- The truncations of the canonical forms of a, b and c by Freese's terms.
   trunc-a : ρᶜ 0F ⊑ âᶜ

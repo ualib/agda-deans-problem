@@ -179,7 +179,7 @@ and not by joins with `c`, since `θ₁(x)` is not `p = x ∨ c`
 
 -- θ₁ maps the ideal (x ∨ y] into itself, and the filter [z) into itself.
 θ₁-ideal : {w : LatTerm (Fin 3)} → w ≤ʷ x ∨̇ y → w [ θ₁ ] ≤ʷ x ∨̇ y
-θ₁-ideal w≤ = ≤ʷ-trans ([]-mono θ₁ w≤) (proj₁ θ₁-fixes-x∨y)
+θ₁-ideal w≤ = ≤ʷ-trans ([]-mono θ₁ w≤) (θ₁-fixes-x∨y .proj₁)
 
 θ₁-filter : {w : LatTerm (Fin 3)} → z ≤ʷ w → z ≤ʷ w [ θ₁ ]
 θ₁-filter z≤ = []-mono θ₁ z≤
@@ -317,8 +317,8 @@ of `⟨p, q, z⟩` up to equality, by the pigeonhole principle on the list
 -- Distinct indices name distinct elements of ⟨p, q, z⟩.
 ⟨pqz⟩-infinite : ∀ m n → ω-term m [ pqz ] ≈ʷ ω-term n [ pqz ] → m ≡ n
 ⟨pqz⟩-infinite m n e =
-  ℊ≤ℊ-inv (proj₁ (Ω-injective {ℊ m} {ℊ n}
-    (≈ʷ-trans (≈ʷ-sym (ω-term-in-⟨pqz⟩ m)) (≈ʷ-trans e (ω-term-in-⟨pqz⟩ n)))))
+  ℊ≤ℊ-inv (Ω-injective {ℊ m} {ℊ n}
+    (≈ʷ-trans (≈ʷ-sym (ω-term-in-⟨pqz⟩ m)) (≈ʷ-trans e (ω-term-in-⟨pqz⟩ n))) .proj₁)
 
 -- No finite list contains every element of ⟨p, q, z⟩.
 ⟨pqz⟩-not-finite : (L : List (LatTerm (Fin 3))) → ¬ (∀ t → Any (t [ pqz ] ≈ʷ_) L)

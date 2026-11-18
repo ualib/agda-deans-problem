@@ -145,7 +145,7 @@ module _
     -- The other partition case would put z below the other generators.
     impossible : ℊ z ≤ʷ ⋁others [ Θ ] → ⋁others [ Θ ] ≤ʷ ⋁others
     impossible p = ⊥-elim (z≰⋁others (injective→reflects Θ
-      (freelyGenerates→injective Θ Θ-free) (≤ʷ-trans (proj₁ fixz) p)))
+      (freelyGenerates→injective Θ Θ-free) (≤ʷ-trans (fixz .proj₁) p)))
 
   -- The image of the meet of the other two lies above that meet.
   fixed-generator-meet : ℊ (other z) ∧̇ ℊ (other' z)
@@ -155,7 +155,7 @@ module _
     -- The other dual partition case would put the meet below z.
     impossible : ⋀others [ Θ ] ≤ʷ ℊ z → ⋀others ≤ʷ ⋀others [ Θ ]
     impossible p = ⊥-elim (⋀others≰z (injective→reflects Θ
-      (freelyGenerates→injective Θ Θ-free) (≤ʷ-trans p (proj₂ fixz))))
+      (freelyGenerates→injective Θ Θ-free) (≤ʷ-trans p (fixz .proj₂))))
 
   -- Properness makes the fixed generator unique.
   fixed-generator-unique : (m : Fin 3) → (∀ i → ¬ (ℊ m ≈ʷ Θ i))
@@ -253,11 +253,11 @@ module _
 
     -- Both images lie below the fixed join.
     x≤xy : Φ x ≤ʷ ℊ x ∨̇ ℊ y
-    x≤xy = ≤ʷ-trans ∨̇-upperˡ (proj₁ fixxy)
+    x≤xy = ≤ʷ-trans ∨̇-upperˡ (fixxy .proj₁)
 
     -- The second upper bound supplied by the fixed join.
     y≤xy : Φ y ≤ʷ ℊ x ∨̇ ℊ y
-    y≤xy = ≤ʷ-trans ∨̇-upperʳ (proj₁ fixxy)
+    y≤xy = ≤ʷ-trans ∨̇-upperʳ (fixxy .proj₁)
 
     -- y below Φ x would force y below x by order reflection.
     y≰Φx : ¬ (ℊ y ≤ʷ Φ x)
@@ -287,8 +287,8 @@ module _
     { inflationary = inf
     ; fixes-z = fixz
     ; fixes-xy = fixxy
-    ; fixes-xz = ∨≤ x≤xz (≤∨ʳ (proj₁ fixz)) , inflationary-term inf (ℊ x ∨̇ ℊ z)
-    ; fixes-yz = ∨≤ y≤yz (≤∨ʳ (proj₁ fixz)) , inflationary-term inf (ℊ y ∨̇ ℊ z)
+    ; fixes-xz = ∨≤ x≤xz (≤∨ʳ (fixz .proj₁)) , inflationary-term inf (ℊ x ∨̇ ℊ z)
+    ; fixes-yz = ∨≤ y≤yz (≤∨ʳ (fixz .proj₁)) , inflationary-term inf (ℊ y ∨̇ ℊ z)
     ; bound-x = ≤∧ x≤xy x≤xz
     ; bound-y = ≤∧ y≤xy y≤yz
     }
@@ -340,7 +340,7 @@ module _
       → InflationaryShape Θ z ⊎ InflationaryShape (iter Θ 2) z
 
     finish (inj₁ (px , py)) = inj₁ (inflationary-shape Θ Θ-free z fixz
-      (inflationary-of Θ z px py (proj₂ fixz)) fixxy)
+      (inflationary-of Θ z px py (fixz .proj₂)) fixxy)
 
     finish (inj₂ (px , py)) = inj₂ (inflationary-shape (iter Θ 2)
       (iter-free Θ Θ-free 2) z fixz² inf² fixxy²)
@@ -362,11 +362,11 @@ module _
       inf² = inflationary-of (iter Θ 2) z
         (subst (ℊ x ≤ʷ_) (sym (square-equation Θ (ℊ x))) (≤ʷ-trans px ([]-mono Θ py)))
         (subst (ℊ y ≤ʷ_) (sym (square-equation Θ (ℊ y))) (≤ʷ-trans py ([]-mono Θ px)))
-        (proj₂ fixz²)
+        (fixz² .proj₂)
 
   -- A fixed join yields the full shape for exponent one or two.
   fixed-join-shape : InflationaryShape Θ z ⊎ InflationaryShape (iter Θ 2) z
-  fixed-join-shape = finish (proj₁ (fixes-join Θ Θ-free z fixxy))
+  fixed-join-shape = finish (fixes-join Θ Θ-free z fixxy .proj₁)
 ```
 
 #### Corollary E1

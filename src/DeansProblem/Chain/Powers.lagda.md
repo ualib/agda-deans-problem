@@ -194,20 +194,20 @@ the bottom step `θ₀ = ψ^(m₀ + 1)`.  Corollary 2.4 makes it one of the term
   private
     -- The exponent of the power that fixes the generators, less one.
     d : ℕ
-    d = proj₁ power-fixes
+    d = power-fixes .proj₁
 
     -- Every generator is ψ of some generator.
     gen-in-ψ : ∀ i → Σ[ j ∈ Fin 3 ] ℊ i ≈ʷ ψ j
     gen-in-ψ i = generator-in-image ψ (iter ψ d i)
-                   (≈ʷ-sym (subst (_≈ʷ ℊ i) ([]-iter-sucʳ (ℊ i) ψ d) (proj₂ power-fixes i)))
+                   (≈ʷ-sym (subst (_≈ʷ ℊ i) ([]-iter-sucʳ (ℊ i) ψ d) (power-fixes .proj₂ i)))
 
     -- A preimage under ψ of each generator.
     pre : Sub (Fin 3) (Fin 3)
-    pre i = ℊ (proj₁ (gen-in-ψ i))
+    pre i = ℊ (gen-in-ψ i .proj₁)
 
     -- Every term is ψ of a term.
     ψ-onto : (t : LatTerm (Fin 3)) → t [ pre ] [ ψ ] ≈ʷ t
-    ψ-onto t = subst₂ _≈ʷ_ ([]-⨟ t pre ψ) ([]-ℊ t) ([]-congʳ t (λ i → ≈ʷ-sym (proj₂ (gen-in-ψ i))))
+    ψ-onto t = subst₂ _≈ʷ_ ([]-⨟ t pre ψ) ([]-ℊ t) ([]-congʳ t (λ i → ≈ʷ-sym (gen-in-ψ i .proj₂)))
 
     -- Every generator is the value of a term under every power of ψ.
     gen-in-power : ∀ n i → Σ[ t ∈ LatTerm (Fin 3) ] ℊ i ≈ʷ t [ iter ψ n ]

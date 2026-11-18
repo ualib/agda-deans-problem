@@ -155,7 +155,7 @@ module _ {Y : Type υ} (h : FL Y .proj₁ ≤ FL Z .proj₁) (c : CopyChain Y) w
   -- The next copy does not lie in this one, since h is injective.
   embed-⊉ : (k : ℕ) → ¬ copy (embed-φ (suc k)) ⊆ copy (embed-φ k)
   embed-⊉ k ⊇ = ascends k .proj₂ λ (b , ey) → let (a , ea) = ⊇ (b , ≈ʷ-refl) in
-    a , ≈ʷ-trans (proj₂ h ea) ey
+    a , ≈ʷ-trans (h .proj₂ ea) ey
 
   -- The chain of copies in FL(Z).
   embed-copyChain : CopyChain Z

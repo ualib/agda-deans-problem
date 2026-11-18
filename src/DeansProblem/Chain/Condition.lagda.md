@@ -248,11 +248,11 @@ containment is containment of the generators (`⊆⇔gens`{.AgdaFunction}).
 -- A sublattice lies in another as soon as its generators do.
 gens⊆ : {σ : Sub I X} {τ : Sub J X} → (∀ i → ⟨ τ ⟩ (σ i)) → ⟨ σ ⟩ ⊆ ⟨ τ ⟩
 gens⊆ {σ = σ} {τ} g (t , e) =
-  t [ p ] , subst (_≈ʷ _) ([]-⨟ t p τ) (≈ʷ-trans ([]-congʳ t (λ i → proj₂ (g i))) e)
+  t [ p ] , subst (_≈ʷ _) ([]-⨟ t p τ) (≈ʷ-trans ([]-congʳ t (λ i → g i .proj₂)) e)
   where
   -- The term expressing each generator of σ in τ.
   p : Sub _ _
-  p i = proj₁ (g i)
+  p i = g i .proj₁
 
 -- Containment is containment of the generators.
 ⊆⇔gens : {σ : Sub I X} {τ : Sub J X} → (⟨ σ ⟩ ⊆ ⟨ τ ⟩) ⇔ (∀ i → ⟨ τ ⟩ (σ i))
@@ -325,7 +325,7 @@ record StrictlyAscending (n : ℕ) (X : Type χ) : Type χ where
 strict→ascending : StrictlyAscending n X → Ascending n X
 strict→ascending c = record
   { links    = StrictlyAscending.links c
-  ; ascends  = λ k → proj₁ (StrictlyAscending.ascends c k)
+  ; ascends  = λ k → StrictlyAscending.ascends c k .proj₁
   }
 
 -- The chain condition for n-generated sublattices of FL(X): no strictly ascending chain.
@@ -336,7 +336,7 @@ ChainCondition n X = ¬ StrictlyAscending n X
 stabilizes→chainCondition : ((c : Ascending n X) → Stabilizes c) → ChainCondition n X
 stabilizes→chainCondition every c =
   let (N , st) = every (strict→ascending c)
-  in proj₂ (StrictlyAscending.ascends c N) (st N ≤-refl)
+  in StrictlyAscending.ascends c N .proj₂ (st N ≤-refl)
 ```
 
 #### Chains of copies of FL(3) are chains
@@ -406,11 +406,11 @@ module Orbit {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (
 
   -- The terms expressing each generator in the image: σ i ≈ θ i [ σ ⨟ Φ ].
   θ : Sub (Fin n) (Fin n)
-  θ i = proj₁ (σ⊆Φσ (gen∈ σ i))
+  θ i = σ⊆Φσ (gen∈ σ i) .proj₁
 
   -- The defining equation of θ.
   θ≈ : ∀ i → θ i [ σ ⨟ Φ ] ≈ʷ σ i
-  θ≈ i = proj₂ (σ⊆Φσ (gen∈ σ i))
+  θ≈ i = σ⊆Φσ (gen∈ σ i) .proj₂
 
   -- Applying θ, then σ, then Φ, is applying σ.
   turn : (w : LatTerm (Fin n)) → w [ θ ] [ σ ] [ Φ ] ≈ʷ w [ σ ]
@@ -464,17 +464,17 @@ A repeat `mₐ ≈ m_b`, with `b = a + (1 + o)`, puts `gⱼ` at `m_(1+o)` (`gen�
   image-gen j = iter θ o j , ≈ʷ-sym (≈ʷ-trans ([]-cong Φ gen≈) (back j o))
     where
     a b o : ℕ
-    a = proj₁ (orbit-repeats j)
-    b = proj₁ (proj₂ (orbit-repeats j))
-    o = proj₁ (m≤n⇒∃[o]m+o≡n (proj₁ (proj₂ (proj₂ (orbit-repeats j)))))
+    a = orbit-repeats j .proj₁
+    b = orbit-repeats j .proj₂ .proj₁
+    o = m≤n⇒∃[o]m+o≡n (orbit-repeats j .proj₂ .proj₂ .proj₁) .proj₁
 
     -- The repeat.
     ma≈mb : orbit j a ≈ʷ orbit j b
-    ma≈mb = proj₂ (proj₂ (proj₂ (orbit-repeats j)))
+    ma≈mb = orbit-repeats j .proj₂ .proj₂ .proj₂
 
     -- b is a + (1 + o).
     b≡ : b ≡ a + suc o
-    b≡ = trans (sym (proj₂ (m≤n⇒∃[o]m+o≡n (proj₁ (proj₂ (proj₂ (orbit-repeats j)))))))
+    b≡ = trans (sym (m≤n⇒∃[o]m+o≡n (orbit-repeats j .proj₂ .proj₂ .proj₁) .proj₂))
                (sym (+-suc a o))
 
     -- The generator is the (1 + o)-th element of its orbit.
@@ -714,13 +714,13 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : StrictlyAscending n X) where
   no-onto-later : (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
                 → ¬ (⟨ links k ⟩ ⊆ ⟨ links j ⨟ Φ ⟩)
   no-onto-later Φ Φ-free {j} {k} j<k k⊆ =
-    proj₂ (ascends j) (λ p → collapse _≟ˣ_ (links j) (links k) Φ Φ-free (ascends-≤ c′ (<⇒≤ j<k)) k⊆
+    ascends j .proj₂ (λ p → collapse _≟ˣ_ (links j) (links k) Φ Φ-free (ascends-≤ c′ (<⇒≤ j<k)) k⊆
                                       (ascends-≤ c′ j<k p))
 
   -- In particular, no injective Φ carries a link onto a later link.
   no-image-later : (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
                  → ¬ (⟨ links j ⨟ Φ ⟩ ≐ ⟨ links k ⟩)
-  no-image-later Φ Φ-free j<k e = no-onto-later Φ Φ-free j<k (proj₂ e)
+  no-image-later Φ Φ-free j<k e = no-onto-later Φ Φ-free j<k (e .proj₂)
 ```
 
 #### Building and moving strictly ascending chains
@@ -800,7 +800,7 @@ strict-⨟ : StrictlyAscending n X → (ι : Sub X Y) → IsInjective (subst-hom
          → StrictlyAscending n Y
 strict-⨟ c ι inj = record
   { links    = λ k → links k ⨟ ι
-  ; ascends  = λ k → ⊆-⨟ ι (proj₁ (ascends k)) , λ h → proj₂ (ascends k) (⊆-⨟⁻ ι inj h)
+  ; ascends  = λ k → ⊆-⨟ ι (ascends k .proj₁) , λ h → ascends k .proj₂ (⊆-⨟⁻ ι inj h)
   }
   where open StrictlyAscending c
 ```
@@ -850,38 +850,38 @@ module _ {X : Type χ} {n : ℕ} (e : FL (Fin n) .proj₁ IsSubalgebraOf FL X .p
   private
     -- The images of the generators, which freely generate.
     r : Sub (Fin n) X
-    r = restriction (proj₁ e)
+    r = restriction (e .proj₁)
 
     r-inj : IsInjective (subst-hom r .proj₁)
     r-inj = freelyGenerates→injective r (≤→freelyGenerates e)
 
     -- A term over the generators naming each σ j in the copy.
     ρ : Sub (Fin n) (Fin n)
-    ρ j = proj₁ (proj₂ e≐ (gen∈ σ j))
+    ρ j = e≐ .proj₂ (gen∈ σ j) .proj₁
 
     σ≈ρ : ∀ j → σ j ≈ʷ ρ j [ r ]
-    σ≈ρ j = ≈ʷ-trans (≈ʷ-sym (proj₂ (proj₂ e≐ (gen∈ σ j)))) (hom-induced (proj₁ e) (ρ j))
+    σ≈ρ j = ≈ʷ-trans (≈ʷ-sym (e≐ .proj₂ (gen∈ σ j) .proj₂)) (hom-induced (e .proj₁) (ρ j))
 
     -- Each generator is one of the terms ρ (Corollary 2.4).
     hit : ∀ i → Σ[ j ∈ Fin n ] ℊ i ≈ʷ ρ j
-    hit i = let (s , s≈) = proj₁ e≐ (ℊ i , hom-induced (proj₁ e) (ℊ i))
+    hit i = let (s , s≈) = e≐ .proj₁ (ℊ i , hom-induced (e .proj₁) (ℊ i))
             in free-generator-in-image r r-inj ρ s
                  (≈ʷ-trans (≈ʷ-sym s≈) ([]-congʳ s σ≈ρ))
 
     π : Fin n → Fin n
-    π i = proj₁ (hit i)
+    π i = hit i .proj₁
 
     π-inj : ∀ {i i'} → π i ≡ π i' → i ≡ i'
     π-inj {i} {i'} p =
-      ℊ-injective (≈ʷ-trans (proj₂ (hit i))
-                            (subst (λ j → ρ j ≈ʷ ℊ i') (sym p) (≈ʷ-sym (proj₂ (hit i')))))
+      ℊ-injective (≈ʷ-trans (hit i .proj₂)
+                            (subst (λ j → ρ j ≈ʷ ℊ i') (sym p) (≈ʷ-sym (hit i' .proj₂))))
 
     -- The inverse of π.
     π⁻ : Fin n → Fin n
-    π⁻ k = proj₁ (fin-injective→onto π π-inj k)
+    π⁻ k = fin-injective→onto π π-inj k .proj₁
 
     ππ⁻ : ∀ k → π (π⁻ k) ≡ k
-    ππ⁻ k = proj₂ (fin-injective→onto π π-inj k)
+    ππ⁻ k = fin-injective→onto π π-inj k .proj₂
 
     π⁻-inj : ∀ {k k'} → π⁻ k ≡ π⁻ k' → k ≡ k'
     π⁻-inj {k} {k'} p = trans (sym (ππ⁻ k)) (trans (cong π p) (ππ⁻ k'))
@@ -889,7 +889,7 @@ module _ {X : Type χ} {n : ℕ} (e : FL (Fin n) .proj₁ IsSubalgebraOf FL X .p
     -- σ is r re-indexed by π⁻.
     rπ⁻≈σ : ∀ k → r (π⁻ k) ≈ʷ σ k
     rπ⁻≈σ k = ≈ʷ-sym (≈ʷ-trans (σ≈ρ k) ([]-cong r (subst (λ j → ρ j ≈ʷ ℊ (π⁻ k)) (ππ⁻ k)
-                                                         (≈ʷ-sym (proj₂ (hit (π⁻ k)))))))
+                                                         (≈ʷ-sym (hit (π⁻ k) .proj₂)))))
 
   -- A copy of FL(n) generated by n elements is freely generated by them.
   copy≐→freelyGenerates : FreelyGenerates σ
@@ -931,7 +931,7 @@ module _ (c : StrictlyAscendingᶠ X) where
   -- Each link lies in the link d places later.
   ascendsᶠ-+ : ∀ j d → ⟨ links j ⟩ ⊆ ⟨ links (d + j) ⟩
   ascendsᶠ-+ j zero     p = p
-  ascendsᶠ-+ j (suc d)  p = proj₁ (ascends (d + j)) (ascendsᶠ-+ j d p)
+  ascendsᶠ-+ j (suc d)  p = ascends (d + j) .proj₁ (ascendsᶠ-+ j d p)
 
   -- Each link lies in every later one.
   ascendsᶠ-≤ : ∀ {j k} → j ≤ k → ⟨ links j ⟩ ⊆ ⟨ links k ⟩
@@ -946,13 +946,13 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : StrictlyAscendingᶠ X) where
   no-onto-laterᶠ : (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
                  → ¬ (⟨ links k ⟩ ⊆ ⟨ links j ⨟ Φ ⟩)
   no-onto-laterᶠ Φ Φ-free {j} {k} j<k k⊆ =
-    proj₂ (ascends j) (λ p → collapse _≟ˣ_ (links j) (links k) Φ Φ-free (ascendsᶠ-≤ c (<⇒≤ j<k)) k⊆
+    ascends j .proj₂ (λ p → collapse _≟ˣ_ (links j) (links k) Φ Φ-free (ascendsᶠ-≤ c (<⇒≤ j<k)) k⊆
                                       (ascendsᶠ-≤ c j<k p))
 
   -- Corollary A3 as the paper states it: no injective Φ has Φ(L j) = L k with j < k.
   no-image-laterᶠ : (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
                   → ¬ (⟨ links j ⨟ Φ ⟩ ≐ ⟨ links k ⟩)
-  no-image-laterᶠ Φ Φ-free j<k e = no-onto-laterᶠ Φ Φ-free j<k (proj₂ e)
+  no-image-laterᶠ Φ Φ-free j<k e = no-onto-laterᶠ Φ Φ-free j<k (e .proj₂)
 ```
 
 The remark after Corollary A3 says first that no chain is generated by one

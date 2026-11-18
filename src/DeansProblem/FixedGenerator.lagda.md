@@ -622,19 +622,19 @@ private
 -- The top is no canonical joinand or meetand of an element of complexity two; nor is the bottom.
 top-not-child : (u v : LatTerm (Fin 3)) → κ u ≡ 2 → v ≈ʷ top → ¬ (v ∈ CJ u ⊎ v ∈ CM u)
 top-not-child u v κu v≈ (inj₁ v∈) =
-  κ2≉top u κu (≤-top u , ≤ʷ-trans (proj₂ v≈) (canonicalJoinands-upper _≟_ v∈))
+  κ2≉top u κu (≤-top u , ≤ʷ-trans (v≈ .proj₂) (canonicalJoinands-upper _≟_ v∈))
 top-not-child u v κu v≈ (inj₂ v∈) =
   κ2≉top u κu (≤-top u , canonicalMeetands-greatest _≟_ (λ {c} c∈ →
-    ≤ʷ-trans (proj₂ v≈) (antichain-≤ ≤ʷ-refl (canonicalMeetands-antichain _≟_ u) c∈ v∈
-                                     (≤ʷ-trans (≤-top c) (proj₂ v≈)))))
+    ≤ʷ-trans (v≈ .proj₂) (antichain-≤ ≤ʷ-refl (canonicalMeetands-antichain _≟_ u) c∈ v∈
+                                     (≤ʷ-trans (≤-top c) (v≈ .proj₂)))))
 
 bot-not-child : (u v : LatTerm (Fin 3)) → κ u ≡ 2 → v ≈ʷ bot → ¬ (v ∈ CJ u ⊎ v ∈ CM u)
 bot-not-child u v κu v≈ (inj₂ v∈) =
-  κ2≉bot u κu (≤ʷ-trans (canonicalMeetands-lower _≟_ v∈) (proj₁ v≈) , bot-≤ u)
+  κ2≉bot u κu (≤ʷ-trans (canonicalMeetands-lower _≟_ v∈) (v≈ .proj₁) , bot-≤ u)
 bot-not-child u v κu v≈ (inj₁ v∈) =
   κ2≉bot u κu (canonicalJoinands-least _≟_ (λ {c} c∈ →
     ≤ʷ-trans (antichain-≤ ≤ʷ-refl (canonicalJoinands-antichain _≟_ u) v∈ c∈
-                          (≤ʷ-trans (proj₁ v≈) (bot-≤ c))) (proj₁ v≈)) , bot-≤ u)
+                          (≤ʷ-trans (v≈ .proj₁) (bot-≤ c))) (v≈ .proj₁)) , bot-≤ u)
 ```
 
 #### The join case
@@ -719,7 +719,7 @@ module JoinCase (Θ : Sub (Fin 3) (Fin 3)) (Θ-free : FreelyGenerates Θ) (m : F
   join-power : (z′ : Fin 3) (e : ℕ)
              → iter Θ (suc e) (other z′) ∨̇ iter Θ (suc e) (other' z′) ≈ʷ ℊ (other z′) ∨̇ ℊ (other' z′)
              → Σ[ E ∈ ℕ ] Inflationary (iter Θ (suc E))
-  join-power z′ e fixj = finish (proj₁ (fixes-join Ψ Ψ-free z′ fixj))
+  join-power z′ e fixj = finish (fixes-join Ψ Ψ-free z′ fixj .proj₁)
     where
     Ψ : Sub (Fin 3) (Fin 3)
     Ψ = iter Θ (suc e)

@@ -216,8 +216,8 @@ module _ (𝑳 : Lattice α ρ) where
                        (≤-trans (box (other₂ i) .proj₂) ∨-upperʳ)
 
       ∧-mono : lo (other₁ i) ∧ lo (other₂ i) ≤ η (other₁ i) ∧ η (other₂ i)
-      ∧-mono = ∧-greatest (≤-trans ∧-lowerˡ (proj₁ (box (other₁ i))))
-                          (≤-trans ∧-lowerʳ (proj₁ (box (other₂ i))))
+      ∧-mono = ∧-greatest (≤-trans ∧-lowerˡ (box (other₁ i) .proj₁))
+                          (≤-trans ∧-lowerʳ (box (other₂ i) .proj₁))
 
     -- Freese's Lemma 2.
     lemma-2 : StronglyIrredundant → InIntervals → (i : Fin 3)

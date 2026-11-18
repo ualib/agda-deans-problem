@@ -225,11 +225,11 @@ fixed→coherent₂ F = record
   Θ₂-free 1F = θ-free
 
   missed₂ : Fin 2 → Fin 3
-  missed₂ 0F = proj₁ (Θ-misses F)
+  missed₂ 0F = Θ-misses F .proj₁
   missed₂ 1F = missed
 
   missed∉₂ : ∀ j i → ¬ (ℊ (missed₂ j) ≈ʷ Θ₂ j i)
-  missed∉₂ 0F = proj₂ (Θ-misses F)
+  missed∉₂ 0F = Θ-misses F .proj₂
   missed∉₂ 1F = missed∉θ
 
   coh : ∀ {j k} → j < k → ∀ i → Θ₂ j i [ Θ₂ k ] ≈ʷ Θ₂ j i
@@ -590,23 +590,23 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
   module _ (j : ℕ) (R : Recurs j) where
     -- A strictly increasing sequence of recurrences.
     offsets : ℕ → ℕ
-    offsets zero     = proj₁ (R 0)
-    offsets (suc t)  = proj₁ (R (offsets t))
+    offsets zero     = R 0 .proj₁
+    offsets (suc t)  = R (offsets t) .proj₁
 
     offsets-step : ∀ t → offsets t <ℕ offsets (suc t)
-    offsets-step t = proj₁ (proj₂ (R (offsets t)))
+    offsets-step t = R (offsets t) .proj₂ .proj₁
 
     offsets-mono : ∀ t d → offsets t <ℕ offsets (suc d + t)
     offsets-mono t zero     = offsets-step t
     offsets-mono t (suc d)  = <-trans (offsets-mono t d) (offsets-step (suc d + t))
 
     offsets-positive : ∀ t → 0 <ℕ offsets t
-    offsets-positive zero     = proj₁ (proj₂ (R 0))
+    offsets-positive zero     = R 0 .proj₂ .proj₁
     offsets-positive (suc t)  = <-trans (offsets-positive t) (offsets-step t)
 
     offsets-recur : ∀ t v → transition c 0 (offsets t + j) v ≈ʷ transition c 0 j v
-    offsets-recur zero     = proj₂ (proj₂ (R 0))
-    offsets-recur (suc t)  = proj₂ (proj₂ (R (offsets t)))
+    offsets-recur zero     = R 0 .proj₂ .proj₂
+    offsets-recur (suc t)  = R (offsets t) .proj₂ .proj₂
 
     -- Two of the transitions θ_{j, offsets t + j} agree.
     transitions-repeat : Σ[ t ∈ ℕ ] Σ[ t′ ∈ ℕ ] t <ℕ t′

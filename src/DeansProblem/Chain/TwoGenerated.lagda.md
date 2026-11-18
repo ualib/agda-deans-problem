@@ -98,9 +98,9 @@ closed = from-yes (all? (λ i → all? (λ j → any? (λ k → four i ∧̇ fou
 one-of-four : (t : LatTerm (Fin 2)) → Σ[ k ∈ Fin 4 ] t ≈ʷ four k
 one-of-four (ℊ 0F)   = 0F , ≈ʷ-refl
 one-of-four (ℊ 1F)   = 1F , ≈ʷ-refl
-one-of-four (s ∧̇ t)  = let (i , s≈) = one-of-four s ; (j , t≈) = one-of-four t ; (k , e) = proj₁ closed i j
+one-of-four (s ∧̇ t)  = let (i , s≈) = one-of-four s ; (j , t≈) = one-of-four t ; (k , e) = closed .proj₁ i j
                        in k , ≈ʷ-trans (∧̇-cong s≈ t≈) e
-one-of-four (s ∨̇ t)  = let (i , s≈) = one-of-four s ; (j , t≈) = one-of-four t ; (k , e) = proj₂ closed i j
+one-of-four (s ∨̇ t)  = let (i , s≈) = one-of-four s ; (j , t≈) = one-of-four t ; (k , e) = closed .proj₂ i j
                        in k , ≈ʷ-trans (∨̇-cong s≈ t≈) e
 
 -- Two elements generate a sublattice of at most four elements.
@@ -147,30 +147,30 @@ four values that generate it.
     private
       -- The new element of step k.
       new : ∀ k → Σ[ w ∈ LatTerm X ] ⟨ links (suc k) ⟩ w × ¬ ⟨ links k ⟩ w
-      new k = new-element (proj₂ (ascends k))
+      new k = new-element (ascends k .proj₂)
 
     -- A member of the bottom link, then the new element of each step.
     witness : ℕ → LatTerm X
     witness zero     = links 0 0F
-    witness (suc k)  = proj₁ (new k)
+    witness (suc k)  = new k .proj₁
 
     -- The m-th witness lies in link m.
     witness∈ : ∀ m → ⟨ links m ⟩ (witness m)
     witness∈ zero     = gen∈ (links 0) 0F
-    witness∈ (suc k)  = proj₁ (proj₂ (new k))
+    witness∈ (suc k)  = new k .proj₂ .proj₁
 
     -- Witnesses at different places are unequal.
     apart : ∀ {m m′} → m < m′ → ¬ (witness m ≈ʷ witness m′)
     apart {m} {suc k} (s≤s m≤k) e =
-      proj₂ (proj₂ (new k)) (⟨⟩-resp (links k) (ascends-≤ (strict→ascending c) m≤k (witness∈ m)) e)
+      new k .proj₂ .proj₂ (⟨⟩-resp (links k) (ascends-≤ (strict→ascending c) m≤k (witness∈ m)) e)
 
     -- Two generators: no strictly ascending chain of 2-generated sublattices.
     no-chain₂ : ⊥
     no-chain₂ =
       let (i , j , i<j , e) = pigeonhole (n<1+n 4) idx
-      in apart i<j (≈ʷ-trans (proj₂ (at i)) (subst (λ k → four k [ links 4 ] ≈ʷ witness (toℕ j))
+      in apart i<j (≈ʷ-trans (at i .proj₂) (subst (λ k → four k [ links 4 ] ≈ʷ witness (toℕ j))
                                                     (sym e)
-                                                    (≈ʷ-sym (proj₂ (at j)))))
+                                                    (≈ʷ-sym (at j .proj₂))))
       where
       -- The first five witnesses lie in link 4, and so equal values of the four terms.
       at : (i : Fin 5) → Σ[ k ∈ Fin 4 ] witness (toℕ i) ≈ʷ four k [ links 4 ]
@@ -181,7 +181,7 @@ four values that generate it.
         ≤-pred (s≤s a≤4) = a≤4
 
       idx : Fin 5 → Fin 4
-      idx i = proj₁ (at i)
+      idx i = at i .proj₁
 
   -- The chain condition holds for 2-generated sublattices.
   chainCondition₂ : ChainCondition 2 X

@@ -325,7 +325,7 @@ module _ {I : Type ι} {Y : Type υ} (τ : Sub I Y) where
                   (x : Any (_⊑ᴹ mjoin jh jt) cs ⊎ (Σ[ j ∈ I ] mgen j ∈ cs × τ j ≤ʷ ⋁ᴶ jh jt))
                 → childᴹ τ x ≡ inj₁ (pmjoin P) → Bound P i l u → l ≤ʷ τ i × τ i ≤ʷ u
 
-  bound-sound (gen⊑ e)          at-gen          = proj₂ e , proj₁ e
+  bound-sound (gen⊑ e)          at-gen          = e .proj₂ , e .proj₁
   bound-sound (join⊑ {h' = h'} {t' = t'} e _ cov) (cutᴶ d∈ eq)    =
     cut-soundᴶ {h' = h'} {t' = t'} e (cov d∈) (trans (sym (lookup-collect (λ x∈ → childᴶ τ (cov x∈)) d∈)) eq)
   bound-sound (join⊑ {h' = h'} {t' = t'} e _ cov) (inᴶ d∈ eq b)   =
@@ -434,8 +434,8 @@ truncation has the identity pattern sends `y` to `y`
   point-box τ r e {y} jg mg =
     let (u , b) = idPattern-joinGen jg
         (l , b′) = idPattern-meetGen mg
-    in proj₂ (bound-sound τ r (subst (λ P → Bound P y l (ℊ y)) (sym e) b′))
-     , proj₁ (bound-sound τ r (subst (λ P → Bound P y (ℊ y) u) (sym e) b))
+    in bound-sound τ r (subst (λ P → Bound P y l (ℊ y)) (sym e) b′) .proj₂
+     , bound-sound τ r (subst (λ P → Bound P y (ℊ y) u) (sym e) b) .proj₁
 ```
 
 The identity pattern is the pattern of the tree read inside a link as `FL(3)`:

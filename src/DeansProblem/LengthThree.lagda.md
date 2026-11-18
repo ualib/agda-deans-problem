@@ -134,7 +134,7 @@ private
   -- The head of an antichain is not below its second member.
   antichain-head : {A : Type} {R : A → A → Type} {u v : A} {us : List A}
                  → AllPairs (λ a b → ¬ R a b × ¬ R b a) (u ∷ v ∷ us) → ¬ R u v
-  antichain-head (hd ∷ _) = proj₁ (All.head hd)
+  antichain-head (hd ∷ _) = All.head hd .proj₁
 
   suc≰0 : ∀ {m} → suc m ≤ 0 → ⊥
   suc≰0 ()
@@ -191,29 +191,29 @@ module _ (Ψ : Sub (Fin 3) (Fin 3)) (Ψ-free : FreelyGenerates Ψ) (inf : Inflat
     recurse (cjmeet ic) =
       above-c n ⌊ jmeet mh mt ⌋ᴶ (small (cjmeet ic))
               (fixed-joinand-inflationary Ψ Ψ-free inf w fix
-                 (subst (λ D → ⌊ jmeet mh mt ⌋ᴶ ∈ map ⌊_⌋ᴶ (proj₁ (joinandsOfC D) ∷ proj₂ (joinandsOfC D)))
+                 (subst (λ D → ⌊ jmeet mh mt ⌋ᴶ ∈ map ⌊_⌋ᴶ (joinandsOfC D .proj₁ ∷ joinandsOfC D .proj₂))
                         (sym eq) (Data.List.Membership.Propositional.Properties.∈-map⁺ ⌊_⌋ᴶ a∈))
                  (λ v e′ → gen≉meet ic (≈ʷ-sym e′)))
 
   above-c-shape n        w (genᶜ g)     eq _                    e b fix =
     ≤ʷ-trans c≤z (subst (λ u → ℊ u ≤ʷ w) (fixed-gen g (≈ʷ-trans (≈ʷ-sym ([]-cong Ψ (≈ʷ-sym e))) (≈ʷ-trans fix (≈ʷ-sym e))))
-                        (proj₁ e))
+                        (e .proj₁))
   above-c-shape zero     w (joinᶜ h t)  eq _                    e b fix = ⊥-elim (suc≰0 (subst (_≤ 0) (cong depth eq) b))
   above-c-shape zero     w (meetᶜ h t)  eq _                    e b fix = ⊥-elim (suc≰0 (subst (_≤ 0) (cong depth eq) b))
   -- A join: through a meet joinand, or through two distinct generator joinands.
   above-c-shape (suc n)  w (joinᶜ (jmeet mh mt) t)             eq (cjoin ne cs ac c4)  e b fix =
     ≤ʷ-trans (≤ʷ-trans (meet-joinand n w (jmeet mh mt) t eq cs b fix mh mt (here refl))
-                       (⋁ᴶ-upper {h = jmeet mh mt} {t = t} (here refl))) (proj₁ e)
+                       (⋁ᴶ-upper {h = jmeet mh mt} {t = t} (here refl))) (e .proj₁)
   above-c-shape (suc n)  w (joinᶜ (jgen g) [])                 eq (cjoin ne cs ac c4)  e b fix = ⊥-elim (ne refl)
   above-c-shape (suc n)  w (joinᶜ (jgen g) (jmeet mh mt ∷ t′)) eq (cjoin ne cs ac c4)  e b fix =
     ≤ʷ-trans (≤ʷ-trans (meet-joinand n w (jgen g) (jmeet mh mt ∷ t′) eq cs b fix mh mt (there (here refl)))
-                       (⋁ᴶ-upper {h = jgen g} {t = jmeet mh mt ∷ t′} (there (here refl)))) (proj₁ e)
+                       (⋁ᴶ-upper {h = jgen g} {t = jmeet mh mt ∷ t′} (there (here refl)))) (e .proj₁)
   above-c-shape (suc n)  w (joinᶜ (jgen g) (jgen g′ ∷ t′))     eq (cjoin ne cs ac c4)  e b fix =
     ≤ʷ-trans (≤ʷ-trans (c≤join z g g′ (λ e′ → antichain-head ac (ℊ≤ℊ e′)))
                        (∨≤ (⋁ᴶ-upper {h = jgen g} {t = jgen g′ ∷ t′} (here refl))
-                           (⋁ᴶ-upper {h = jgen g} {t = jgen g′ ∷ t′} (there (here refl))))) (proj₁ e)
+                           (⋁ᴶ-upper {h = jgen g} {t = jgen g′ ∷ t′} (there (here refl))))) (e .proj₁)
   above-c-shape (suc n)  w (meetᶜ h t)  eq (cmeet _ cs _ _)     e b fix =
-    ≤ʷ-trans (⋀ᴹ-greatest (λ {a} a∈ → meetand a a∈ (lookup cs a∈))) (proj₁ e)
+    ≤ʷ-trans (⋀ᴹ-greatest (λ {a} a∈ → meetand a a∈ (lookup cs a∈))) (e .proj₁)
     where
     children≤ : (a : CMand (Fin 3)) → a ∈ h ∷ t → IsCanonicalM a → κ ⌊ a ⌋ᴹ ≤ n
     children≤ a a∈ ic =
@@ -222,7 +222,7 @@ module _ (Ψ : Sub (Fin 3) (Fin 3)) (Ψ-free : FreelyGenerates Ψ) (inf : Inflat
 
     meetand∈ : (a : CMand (Fin 3)) → a ∈ h ∷ t → ⌊ a ⌋ᴹ ∈ CM w
     meetand∈ a a∈ =
-      subst (λ D → ⌊ a ⌋ᴹ ∈ map ⌊_⌋ᴹ (proj₁ (meetandsOfC D) ∷ proj₂ (meetandsOfC D))) (sym eq)
+      subst (λ D → ⌊ a ⌋ᴹ ∈ map ⌊_⌋ᴹ (meetandsOfC D .proj₁ ∷ meetandsOfC D .proj₂)) (sym eq)
             (Data.List.Membership.Propositional.Properties.∈-map⁺ ⌊_⌋ᴹ a∈)
       where
       meetandsOfC : CTerm (Fin 3) → CMand (Fin 3) × List (CMand (Fin 3))
@@ -295,15 +295,15 @@ module _ (Θ₁ : Sub (Fin 3) (Fin 3)) (Θ₁-free : FreelyGenerates Θ₁) (z :
       below q =
         [ (λ e → x≢z (sym (ℊ≤ℊ-inv e))) , (λ e → y≢z (sym (ℊ≤ℊ-inv e))) ]′
           (ℊ≤∨-inv (injective→reflects Θ₁ {s = ℊ z} {t = ℊ x ∨̇ ℊ y} (freelyGenerates→injective Θ₁ Θ₁-free)
-                      (≤ʷ-trans (proj₁ fixz₁) q)))
+                      (≤ʷ-trans (fixz₁ .proj₁) q)))
 
   -- The contradiction.
   core : ⊥
-  core = [ y≢x , y≢z ]′ (nothing (proj₂ Θ₁-free {y} {x ∷ z ∷ []} a∧z≤b))
+  core = [ y≢x , y≢z ]′ (nothing (Θ₁-free .proj₂ {y} {x ∷ z ∷ []} a∧z≤b))
     where
     -- Θ₁(x) ∧ Θ₁(z) ≤ (x ∨ y) ∧ z = c ≤ Θ₁(y).
     a∧z≤b : Θ₁ x ∧̇ Θ₁ z ≤ʷ Θ₁ y
-    a∧z≤b = ≤ʷ-trans (≤∧ (∧ʳ≤ (proj₁ fixz₁)) (∧ˡ≤ a≤xy))
+    a∧z≤b = ≤ʷ-trans (≤∧ (∧ʳ≤ (fixz₁ .proj₁)) (∧ˡ≤ a≤xy))
                      (fixed-above-c Ψ Ψ-free inf z fixz movex movey (Θ₁ y) (Ψ-fixes y))
 
     -- The meet condition puts y among x and z.

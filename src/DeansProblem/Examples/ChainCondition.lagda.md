@@ -214,8 +214,8 @@ module _ {X : Type χ} {Y : Type υ} (a b w : LatTerm X) (σ : Sub X Y) where
   -- Substitution commutes with the ladder.
   ladder-[] : ∀ k → L.A k [ σ ] ≡ M.A k × L.B k [ σ ] ≡ M.B k
   ladder-[] zero     = refl , refl
-  ladder-[] (suc k)  = cong (λ v → w [ σ ] ∧̇ (a [ σ ] ∨̇ v)) (proj₂ (ladder-[] k))
-                     , cong (λ v → w [ σ ] ∧̇ (b [ σ ] ∨̇ v)) (proj₁ (ladder-[] k))
+  ladder-[] (suc k)  = cong (λ v → w [ σ ] ∧̇ (a [ σ ] ∨̇ v)) (ladder-[] k .proj₂)
+                     , cong (λ v → w [ σ ] ∧̇ (b [ σ ] ∨̇ v)) (ladder-[] k .proj₁)
 
 module _ {X : Type χ} (a b c w : LatTerm X) where
   private
@@ -227,10 +227,10 @@ module _ {X : Type χ} (a b c w : LatTerm X) where
   stable zero     hA hB w≤c = (≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ w≤c) , ≤∧ (∧ˡ≤ ≤ʷ-refl) hA)
                             , (≤∧ (∧ˡ≤ ≤ʷ-refl) (∧ʳ≤ w≤c) , ≤∧ (∧ˡ≤ ≤ʷ-refl) hB)
   stable (suc k)  hA hB w≤c =
-      (≤∧ (∧ˡ≤ w≤c) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (proj₁ (proj₂ below))))
-      , ≤∧ hA (∧ʳ≤ (∨̇-mono ≤ʷ-refl (proj₂ (proj₂ below)))))
-    , (≤∧ (∧ˡ≤ w≤c) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (proj₁ (proj₁ below))))
-      , ≤∧ hB (∧ʳ≤ (∨̇-mono ≤ʷ-refl (proj₂ (proj₁ below)))))
+      (≤∧ (∧ˡ≤ w≤c) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₂ .proj₁)))
+      , ≤∧ hA (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₂ .proj₂))))
+    , (≤∧ (∧ˡ≤ w≤c) (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₁ .proj₁)))
+      , ≤∧ hB (∧ʳ≤ (∨̇-mono ≤ʷ-refl (below .proj₁ .proj₂))))
     where
     -- The rungs up to k agree.
     below : V.A k ≈ʷ C.A k × V.B k ≈ʷ C.B k
@@ -256,12 +256,12 @@ module _ {X : Type χ} (a b w : LatTerm X) where
   -- The ladder of terms is the ladder of Lemma 4.4 in the lattice FL(X).
   ladder≡rungs : ∀ k → L.A k ≡ R.A k × L.B k ≡ R.B k
   ladder≡rungs zero     = refl , refl
-  ladder≡rungs (suc k)  = cong (λ v → w ∧̇ (a ∨̇ v)) (proj₂ (ladder≡rungs k))
-                        , cong (λ v → w ∧̇ (b ∨̇ v)) (proj₁ (ladder≡rungs k))
+  ladder≡rungs (suc k)  = cong (λ v → w ∧̇ (a ∨̇ v)) (ladder≡rungs k .proj₂)
+                        , cong (λ v → w ∧̇ (b ∨̇ v)) (ladder≡rungs k .proj₁)
 
   -- Each side ascends over any distance (Lemma 4.4 in FL(X)).
   A-mono-≤ : ∀ {j k} → j ≤ℕ k → L.A j ≤ʷ L.A k
-  A-mono-≤ {j} {k} j≤k = subst₂ _≤ʷ_ (sym (proj₁ (ladder≡rungs j))) (sym (proj₁ (ladder≡rungs k)))
+  A-mono-≤ {j} {k} j≤k = subst₂ _≤ʷ_ (sym (ladder≡rungs j .proj₁)) (sym (ladder≡rungs k .proj₁))
                                  (≤→≤ʷ (R.A-mono-≤ j≤k))
 
 module _ {X : Type χ} (a b w v : LatTerm X) where
@@ -272,12 +272,12 @@ module _ {X : Type χ} (a b w v : LatTerm X) where
   -- Lemma 4.4, last clause, in FL(X): if E k ≤ v ≤ w, the rungs agree at every j ≤ k.
   stable≤ : ∀ k → W.E k ≤ʷ v → v ≤ʷ w → ∀ j → j ≤ℕ k → V.A j ≈ʷ W.A j × V.B j ≈ʷ W.B j
   stable≤ k E≤v v≤w j j≤k =
-      subst₂ _≈ʷ_ (sym (proj₁ (ladder≡rungs a b v j))) (sym (proj₁ (ladder≡rungs a b w j))) (proj₁ general)
-    , subst₂ _≈ʷ_ (sym (proj₂ (ladder≡rungs a b v j))) (sym (proj₂ (ladder≡rungs a b w j))) (proj₂ general)
+      subst₂ _≈ʷ_ (sym (ladder≡rungs a b v j .proj₁)) (sym (ladder≡rungs a b w j .proj₁)) (general .proj₁)
+    , subst₂ _≈ʷ_ (sym (ladder≡rungs a b v j .proj₂)) (sym (ladder≡rungs a b w j .proj₂)) (general .proj₂)
     where
     -- The rungs at k, as the lattice's rungs, lie below v.
     E≤v′ : Rungs.A (FL X) a b w k ∨̇ Rungs.B (FL X) a b w k ≤ʷ v
-    E≤v′ = subst₂ (λ s t → s ∨̇ t ≤ʷ v) (proj₁ (ladder≡rungs a b w k)) (proj₂ (ladder≡rungs a b w k))
+    E≤v′ = subst₂ (λ s t → s ∨̇ t ≤ʷ v) (ladder≡rungs a b w k .proj₁) (ladder≡rungs a b w k .proj₂)
                   E≤v
 
     -- Lemma 4.4 in the lattice FL(X).
@@ -327,22 +327,22 @@ module Ascent {X : Type χ} (a b c : LatTerm X) where
     0F → gen∈ (triple (A (suc k))) 0F
     1F → gen∈ (triple (A (suc k))) 1F
     2F → G.A k ∨̇ G.B k
-       , subst₂ (λ u v → u ∨̇ v ≈ʷ E k) (sym (proj₁ (rungs (A (suc k)) k)))
-                (sym (proj₂ (rungs (A (suc k)) k)))
-                (∨̇-cong (proj₁ (even-rungs k)) (proj₂ (even-rungs k)))
+       , subst₂ (λ u v → u ∨̇ v ≈ʷ E k) (sym (rungs (A (suc k)) k .proj₁))
+                (sym (rungs (A (suc k)) k .proj₂))
+                (∨̇-cong (even-rungs k .proj₁) (even-rungs k .proj₂))
 
   -- The link of A (k + 1) lies in the link of E (k + 1).
   ascend-odd : ∀ k → ⟨ triple (A (suc k)) ⟩ ⊆ ⟨ triple (E (suc k)) ⟩
   ascend-odd k = gens⊆ λ where
     0F → gen∈ (triple (E (suc k))) 0F
     1F → gen∈ (triple (E (suc k))) 1F
-    2F → G.A (suc k) , subst (_≈ʷ A (suc k)) (sym (proj₁ (rungs (E (suc k)) (suc k))))
-                             (proj₁ (odd-rungs k))
+    2F → G.A (suc k) , subst (_≈ʷ A (suc k)) (sym (rungs (E (suc k)) (suc k) .proj₁))
+                             (odd-rungs k .proj₁)
 
   -- B (k + 1) lies in the link of E (k + 1).
   B-in-odd : ∀ k → ⟨ triple (E (suc k)) ⟩ (B (suc k))
-  B-in-odd k = G.B (suc k) , subst (_≈ʷ B (suc k)) (sym (proj₂ (rungs (E (suc k)) (suc k))))
-                                   (proj₂ (odd-rungs k))
+  B-in-odd k = G.B (suc k) , subst (_≈ʷ B (suc k)) (sym (rungs (E (suc k)) (suc k) .proj₂))
+                                   (odd-rungs k .proj₂)
 ```
 
 #### The ladder in FL(3)
@@ -395,11 +395,11 @@ y≰x = from-no (y ≤ʷ? x)
 
 -- Neither x nor y lies below c.
 x≰c : ¬ (x ≤ʷ c)
-x≰c h = x≰y∨z (proj₂ (≤∧-inv h))
+x≰c h = x≰y∨z (≤∧-inv h .proj₂)
 
 -- Neither x nor y lies below c.
 y≰c : ¬ (y ≤ʷ c)
-y≰c h = y≰x∨z (proj₁ (≤∧-inv h))
+y≰c h = y≰x∨z (≤∧-inv h .proj₁)
 ```
 
 Every rung lies below `x ∨ y`, and so do the joins `x ∨ Bₖ` and `y ∨ Aₖ`.  The
@@ -453,7 +453,7 @@ too (`A''≤→B'≤`{.AgdaFunction}): of the four cases, `x ∨ Bₖ₊₁ ≤ 
 A≤y∨A : ∀ m k → A (suc m) ≤ʷ y ∨̇ A k → A (suc m) ≤ʷ A k
 A≤y∨A m k h with ∧≤∨-inv h
 ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (yA≤ k)))
-... | inj₁ (inj₂ p) with ℊ≤∨-inv (proj₁ (∨≤-inv p))
+... | inj₁ (inj₂ p) with ℊ≤∨-inv (∨≤-inv p .proj₁)
 ...   | inj₁ q = ⊥-elim (x≰y q)
 ...   | inj₂ q = ⊥-elim (x≰c (≤ʷ-trans q (A≤w k)))
 A≤y∨A m k h | inj₂ (inj₁ p) = ⊥-elim (A≰y (suc m) p)
@@ -463,7 +463,7 @@ A≤y∨A m k h | inj₂ (inj₂ p) = p
 B≤x∨B : ∀ m k → B (suc m) ≤ʷ x ∨̇ B k → B (suc m) ≤ʷ B k
 B≤x∨B m k h with ∧≤∨-inv h
 ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (xB≤ k)))
-... | inj₁ (inj₂ p) with ℊ≤∨-inv (proj₁ (∨≤-inv p))
+... | inj₁ (inj₂ p) with ℊ≤∨-inv (∨≤-inv p .proj₁)
 ...   | inj₁ q = ⊥-elim (y≰x q)
 ...   | inj₂ q = ⊥-elim (y≰c (≤ʷ-trans q (B≤w k)))
 B≤x∨B m k h | inj₂ (inj₁ p) = ⊥-elim (B≰x (suc m) p)
@@ -473,7 +473,7 @@ B≤x∨B m k h | inj₂ (inj₂ p) = p
 A''≤→B'≤ : ∀ k → A (suc (suc k)) ≤ʷ x ∨̇ B k → B (suc k) ≤ʷ x ∨̇ B k
 A''≤→B'≤ k h with ∧≤∨-inv h
 ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (xB≤ k)))
-... | inj₁ (inj₂ p) = proj₂ (∨≤-inv p)
+... | inj₁ (inj₂ p) = ∨≤-inv p .proj₂
 ... | inj₂ (inj₁ p) = ⊥-elim (A'≰x (suc k) p)
 ... | inj₂ (inj₂ p) = ≤ʷ-trans (B≤A (suc k)) (≤ʷ-trans p (≤∨ʳ ≤ʷ-refl))
 
@@ -481,7 +481,7 @@ A''≤→B'≤ k h with ∧≤∨-inv h
 B''≤→A'≤ : ∀ k → B (suc (suc k)) ≤ʷ y ∨̇ A k → A (suc k) ≤ʷ y ∨̇ A k
 B''≤→A'≤ k h with ∧≤∨-inv h
 ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (yA≤ k)))
-... | inj₁ (inj₂ p) = proj₂ (∨≤-inv p)
+... | inj₁ (inj₂ p) = ∨≤-inv p .proj₂
 ... | inj₂ (inj₁ p) = ⊥-elim (B'≰y (suc k) p)
 ... | inj₂ (inj₂ p) = ≤ʷ-trans (A≤B (suc k)) (≤ʷ-trans p (≤∨ʳ ≤ʷ-refl))
 ```
@@ -497,22 +497,22 @@ step: `Aₖ₊₂ ≤ Aₖ₊₁ = c ∧ (x ∨ Bₖ)` would give `Bₖ₊₁ �
 -- The sides ascend strictly.
 A-strict : ∀ k → ¬ (A (suc k) ≤ʷ A k)
 B-strict : ∀ k → ¬ (B (suc k) ≤ʷ B k)
-A-strict zero     h = A'≰x zero (proj₁ (≤∧-inv h))
-A-strict (suc k)  h = B-strict k (B≤x∨B k k (A''≤→B'≤ k (proj₂ (≤∧-inv h))))
-B-strict zero     h = B'≰y zero (proj₁ (≤∧-inv h))
-B-strict (suc k)  h = A-strict k (A≤y∨A k k (B''≤→A'≤ k (proj₂ (≤∧-inv h))))
+A-strict zero     h = A'≰x zero (≤∧-inv h .proj₁)
+A-strict (suc k)  h = B-strict k (B≤x∨B k k (A''≤→B'≤ k (≤∧-inv h .proj₂)))
+B-strict zero     h = B'≰y zero (≤∧-inv h .proj₁)
+B-strict (suc k)  h = A-strict k (A≤y∨A k k (B''≤→A'≤ k (≤∧-inv h .proj₂)))
 
 -- A (k + 1) does not lie below B k.
 A'≰B : ∀ k → ¬ (A (suc k) ≤ʷ B k)
-A'≰B zero     h = A≰y (suc zero) (proj₁ (≤∧-inv h))
+A'≰B zero     h = A≰y (suc zero) (≤∧-inv h .proj₁)
 A'≰B (suc k)  h =
-  A-strict k (≤ʷ-trans (A-mono (suc k)) (A≤y∨A (suc k) k (proj₂ (≤∧-inv h))))
+  A-strict k (≤ʷ-trans (A-mono (suc k)) (A≤y∨A (suc k) k (≤∧-inv h .proj₂)))
 
 -- A (k + 1) does not lie below A k ∨ B k.
 A'≰E : ∀ k → ¬ (A (suc k) ≤ʷ E k)
 A'≰E k h with ∧≤∨-inv h
 ... | inj₁ (inj₁ p) = c≰x∨y (≤ʷ-trans p (∨≤ (A≤x∨y k) (B≤x∨y k)))
-... | inj₁ (inj₂ p) with ℊ≤∨-inv (proj₁ (∨≤-inv p))
+... | inj₁ (inj₂ p) with ℊ≤∨-inv (∨≤-inv p .proj₁)
 ...   | inj₁ q = x≰c (≤ʷ-trans q (A≤w k))
 ...   | inj₂ q = x≰c (≤ʷ-trans q (B≤w k))
 A'≰E k h | inj₂ (inj₁ p) = A-strict k p
@@ -520,7 +520,7 @@ A'≰E k h | inj₂ (inj₂ p) = A'≰B k p
 
 -- B (k + 1) does not lie below A (k + 1).
 B'≰A' : ∀ k → ¬ (B (suc k) ≤ʷ A (suc k))
-B'≰A' k h = B-strict k (B≤x∨B k k (proj₂ (≤∧-inv h)))
+B'≰A' k h = B-strict k (B≤x∨B k k (≤∧-inv h .proj₂))
 ```
 
 #### The new generators lie outside the lower links
@@ -538,19 +538,19 @@ inv-A : ∀ k (t : LatTerm (Fin 3))
 inv-A k (ℊ 0F)   = ≤∨ˡ ≤ʷ-refl , λ h → ⊥-elim (A'≰x k h)
 inv-A k (ℊ 1F)   = ≤∨ʳ ≤ʷ-refl , λ h → ⊥-elim (A≰y (suc k) h)
 inv-A k (ℊ 2F)   = ∨≤ (A≤x∨y k) (B≤x∨y k) , λ h → ⊥-elim (A'≰E k h)
-inv-A k (s ∧̇ t)  = ∧ˡ≤ (proj₁ (inv-A k s))
-                 , λ h → ≤∧ (proj₂ (inv-A k s) (proj₁ (≤∧-inv h)))
-                            (proj₂ (inv-A k t) (proj₂ (≤∧-inv h)))
-inv-A k (s ∨̇ t)  = ∨≤ (proj₁ (inv-A k s)) (proj₁ (inv-A k t)) , join
+inv-A k (s ∧̇ t)  = ∧ˡ≤ (inv-A k s .proj₁)
+                 , λ h → ≤∧ (inv-A k s .proj₂ (≤∧-inv h .proj₁))
+                            (inv-A k t .proj₂ (≤∧-inv h .proj₂))
+inv-A k (s ∨̇ t)  = ∨≤ (inv-A k s .proj₁) (inv-A k t .proj₁) , join
   where
   -- Whitman's condition for A (k + 1) below a join.
   join : A (suc k) ≤ʷ s [ triple (E k) ] ∨̇ t [ triple (E k) ]
        → x ∨̇ B k ≤ʷ s [ triple (E k) ] ∨̇ t [ triple (E k) ]
   join h with ∧≤∨-inv h
-  ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (∨≤ (proj₁ (inv-A k s)) (proj₁ (inv-A k t)))))
+  ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (∨≤ (inv-A k s .proj₁) (inv-A k t .proj₁))))
   ... | inj₁ (inj₂ p) = p
-  ... | inj₂ (inj₁ p) = ≤ʷ-trans (proj₂ (inv-A k s) p) (≤∨ˡ ≤ʷ-refl)
-  ... | inj₂ (inj₂ p) = ≤ʷ-trans (proj₂ (inv-A k t) p) (≤∨ʳ ≤ʷ-refl)
+  ... | inj₂ (inj₁ p) = ≤ʷ-trans (inv-A k s .proj₂ p) (≤∨ˡ ≤ʷ-refl)
+  ... | inj₂ (inj₂ p) = ≤ʷ-trans (inv-A k t .proj₂ p) (≤∨ʳ ≤ʷ-refl)
 
 -- Every element of ⟨x, y, A (k + 1)⟩ lies below x ∨ y, and above y ∨ A k if above B (k + 1).
 inv-B : ∀ k (t : LatTerm (Fin 3))
@@ -559,19 +559,19 @@ inv-B : ∀ k (t : LatTerm (Fin 3))
 inv-B k (ℊ 0F)   = ≤∨ˡ ≤ʷ-refl , λ h → ⊥-elim (B≰x (suc k) h)
 inv-B k (ℊ 1F)   = ≤∨ʳ ≤ʷ-refl , λ h → ⊥-elim (B'≰y k h)
 inv-B k (ℊ 2F)   = A≤x∨y (suc k) , λ h → ⊥-elim (B'≰A' k h)
-inv-B k (s ∧̇ t)  = ∧ˡ≤ (proj₁ (inv-B k s))
-                 , λ h → ≤∧ (proj₂ (inv-B k s) (proj₁ (≤∧-inv h)))
-                            (proj₂ (inv-B k t) (proj₂ (≤∧-inv h)))
-inv-B k (s ∨̇ t)  = ∨≤ (proj₁ (inv-B k s)) (proj₁ (inv-B k t)) , join
+inv-B k (s ∧̇ t)  = ∧ˡ≤ (inv-B k s .proj₁)
+                 , λ h → ≤∧ (inv-B k s .proj₂ (≤∧-inv h .proj₁))
+                            (inv-B k t .proj₂ (≤∧-inv h .proj₂))
+inv-B k (s ∨̇ t)  = ∨≤ (inv-B k s .proj₁) (inv-B k t .proj₁) , join
   where
   -- Whitman's condition for B (k + 1) below a join.
   join : B (suc k) ≤ʷ s [ triple (A (suc k)) ] ∨̇ t [ triple (A (suc k)) ]
        → y ∨̇ A k ≤ʷ s [ triple (A (suc k)) ] ∨̇ t [ triple (A (suc k)) ]
   join h with ∧≤∨-inv h
-  ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (∨≤ (proj₁ (inv-B k s)) (proj₁ (inv-B k t)))))
+  ... | inj₁ (inj₁ p) = ⊥-elim (c≰x∨y (≤ʷ-trans p (∨≤ (inv-B k s .proj₁) (inv-B k t .proj₁))))
   ... | inj₁ (inj₂ p) = p
-  ... | inj₂ (inj₁ p) = ≤ʷ-trans (proj₂ (inv-B k s) p) (≤∨ˡ ≤ʷ-refl)
-  ... | inj₂ (inj₂ p) = ≤ʷ-trans (proj₂ (inv-B k t) p) (≤∨ʳ ≤ʷ-refl)
+  ... | inj₂ (inj₁ p) = ≤ʷ-trans (inv-B k s .proj₂ p) (≤∨ˡ ≤ʷ-refl)
+  ... | inj₂ (inj₂ p) = ≤ʷ-trans (inv-B k t .proj₂ p) (≤∨ʳ ≤ʷ-refl)
 ```
 
 If `Aₖ₊₁` were `t [ triple (E k) ]`, the invariant would put `x ∨ Bₖ` below it,
@@ -583,12 +583,12 @@ so `x ≤ Aₖ₊₁ ≤ c` (`A'∉`{.AgdaFunction}); dually for `Bₖ₊₁`
 -- A (k + 1) is not in ⟨x, y, E k⟩.
 A'∉ : ∀ k → ¬ ⟨ triple (E k) ⟩ (A (suc k))
 A'∉ k (t , e) =
-  x≰c (≤ʷ-trans (proj₁ (∨≤-inv (≤ʷ-trans (proj₂ (inv-A k t) (proj₂ e)) (proj₁ e)))) (A≤w (suc k)))
+  x≰c (≤ʷ-trans (∨≤-inv (≤ʷ-trans (inv-A k t .proj₂ (e .proj₂)) (e .proj₁)) .proj₁) (A≤w (suc k)))
 
 -- B (k + 1) is not in ⟨x, y, A (k + 1)⟩.
 B'∉ : ∀ k → ¬ ⟨ triple (A (suc k)) ⟩ (B (suc k))
 B'∉ k (t , e) =
-  y≰c (≤ʷ-trans (proj₁ (∨≤-inv (≤ʷ-trans (proj₂ (inv-B k t) (proj₂ e)) (proj₁ e)))) (B≤w (suc k)))
+  y≰c (≤ʷ-trans (∨≤-inv (≤ʷ-trans (inv-B k t .proj₂ (e .proj₂)) (e .proj₁)) .proj₁) (B≤w (suc k)))
 
 -- E (k + 1) is not in ⟨x, y, A (k + 1)⟩.
 E'∉ : ∀ k → ¬ ⟨ triple (A (suc k)) ⟩ (E (suc k))
@@ -628,7 +628,7 @@ chain-condition-fails cc = cc ladder
 
 -- The ladder, read as an ascending chain, never stabilizes.
 ladder-never-stabilizes : ¬ Stabilizes (strict→ascending ladder)
-ladder-never-stabilizes (N , st) = proj₂ (StrictlyAscending.ascends ladder N) (st N ≤-refl)
+ladder-never-stabilizes (N , st) = StrictlyAscending.ascends ladder N .proj₂ (st N ≤-refl)
 ```
 
 #### No link is a copy of FL(3)
@@ -665,7 +665,7 @@ link-meet = interleave-all (λ σ → σ 0F ∧̇ σ 1F ≤ʷ σ 2F)
 -- A triple whose third member lies above the meet of the others generates no copy of FL(3).
 meet-below→no-copy : (σ : Sub (Fin 3) X) → σ 0F ∧̇ σ 1F ≤ʷ σ 2F
                    → (e : FL (Fin 3) .proj₁ IsSubalgebraOf FL X .proj₁) → ¬ (copy e ≐ ⟨ σ ⟩)
-meet-below→no-copy σ p e e≐ = not-member (proj₂ (copy≐→freelyGenerates e σ e≐) {2F} {0F ∷ 1F ∷ []} p)
+meet-below→no-copy σ p e e≐ = not-member (copy≐→freelyGenerates e σ e≐ .proj₂ {2F} {0F ∷ 1F ∷ []} p)
   where
   -- The index of the third member is neither of the other two.
   not-member : ¬ Any (2F ≡_) (0F ∷ 1F ∷ [])
@@ -701,11 +701,11 @@ private
 
 -- Every rung of the A side is a member of ⟨x, y, c⟩.
 A∈ : ∀ k → ⟨ triple c ⟩ (A k)
-A∈ k = G.A k , subst (_≈ʷ A k) (sym (proj₁ (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k))) ≈ʷ-refl
+A∈ k = G.A k , subst (_≈ʷ A k) (sym (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k .proj₁)) ≈ʷ-refl
 
 -- Every rung of the B side is a member of ⟨x, y, c⟩.
 B∈ : ∀ k → ⟨ triple c ⟩ (B k)
-B∈ k = G.B k , subst (_≈ʷ B k) (sym (proj₂ (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k))) ≈ʷ-refl
+B∈ k = G.B k , subst (_≈ʷ B k) (sym (ladder-[] (ℊ 0F) (ℊ 1F) (ℊ 2F) (triple c) k .proj₂)) ≈ʷ-refl
 
 -- The sublattice ⟨x, y, w⟩ lies in ⟨x, y, c⟩ when w does.
 triple⊆ : ∀ {w} → ⟨ triple c ⟩ w → ⟨ triple w ⟩ ⊆ ⟨ triple c ⟩
@@ -722,7 +722,7 @@ links⊆⟨x,y,c⟩ = interleave-all (λ σ → ⟨ σ ⟩ ⊆ ⟨ triple c ⟩)
   where
   -- The join of the k-th rungs is a member.
   E∈ : ∀ k → ⟨ triple c ⟩ (E k)
-  E∈ k = proj₁ (A∈ k) ∨̇ proj₁ (B∈ k) , ∨̇-cong (proj₂ (A∈ k)) (proj₂ (B∈ k))
+  E∈ k = A∈ k .proj₁ ∨̇ B∈ k .proj₁ , ∨̇-cong (A∈ k .proj₂) (B∈ k .proj₂)
 
 -- A later rung of the A side never lies below an earlier one.
 A-later≰ : ∀ {j k} → j < k → ¬ (A k ≤ʷ A j)
@@ -734,14 +734,14 @@ A-injective {j} {k} e = compare (<-cmp j k)
   where
   -- By the order of j and k.
   compare : Tri (j < k) (j ≡ k) (k < j) → j ≡ k
-  compare (tri< j<k _ _)  = ⊥-elim (A-later≰ j<k (proj₂ e))
+  compare (tri< j<k _ _)  = ⊥-elim (A-later≰ j<k (e .proj₂))
   compare (tri≈ _ j≡k _)  = j≡k
-  compare (tri> _ _ k<j)  = ⊥-elim (A-later≰ k<j (proj₁ e))
+  compare (tri> _ _ k<j)  = ⊥-elim (A-later≰ k<j (e .proj₁))
 
 -- No finite list covers ⟨x, y, c⟩: it is infinite.
 ⟨x,y,c⟩-infinite : ¬ (Σ[ L ∈ List (LatTerm (Fin 3)) ] (∀ {w} → ⟨ triple c ⟩ w → Any (w ≈ʷ_) L))
 ⟨x,y,c⟩-infinite (L , covers) =
-  let (j , k , j<k , e) = pigeonhole-≈ L A (λ k → covers (A∈ k)) in A-later≰ j<k (proj₂ e)
+  let (j , k , j<k , e) = pigeonhole-≈ L A (λ k → covers (A∈ k)) in A-later≰ j<k (e .proj₂)
 ```
 
 #### The bottom link's term recurs

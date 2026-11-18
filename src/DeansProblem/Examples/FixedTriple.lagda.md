@@ -227,40 +227,40 @@ module _ (Θ : Sub (Fin 3) (Fin 3)) (fixes-θ₁ : ∀ i → θ₁ i [ Θ ] ≈�
 
     -- A generator below the image of z is z.
     below-c₀ : ∀ {v} → ℊ v ≤ʷ c₀ → v ≡ 2F
-    below-c₀ p = ℊ≤ℊ-inv (≤ʷ-trans p (proj₁ c₀≈z))
+    below-c₀ p = ℊ≤ℊ-inv (≤ʷ-trans p (c₀≈z .proj₁))
 
     -- x lies below a, and y below b: each is join prime, and neither lies below z.
     x≤a : x ≤ʷ a
-    x≤a = [ id , (λ p → ⊥-elim (0≢2 (below-c₀ (proj₂ (≤∧-inv p))))) ]′
-            (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperˡ (proj₂ (fixes-θ₁ 0F))))
+    x≤a = [ id , (λ p → ⊥-elim (0≢2 (below-c₀ (≤∧-inv p .proj₂)))) ]′
+            (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperˡ (fixes-θ₁ 0F .proj₂)))
 
     y≤b : y ≤ʷ b
-    y≤b = [ id , (λ p → ⊥-elim (1≢2 (below-c₀ (proj₂ (≤∧-inv p))))) ]′
-            (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperˡ (proj₂ (fixes-θ₁ 1F))))
+    y≤b = [ id , (λ p → ⊥-elim (1≢2 (below-c₀ (≤∧-inv p .proj₂)))) ]′
+            (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperˡ (fixes-θ₁ 1F .proj₂)))
 
     -- Whitman's condition on b ∧ c₀ ≤ x ∨ (y ∧ z): only b ≤ y survives.
     b≤y : b ≤ʷ y
-    b≤y = [ [ (λ p → ⊥-elim ([ (λ q → 1≢0 (ℊ≤ℊ-inv q)) , (λ q → 1≢2 (ℊ≤ℊ-inv (proj₂ (≤∧-inv q)))) ]′
+    b≤y = [ [ (λ p → ⊥-elim ([ (λ q → 1≢0 (ℊ≤ℊ-inv q)) , (λ q → 1≢2 (ℊ≤ℊ-inv (≤∧-inv q .proj₂))) ]′
                                 (ℊ≤∨-inv (≤ʷ-trans y≤b p))))
-            , (λ p → ⊥-elim ([ (λ q → 2≢0 (ℊ≤ℊ-inv q)) , (λ q → 2≢1 (ℊ≤ℊ-inv (proj₁ (≤∧-inv q)))) ]′
-                                (ℊ≤∨-inv (≤ʷ-trans (proj₂ c₀≈z) p)))) ]′
+            , (λ p → ⊥-elim ([ (λ q → 2≢0 (ℊ≤ℊ-inv q)) , (λ q → 2≢1 (ℊ≤ℊ-inv (≤∧-inv q .proj₁))) ]′
+                                (ℊ≤∨-inv (≤ʷ-trans (c₀≈z .proj₂) p)))) ]′
           , [ (λ p → ⊥-elim ([ (λ q → 1≢0 (ℊ≤ℊ-inv (≤ʷ-trans y≤b q)))
-                              , (λ q → 2≢0 (ℊ≤ℊ-inv (≤ʷ-trans (proj₂ c₀≈z) q))) ]′ (∧≤ℊ-inv p)))
-            , (λ p → [ id , (λ q → ⊥-elim (2≢1 (ℊ≤ℊ-inv (≤ʷ-trans (proj₂ c₀≈z) q)))) ]′
-                        (∧≤ℊ-inv (proj₁ (≤∧-inv p)))) ]′ ]′
-          (∧≤∨-inv (proj₂ (∨≤-inv (proj₁ (fixes-θ₁ 0F)))))
+                              , (λ q → 2≢0 (ℊ≤ℊ-inv (≤ʷ-trans (c₀≈z .proj₂) q))) ]′ (∧≤ℊ-inv p)))
+            , (λ p → [ id , (λ q → ⊥-elim (2≢1 (ℊ≤ℊ-inv (≤ʷ-trans (c₀≈z .proj₂) q)))) ]′
+                        (∧≤ℊ-inv (≤∧-inv p .proj₁))) ]′ ]′
+          (∧≤∨-inv (∨≤-inv (fixes-θ₁ 0F .proj₁) .proj₂))
 
     -- And dually on a ∧ c₀ ≤ y ∨ (x ∧ z): only a ≤ x survives.
     a≤x : a ≤ʷ x
-    a≤x = [ [ (λ p → ⊥-elim ([ (λ q → 0≢1 (ℊ≤ℊ-inv q)) , (λ q → 0≢2 (ℊ≤ℊ-inv (proj₂ (≤∧-inv q)))) ]′
+    a≤x = [ [ (λ p → ⊥-elim ([ (λ q → 0≢1 (ℊ≤ℊ-inv q)) , (λ q → 0≢2 (ℊ≤ℊ-inv (≤∧-inv q .proj₂))) ]′
                                 (ℊ≤∨-inv (≤ʷ-trans x≤a p))))
-            , (λ p → ⊥-elim ([ (λ q → 2≢1 (ℊ≤ℊ-inv q)) , (λ q → 2≢0 (ℊ≤ℊ-inv (proj₁ (≤∧-inv q)))) ]′
-                                (ℊ≤∨-inv (≤ʷ-trans (proj₂ c₀≈z) p)))) ]′
+            , (λ p → ⊥-elim ([ (λ q → 2≢1 (ℊ≤ℊ-inv q)) , (λ q → 2≢0 (ℊ≤ℊ-inv (≤∧-inv q .proj₁))) ]′
+                                (ℊ≤∨-inv (≤ʷ-trans (c₀≈z .proj₂) p)))) ]′
           , [ (λ p → ⊥-elim ([ (λ q → 0≢1 (ℊ≤ℊ-inv (≤ʷ-trans x≤a q)))
-                              , (λ q → 2≢1 (ℊ≤ℊ-inv (≤ʷ-trans (proj₂ c₀≈z) q))) ]′ (∧≤ℊ-inv p)))
-            , (λ p → [ id , (λ q → ⊥-elim (2≢0 (ℊ≤ℊ-inv (≤ʷ-trans (proj₂ c₀≈z) q)))) ]′
-                        (∧≤ℊ-inv (proj₁ (≤∧-inv p)))) ]′ ]′
-          (∧≤∨-inv (proj₂ (∨≤-inv (proj₁ (fixes-θ₁ 1F)))))
+                              , (λ q → 2≢1 (ℊ≤ℊ-inv (≤ʷ-trans (c₀≈z .proj₂) q))) ]′ (∧≤ℊ-inv p)))
+            , (λ p → [ id , (λ q → ⊥-elim (2≢0 (ℊ≤ℊ-inv (≤ʷ-trans (c₀≈z .proj₂) q)))) ]′
+                        (∧≤ℊ-inv (≤∧-inv p .proj₁))) ]′ ]′
+          (∧≤∨-inv (∨≤-inv (fixes-θ₁ 1F .proj₁) .proj₂))
 
   -- An endomorphism fixing θ₁(x), θ₁(y) and θ₁(z) fixes every generator.
   rigid : ∀ i → Θ i ≈ʷ ℊ i

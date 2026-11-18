@@ -188,8 +188,8 @@ The ladder over the three generators of `FL(3)`, written out as lattice terms
   rung-terms : (a b w : L) → ∀ k → ⟦ termA k ⟧ (abw a b w) ≡ Rungs.A a b w k
                                   × ⟦ termB k ⟧ (abw a b w) ≡ Rungs.B a b w k
   rung-terms a b w zero     = refl , refl
-  rung-terms a b w (suc k)  = cong (λ u → w ∧ (a ∨ u)) (proj₂ (rung-terms a b w k))
-                            , cong (λ u → w ∧ (b ∨ u)) (proj₁ (rung-terms a b w k))
+  rung-terms a b w (suc k)  = cong (λ u → w ∧ (a ∨ u)) (rung-terms a b w k .proj₂)
+                            , cong (λ u → w ∧ (b ∨ u)) (rung-terms a b w k .proj₁)
 ```
 
 #### The fourth clause
@@ -211,13 +211,13 @@ at every `j ≤ k`, which is Lemma 4.4's last clause as the paper states it).
       ≤-antisym (∧-mono ≤-refl v≤w) (∧-greatest ∧-lowerˡ hB)
     stable-at (suc k)  hA hB v≤w =
       ≤-antisym
-        (∧-mono v≤w (∨-mono ≤-refl (≤-reflexive′ (proj₂ below))))
+        (∧-mono v≤w (∨-mono ≤-refl (≤-reflexive′ (below .proj₂))))
         (∧-greatest hA (≤-trans  ∧-lowerʳ
-                                 (∨-mono ≤-refl (≤-reflexive′ (sym′ (proj₂ below)))))) ,
+                                 (∨-mono ≤-refl (≤-reflexive′ (sym′ (below .proj₂)))))) ,
       ≤-antisym
-        (∧-mono v≤w (∨-mono ≤-refl (≤-reflexive′ (proj₁ below))))
+        (∧-mono v≤w (∨-mono ≤-refl (≤-reflexive′ (below .proj₁))))
         (∧-greatest hB (≤-trans  ∧-lowerʳ
-                                 (∨-mono ≤-refl (≤-reflexive′ (sym′ (proj₁ below))))))
+                                 (∨-mono ≤-refl (≤-reflexive′ (sym′ (below .proj₁))))))
       where
       open Setoid 𝔻[ 𝑳 ] using () renaming ( sym to sym′ )
       open Lattice-Order 𝓛 using () renaming ( ≤-reflexive to ≤-reflexive′ )

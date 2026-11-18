@@ -154,11 +154,11 @@ a'≤a = ≤ʷ-trans ∧̇-lowerˡ ∧̇-lowerˡ
 
 -- The cyclic permutation does not send a to a'.
 π-fails : ¬ (a [ π ] ≈ʷ a')
-π-fails e = 1F∉[0F] (proj₁ abc-free {1F} {0F ∷ []} (≤ʷ-trans (proj₁ e) a'≤a))
+π-fails e = 1F∉[0F] (abc-free .proj₁ {1F} {0F ∷ []} (≤ʷ-trans (e .proj₁) a'≤a))
 
 -- Nor does its square.
 π²-fails : ¬ (a [ π ] [ π ] ≈ʷ a')
-π²-fails e = 2F∉[0F] (proj₁ abc-free {2F} {0F ∷ []} (≤ʷ-trans (proj₁ e) a'≤a))
+π²-fails e = 2F∉[0F] (abc-free .proj₁ {2F} {0F ∷ []} (≤ʷ-trans (e .proj₁) a'≤a))
 ```
 
 The substitution `bar`{.AgdaFunction} sends each generator to its barred

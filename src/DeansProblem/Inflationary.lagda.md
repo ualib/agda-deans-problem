@@ -168,7 +168,7 @@ Sat β (s ∧̇ t)  = Sat β s × Sat β t
 ≤[]→sat : (g : Y) (σ : Sub X Y) (t : LatTerm X) → ℊ g ≤ʷ t [ σ ] → Sat (λ v → ℊ g ≤ʷ σ v) t
 ≤[]→sat g σ (ℊ v)    p = p
 ≤[]→sat g σ (s ∨̇ t)  p = [ inj₁ ∘ ≤[]→sat g σ s , inj₂ ∘ ≤[]→sat g σ t ]′ (ℊ≤∨-inv p)
-≤[]→sat g σ (s ∧̇ t)  p = ≤[]→sat g σ s (proj₁ (≤∧-inv p)) , ≤[]→sat g σ t (proj₂ (≤∧-inv p))
+≤[]→sat g σ (s ∧̇ t)  p = ≤[]→sat g σ s (≤∧-inv p .proj₁) , ≤[]→sat g σ t (≤∧-inv p .proj₂)
 
 -- And conversely.
 sat→≤[] : (g : Y) (σ : Sub X Y) (t : LatTerm X) → Sat (λ v → ℊ g ≤ʷ σ v) t → ℊ g ≤ʷ t [ σ ]
@@ -199,7 +199,7 @@ Satᵈ β (s ∧̇ t)  = Satᵈ β s ⊎ Satᵈ β t
 
 []≤→satᵈ : (g : Y) (σ : Sub X Y) (t : LatTerm X) → t [ σ ] ≤ʷ ℊ g → Satᵈ (λ v → σ v ≤ʷ ℊ g) t
 []≤→satᵈ g σ (ℊ v)    p = p
-[]≤→satᵈ g σ (s ∨̇ t)  p = []≤→satᵈ g σ s (proj₁ (∨≤-inv p)) , []≤→satᵈ g σ t (proj₂ (∨≤-inv p))
+[]≤→satᵈ g σ (s ∨̇ t)  p = []≤→satᵈ g σ s (∨≤-inv p .proj₁) , []≤→satᵈ g σ t (∨≤-inv p .proj₂)
 []≤→satᵈ g σ (s ∧̇ t)  p = [ inj₁ ∘ []≤→satᵈ g σ s , inj₂ ∘ []≤→satᵈ g σ t ]′ (∧≤ℊ-inv p)
 
 satᵈ-empty : {β : X → Type ℓ} → (∀ v → β v → ⊥) → (t : LatTerm X) → Satᵈ β t → ⊥
@@ -289,8 +289,8 @@ module _ {n : ℕ} (Φ : Sub (Fin n) (Fin n)) (Φ-free : FreelyGenerates Φ) (in
   fixed-joinand-inflationary w fix {c} c∈ ng =
     let (c′ , c′∈ , e) = find (fixed-joinand Φ Φ-free w fix c∈ ng)
         c≤c′ : c ≤ʷ c′
-        c≤c′ = ≤ʷ-trans (inflationary-term inf c) (proj₁ e)
-    in ≤ʷ-trans (proj₁ e) (antichain-≤ ≤ʷ-refl (canonicalJoinands-antichain _≟_ w) c∈ c′∈ c≤c′)
+        c≤c′ = ≤ʷ-trans (inflationary-term inf c) (e .proj₁)
+    in ≤ʷ-trans (e .proj₁) (antichain-≤ ≤ʷ-refl (canonicalJoinands-antichain _≟_ w) c∈ c′∈ c≤c′)
      , inflationary-term inf c
 
   -- And each non-generator canonical meetand.
@@ -299,8 +299,8 @@ module _ {n : ℕ} (Φ : Sub (Fin n) (Fin n)) (Φ-free : FreelyGenerates Φ) (in
   fixed-meetand-inflationary w fix {c} c∈ ng =
     let (c′ , c′∈ , e) = find (fixed-meetand Φ Φ-free w fix c∈ ng)
         c≤c′ : c ≤ʷ c′
-        c≤c′ = ≤ʷ-trans (inflationary-term inf c) (proj₁ e)
-    in ≤ʷ-trans (proj₁ e) (antichain-≤ ≤ʷ-refl (canonicalMeetands-antichain _≟_ w) c∈ c′∈ c≤c′)
+        c≤c′ = ≤ʷ-trans (inflationary-term inf c) (e .proj₁)
+    in ≤ʷ-trans (e .proj₁) (antichain-≤ ≤ʷ-refl (canonicalMeetands-antichain _≟_ w) c∈ c′∈ c≤c′)
      , inflationary-term inf c
 
   -- Every node of the canonical tree of a fixed point is fixed.
@@ -315,8 +315,8 @@ module _ {n : ℕ} (Φ : Sub (Fin n) (Fin n)) (Φ-free : FreelyGenerates Φ) (in
     let -- u [ Φ ] is the meet of the images of the canonical meetands of u, and lies below ℊ g.
         below : ⋀⁺ (meetand₀ _≟_ u [ Φ ]) (map (_[ Φ ]) (meetands₊ _≟_ u)) ≤ʷ ℊ g
         below = ≤ʷ-trans (subst (_≤ʷ u) (⋀⁺-[] Φ (meetand₀ _≟_ u) (meetands₊ _≟_ u))
-                                (≤ʷ-trans (proj₁ ([]-cong Φ (≈ʷ-sym (meetand-representation _≟_ u))))
-                                          (proj₁ fix)))
+                                (≤ʷ-trans ([]-cong Φ (≈ʷ-sym (meetand-representation _≟_ u)) .proj₁)
+                                          (fix .proj₁)))
                          (canonicalMeetands-lower _≟_ g∈)
         (m , m∈ , m[Φ]≤g) = find (map⁻ (⋀⁺-gen-below below))
         -- m ≤ m [ Φ ] ≤ ℊ g, so the meetand m is ℊ g, up to equality.
@@ -329,7 +329,7 @@ module _ {n : ℕ} (Φ : Sub (Fin n) (Fin n)) (Φ-free : FreelyGenerates Φ) (in
   strict-fixed-not-below : (∀ v → ¬ (Φ v ≤ʷ ℊ v)) → (w : LatTerm (Fin n)) → w [ Φ ] ≈ʷ w
                          → (g : Fin n) → ¬ (w ≤ʷ ℊ g)
   strict-fixed-not-below strict w fix g w≤g =
-    satᵈ-empty none w ([]≤→satᵈ g Φ w (≤ʷ-trans (proj₁ fix) w≤g))
+    satᵈ-empty none w ([]≤→satᵈ g Φ w (≤ʷ-trans (fix .proj₁) w≤g))
     where
     -- Φ v ≤ g is impossible: v ≤ Φ v ≤ g makes v the generator g, and then Φ g ≤ g.
     none : ∀ v → Φ v ≤ʷ ℊ g → ⊥
@@ -380,8 +380,8 @@ module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) where
                  ⊎ (ℊ (other z) ≤ʷ Φ (other' z) × ℊ (other' z) ≤ʷ Φ (other z)))
                × Φ (other z) ≤ʷ ℊ (other z) ∨̇ ℊ (other' z) × Φ (other' z) ≤ʷ ℊ (other z) ∨̇ ℊ (other' z)
   fixes-join z e =
-    cases (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperˡ (proj₂ e))) (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperʳ (proj₂ e)))
-    , ≤ʷ-trans ∨̇-upperˡ (proj₁ e) , ≤ʷ-trans ∨̇-upperʳ (proj₁ e)
+    cases (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperˡ (e .proj₂))) (ℊ≤∨-inv (≤ʷ-trans ∨̇-upperʳ (e .proj₂)))
+    , ≤ʷ-trans ∨̇-upperˡ (e .proj₁) , ≤ʷ-trans ∨̇-upperʳ (e .proj₁)
     where
     x y : Fin 3
     x = other z
@@ -394,10 +394,10 @@ module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) where
     cases (inj₂ p) (inj₁ q) = inj₂ (p , q)
     cases (inj₁ p) (inj₁ q) =
       ⊥-elim (other≢other' z (sym (ℊ≤ℊ-inv (injective→reflects Φ {s = ℊ y} {t = ℊ x} Φ-inj
-                (≤ʷ-trans (≤ʷ-trans ∨̇-upperʳ (proj₁ e)) (∨≤ p q))))))
+                (≤ʷ-trans (≤ʷ-trans ∨̇-upperʳ (e .proj₁)) (∨≤ p q))))))
     cases (inj₂ p) (inj₂ q) =
       ⊥-elim (other≢other' z (ℊ≤ℊ-inv (injective→reflects Φ {s = ℊ x} {t = ℊ y} Φ-inj
-                (≤ʷ-trans (≤ʷ-trans ∨̇-upperˡ (proj₁ e)) (∨≤ p q)))))
+                (≤ʷ-trans (≤ʷ-trans ∨̇-upperˡ (e .proj₁)) (∨≤ p q)))))
 
   -- If Φ x ∨ Φ y = x ∨ y, then z ≤ Φ z.
   fixes-join-third : (z : Fin 3) → Φ (other z) ∨̇ Φ (other' z) ≈ʷ ℊ (other z) ∨̇ ℊ (other' z) → ℊ z ≤ʷ Φ z
@@ -409,9 +409,9 @@ module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) where
     below : Φ z ≤ʷ ℊ (other z) ∨̇ ℊ (other' z) → ⊥
     below p =
       [ (λ q → z≢other z (ℊ≤ℊ-inv q)) , (λ q → z≢other' z (ℊ≤ℊ-inv q)) ]′
-        (ℊ≤∨-inv (proj₂ (∨≤-inv (injective→reflects Φ
+        (ℊ≤∨-inv (∨≤-inv (injective→reflects Φ
           {s = (ℊ (other z) ∨̇ ℊ (other' z)) ∨̇ ℊ z} {t = ℊ (other z) ∨̇ ℊ (other' z)} Φ-inj
-          (∨≤ ≤ʷ-refl (≤ʷ-trans p (proj₂ e)))))))
+          (∨≤ ≤ʷ-refl (≤ʷ-trans p (e .proj₂)))) .proj₂))
 
   -- The second iterate applies Φ twice.
   iter-two : ∀ v → iter Φ 2 v ≡ Φ v [ Φ ]
@@ -497,14 +497,14 @@ only at `y`; then `a` is satisfied by `v ↦ y ≤ v`, which says `y ≤ a`.
       where
       -- g lies below a [ Φ ], so a is satisfied by v ↦ g ≤ Φ v.
       sat : Sat (λ v → ℊ g ≤ʷ Φ v) a
-      sat = ≤[]→sat g Φ a (≤ʷ-trans g≤a (proj₂ fixa))
+      sat = ≤[]→sat g Φ a (≤ʷ-trans g≤a (fixa .proj₂))
 
       -- Only h can satisfy it: not g, by the case, and not k, since Φ k = k and g ≠ k.
       shrink : ∀ v → ℊ g ≤ʷ Φ v → ℊ h ≤ʷ ℊ v
       shrink v p =
         [ (λ v≡g → ⊥-elim (¬p (subst (λ u → ℊ g ≤ʷ Φ u) v≡g p)))
         , [ (λ v≡h → ℊ≤ℊ (sym v≡h))
-          , (λ v≡k → ⊥-elim (g≢k (ℊ≤ℊ-inv (≤ʷ-trans (subst (λ u → ℊ g ≤ʷ Φ u) v≡k p) (proj₁ fixk))))) ]′ ]′
+          , (λ v≡k → ⊥-elim (g≢k (ℊ≤ℊ-inv (≤ʷ-trans (subst (λ u → ℊ g ≤ʷ Φ u) v≡k p) (fixk .proj₁))))) ]′ ]′
         (cover v)
 ```
 
@@ -600,7 +600,7 @@ module _ (Φ : Sub (Fin 3) (Fin 3)) (Φ-free : FreelyGenerates Φ) (z : Fin 3) (
   class-inflationary v =
     [ (λ v≡x → subst (λ u → ℊ u ≤ʷ Φ u) (sym v≡x) x≤Φx)
     , [ (λ v≡y → subst (λ u → ℊ u ≤ʷ Φ u) (sym v≡y) y≤Φy)
-      , (λ v≡z → subst (λ u → ℊ u ≤ʷ Φ u) (sym v≡z) (proj₂ fixz)) ]′ ]′ (cover-x v)
+      , (λ v≡z → subst (λ u → ℊ u ≤ʷ Φ u) (sym v≡z) (fixz .proj₂)) ]′ ]′ (cover-x v)
     where
     x≤Φx : ℊ x ≤ʷ Φ x
     x≤Φx = inflation-transfer Φ Φ-free x y z cover-x x≢z fixz a fixa x≤a y≰a

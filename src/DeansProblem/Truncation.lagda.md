@@ -132,8 +132,8 @@ the free lattice (`≡→≈ʷ`{.AgdaFunction}).
 antichain-≡ : {R : A → A → Type ℓ} {xs : List A} → AllPairs (λ x y → ¬ R x y × ¬ R y x) xs
             → {x y : A} → x ∈ xs → y ∈ xs → R x y → x ≡ y
 antichain-≡ (_ ∷ _)   (here refl)  (here refl)  _  = refl
-antichain-≡ (Ix ∷ _)  (here refl)  (there y∈)   p  = ⊥-elim (proj₁ (lookup Ix y∈) p)
-antichain-≡ (Iy ∷ _)  (there x∈)   (here refl)  p  = ⊥-elim (proj₂ (lookup Iy x∈) p)
+antichain-≡ (Ix ∷ _)  (here refl)  (there y∈)   p  = ⊥-elim (lookup Ix y∈ .proj₁ p)
+antichain-≡ (Iy ∷ _)  (there x∈)   (here refl)  p  = ⊥-elim (lookup Iy x∈ .proj₂ p)
 antichain-≡ (_ ∷ I)   (there x∈)   (there y∈)   p  = antichain-≡ I x∈ y∈ p
 
 -- An equation of lattice terms is an equality in the free lattice.
@@ -199,12 +199,12 @@ meet node (`cut-aboveᴹ`{.AgdaFunction}).
   -- At a cut of a join node, the member lies below the node.
   cut-belowᴶ : {h : CJand I} {t : List (CJand I)} {h' : CJand Y} {t' : List (CJand Y)} {i : I}
              → ⋁ᴶ h t [ τ ] ≈ʷ ⋁ᴶ h' t' → jgen i ∈ h ∷ t → τ i ≤ʷ ⋁ᴶ h' t'
-  cut-belowᴶ e i∈ = ≤ʷ-trans ([]-mono τ (⋁ᴶ-upper i∈)) (proj₁ e)
+  cut-belowᴶ e i∈ = ≤ʷ-trans ([]-mono τ (⋁ᴶ-upper i∈)) (e .proj₁)
 
   -- At a cut of a meet node, the member lies above the node.
   cut-aboveᴹ : {h : CMand I} {t : List (CMand I)} {h' : CMand Y} {t' : List (CMand Y)} {i : I}
              → ⋀ᴹ h t [ τ ] ≈ʷ ⋀ᴹ h' t' → mgen i ∈ h ∷ t → ⋀ᴹ h' t' ≤ʷ τ i
-  cut-aboveᴹ e i∈ = ≤ʷ-trans (proj₂ e) ([]-mono τ (⋀ᴹ-lower i∈))
+  cut-aboveᴹ e i∈ = ≤ʷ-trans (e .proj₂) ([]-mono τ (⋀ᴹ-lower i∈))
 ```
 
 #### The theorem
@@ -318,7 +318,7 @@ the same child, so the meet child matches it.
     let (_ , a∈ , D≤a) = find (Any.map⁻ {f = ⌊_⌋ᴶ} (Any.map⁻ {f = _[ τ ]}
                            (joinands-refine (meetᶜ mh' mt') cD (≈ʷ-trans (≈ʷ-sym e) (≡→≈ʷ (image≡ᴶ h t)))
                                             (here refl))))
-    in ⊥-elim (no-maxᴶ ac ne a∈ λ v∈ → ≤ʷ-trans (⋁ᴶ-upper v∈) (reflect (≤ʷ-trans (proj₁ e) D≤a)))
+    in ⊥-elim (no-maxᴶ ac ne a∈ λ v∈ → ≤ʷ-trans (⋁ᴶ-upper v∈) (reflect (≤ʷ-trans (e .proj₁) D≤a)))
   truncation-join h t (joinᶜ h' t') (cjoin _ cs ac c4) cD@(cjoin _ cs' ac' _) e = join⊑ e matched covered
     where
     -- The induction hypotheses for the children of C.
@@ -332,7 +332,7 @@ the same child, so the meet child matches it.
     -- Each embedded child of D lies below the image (Theorem 1.19).
     upperᴶ : ∀ {u} → u ∈ map ⌊_⌋ᴶ (h' ∷ t') → u ≤ʷ ⋁ᴶ h t [ τ ]
     upperᴶ u∈ with ∈-map⁻ ⌊_⌋ᴶ u∈
-    ... | _ , d∈ , refl = ≤ʷ-trans (⋁ᴶ-upper d∈) (proj₂ e)
+    ... | _ , d∈ , refl = ≤ʷ-trans (⋁ᴶ-upper d∈) (e .proj₂)
 
     refineᴶ : ∀ {u} → u ∈ map ⌊_⌋ᴶ (h' ∷ t') → Any (u ≤ʷ_) (map (_[ τ ]) (map ⌊_⌋ᴶ (h ∷ t)))
     refineᴶ u∈ with ∈-map⁻ ⌊_⌋ᴶ u∈
@@ -351,7 +351,7 @@ the same child, so the meet child matches it.
             (≡→≈ʷ (⋁ᴶ≡⋁⁺ h t))
             (All.map⁺ (tabulate λ m∈ → c4 a∈ m∈))
             upperᴶ
-            (subst (⋁ᴶ h t [ τ ] ≤ʷ_) (⋁ᴶ≡⋁⁺ h' t') (proj₁ e))
+            (subst (⋁ᴶ h t [ τ ] ≤ʷ_) (⋁ᴶ≡⋁⁺ h' t') (e .proj₁))
             refineᴶ)))
 
     -- A meet child truncates the child of D its image equals.
@@ -369,7 +369,7 @@ the same child, so the meet child matches it.
     cover _ (jgen i , a∈ , d≤) = inj₂ (i , a∈ , d≤)
     cover {d} d∈ (jmeet mh mt , a∈ , d≤) =
       let (d' , d'∈ , eq) = image a∈
-          d≡d' = antichain-≡ {R = λ u v → ⌊ u ⌋ᴶ ≤ʷ ⌊ v ⌋ᴶ} ac' d∈ d'∈ (≤ʷ-trans d≤ (proj₁ eq))
+          d≡d' = antichain-≡ {R = λ u v → ⌊ u ⌋ᴶ ≤ʷ ⌊ v ⌋ᴶ} ac' d∈ d'∈ (≤ʷ-trans d≤ (eq .proj₁))
       in inj₁ (lose a∈ (subst (jmeet mh mt ⊑ᴶ_) (sym d≡d')
                               (lookup ih a∈ d' (lookup cs a∈) (lookup cs' d'∈) eq)))
 
@@ -388,7 +388,7 @@ The case of a meet `C` is dual, with Lemma 9.13 for meetands
     let (_ , a∈ , a≤D) = find (Any.map⁻ {f = ⌊_⌋ᴹ} (Any.map⁻ {f = _[ τ ]}
                            (meetands-refine (joinᶜ jh' jt') cD (≈ʷ-trans (≈ʷ-sym e) (≡→≈ʷ (image≡ᴹ h t)))
                                             (here refl))))
-    in ⊥-elim (no-minᴹ ac ne a∈ λ v∈ → ≤ʷ-trans (reflect (≤ʷ-trans a≤D (proj₂ e))) (⋀ᴹ-lower v∈))
+    in ⊥-elim (no-minᴹ ac ne a∈ λ v∈ → ≤ʷ-trans (reflect (≤ʷ-trans a≤D (e .proj₂))) (⋀ᴹ-lower v∈))
   truncation-meet h t (meetᶜ h' t') (cmeet _ cs ac c4) cD@(cmeet _ cs' ac' _) e = meet⊑ e matched covered
     where
     -- The induction hypotheses for the children of C.
@@ -402,7 +402,7 @@ The case of a meet `C` is dual, with Lemma 9.13 for meetands
     -- Each embedded child of D lies above the image (dual of Theorem 1.19).
     lowerᴹ : ∀ {u} → u ∈ map ⌊_⌋ᴹ (h' ∷ t') → ⋀ᴹ h t [ τ ] ≤ʷ u
     lowerᴹ u∈ with ∈-map⁻ ⌊_⌋ᴹ u∈
-    ... | _ , d∈ , refl = ≤ʷ-trans (proj₁ e) (⋀ᴹ-lower d∈)
+    ... | _ , d∈ , refl = ≤ʷ-trans (e .proj₁) (⋀ᴹ-lower d∈)
 
     refineᴹ : ∀ {u} → u ∈ map ⌊_⌋ᴹ (h' ∷ t') → Any (_≤ʷ u) (map (_[ τ ]) (map ⌊_⌋ᴹ (h ∷ t)))
     refineᴹ u∈ with ∈-map⁻ ⌊_⌋ᴹ u∈
@@ -421,7 +421,7 @@ The case of a meet `C` is dual, with Lemma 9.13 for meetands
             (≡→≈ʷ (⋀ᴹ≡⋀⁺ h t))
             (All.map⁺ (tabulate λ j∈ → c4 a∈ j∈))
             lowerᴹ
-            (subst (_≤ʷ ⋀ᴹ h t [ τ ]) (⋀ᴹ≡⋀⁺ h' t') (proj₂ e))
+            (subst (_≤ʷ ⋀ᴹ h t [ τ ]) (⋀ᴹ≡⋀⁺ h' t') (e .proj₂))
             refineᴹ)))
 
     -- A join child truncates the child of D its image equals.
@@ -439,7 +439,7 @@ The case of a meet `C` is dual, with Lemma 9.13 for meetands
     cover _ (mgen i , a∈ , ≤d) = inj₂ (i , a∈ , ≤d)
     cover {d} d∈ (mjoin jh jt , a∈ , ≤d) =
       let (d' , d'∈ , eq) = image a∈
-          d'≡d = antichain-≡ {R = λ u v → ⌊ u ⌋ᴹ ≤ʷ ⌊ v ⌋ᴹ} ac' d'∈ d∈ (≤ʷ-trans (proj₂ eq) ≤d)
+          d'≡d = antichain-≡ {R = λ u v → ⌊ u ⌋ᴹ ≤ʷ ⌊ v ⌋ᴹ} ac' d'∈ d∈ (≤ʷ-trans (eq .proj₂) ≤d)
       in inj₁ (lose a∈ (subst (mjoin jh jt ⊑ᴹ_) d'≡d
                               (lookup ih a∈ d' (lookup cs a∈) (lookup cs' d'∈) eq)))
 

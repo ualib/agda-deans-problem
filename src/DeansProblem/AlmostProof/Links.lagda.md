@@ -89,7 +89,7 @@ module _ {X : Type χ} (c : StrictlyAscending 3 X) where
   no-two-links-in-box : {lo hi : Fin 3 → LatTerm X} → StronglyIrredundant lo hi
                       → ∀ {j k} → j < k → InBox lo hi (links j) → ¬ InBox lo hi (links k)
   no-two-links-in-box {lo} {hi} si {j} {k} j<k boxj boxk =
-    proj₂ (ascends j) (λ p → back (ascends-≤ (strict→ascending c) j<k p))
+    ascends j .proj₂ (λ p → back (ascends-≤ (strict→ascending c) j<k p))
     where
     -- Link j lies in the sublattice of link k.
     below : ⟨ links j ⟩ ⊆ ⟨ links k ⟩
@@ -97,11 +97,11 @@ module _ {X : Type χ} (c : StrictlyAscending 3 X) where
 
     -- The terms expressing link j in link k.
     q : Sub (Fin 3) (Fin 3)
-    q i = proj₁ (below (gen∈ (links j) i))
+    q i = below (gen∈ (links j) i) .proj₁
 
     -- The two links agree at every index.
     agree : ∀ i → links j i ≈ʷ links k i
-    agree i = box-agree q (λ i′ → ≈ʷ-sym (proj₂ (below (gen∈ (links j) i′)))) boxj boxk i (si i)
+    agree i = box-agree q (λ i′ → ≈ʷ-sym (below (gen∈ (links j) i′) .proj₂)) boxj boxk i (si i)
 
     -- So link k lies in the sublattice of link j.
     back : ⟨ links k ⟩ ⊆ ⟨ links j ⟩
@@ -159,7 +159,7 @@ Theorem-9·2 =
 theorem-9·2 : Theorem-9·2
 theorem-9·2 lo hi =
     (λ σ' τ' _ _ σ'∈ τ'∈ in⟨τ'⟩ →
-       box-agree (λ j → proj₁ (in⟨τ'⟩ j)) (λ j → ≈ʷ-sym (proj₂ (in⟨τ'⟩ j))) σ'∈ τ'∈)
+       box-agree (λ j → in⟨τ'⟩ j .proj₁) (λ j → ≈ʷ-sym (in⟨τ'⟩ j .proj₂)) σ'∈ τ'∈)
   , (λ s → no-step-in-box s)
   , (λ c → at-most-one-linkᶜ c)
 ```

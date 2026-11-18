@@ -58,7 +58,7 @@ open Decisionᵖ (_≟_ {9}) using ( _≤ᵖ?_ ; _≈ᵖ?_ )
 
 -- The generator a₁ lies below a'.
 a₁≤a' : a₁ ≤ʷ a'
-a₁≤a' = ≤ʷ-trans (from-yes (a₁ ≤ᵖ? a″)) (proj₂ a'≈a″)
+a₁≤a' = ≤ʷ-trans (from-yes (a₁ ≤ᵖ? a″)) (a'≈a″ .proj₂)
 
 -- The generator a₁ is none of a', b', c'.
 a₁≉ : ∀ i → ¬ (a₁ ≈ʷ abc' i)

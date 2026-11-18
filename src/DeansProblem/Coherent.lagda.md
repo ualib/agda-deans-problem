@@ -276,13 +276,13 @@ lemma-6·1 _≟ˣ_ c j =
 
   -- A common bound for the complexities of link j's members.
   B : ℕ
-  B = proj₁ (bound 3 (λ i → complexity _≟ˣ_ (gens j i)))
+  B = bound 3 (λ i → complexity _≟ˣ_ (gens j i)) .proj₁
 
   -- Every value of every transition from j is equal to a member of the list.
   covered : ∀ e i → Any (transition c j e i ≈ʷ_) (bounded B)
   covered e i = bounded-complete B (transition c j e i)
                   (≤-trans (transition-bound′ _≟ˣ_ c j e i)
-                           (proj₂ (bound 3 (λ i → complexity _≟ˣ_ (gens j i))) i))
+                           (bound 3 (λ i → complexity _≟ˣ_ (gens j i)) .proj₂ i))
 
   -- The code of the transition over e steps.
   code : ℕ → Fin (length (bounded B) ^ 3)
@@ -370,8 +370,8 @@ module _ (F : FixedSublattice) where
     ; τ-free   = θ-free
     ; p        = Θ
     ; σ≈p[τ]   = λ i → ≈ʷ-sym (fixes i)
-    ; fresh    = proj₁ Θ-misses
-    ; fresh∉p  = proj₂ Θ-misses
+    ; fresh    = Θ-misses .proj₁
+    ; fresh∉p  = Θ-misses .proj₂
     }
 ```
 

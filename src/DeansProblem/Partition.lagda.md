@@ -177,20 +177,20 @@ would put `z` among them; so `z ≤ θ z` by the partition.  Dually `θ z ≤ z`
       others≤ = ⋁⁺-least λ u∈ →
         let (v , v∈ , u≡) = ∈-map⁻ ℊ u∈
         in subst (_≤ʷ ⋁⁺ (θ g) (map θ gs)) (sym u≡)
-                 (≤ʷ-trans (proj₂ (fix v∈)) (⋁⁺-upper (∈-map⁺ θ v∈)))
+                 (≤ʷ-trans (fix v∈ .proj₂) (⋁⁺-upper (∈-map⁺ θ v∈)))
 
       others≥ : ⋀⁺ (θ g) (map θ gs) ≤ʷ ⋀others
       others≥ = ⋀⁺-greatest λ u∈ →
         let (v , v∈ , u≡) = ∈-map⁻ ℊ u∈
         in subst (⋀⁺ (θ g) (map θ gs) ≤ʷ_) (sym u≡)
-                 (≤ʷ-trans (⋀⁺-lower (∈-map⁺ θ v∈)) (proj₁ (fix v∈)))
+                 (≤ʷ-trans (⋀⁺-lower (∈-map⁺ θ v∈)) (fix v∈ .proj₁))
 
     -- θ fixes z as well.
     fixes-last : θ z ≈ʷ ℊ z
     fixes-last =
-      [ (λ p → ⊥-elim (z∉ (proj₂ θ-free {z} {g ∷ gs} (≤ʷ-trans others≥ p)))) , (λ q → q) ]′
+      [ (λ p → ⊥-elim (z∉ (θ-free .proj₂ {z} {g ∷ gs} (≤ʷ-trans others≥ p)))) , (λ q → q) ]′
         (partitionᵈ (θ z)) ,
-      [ (λ p → ⊥-elim (z∉ (proj₁ θ-free {z} {g ∷ gs} (≤ʷ-trans p others≤)))) , (λ q → q) ]′
+      [ (λ p → ⊥-elim (z∉ (θ-free .proj₁ {z} {g ∷ gs} (≤ʷ-trans p others≤)))) , (λ q → q) ]′
         (partition (θ z))
 
     -- So θ fixes every generator.

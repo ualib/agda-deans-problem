@@ -181,7 +181,7 @@ the only element of `⟨τ⟩` in `[lo i, hi i]`.
   pinnedᶠ τ {lo} {hi} box i (lo≰ , ≰hi) t lo≤ ≤hi =
     subst (_≈ʷ τ i) (⟦⟧-[] τ t)
       (lemma-2-at (FL X) τ lo hi i ((λ p → lo≰ (≤→≤ʷ p)) , (λ p → ≰hi (≤→≤ʷ p)))
-                  (λ j → ≤ʷ→≤ (proj₁ (box j)) , ≤ʷ→≤ (proj₂ (box j)))
+                  (λ j → ≤ʷ→≤ (box j .proj₁) , ≤ʷ→≤ (box j .proj₂))
                   t (≤ʷ→≤ (subst (lo i ≤ʷ_) (sym (⟦⟧-[] τ t)) lo≤))
                     (≤ʷ→≤ (subst (_≤ʷ hi i) (sym (⟦⟧-[] τ t)) ≤hi)))
 
@@ -207,8 +207,8 @@ freely generate.
             → (i : Fin 3) → IrredundantAt lo hi i → σ' i ≈ʷ τ' i
   box-agree {σ'} {τ'} q σ'≈ boxσ' boxτ' i irr =
     ≈ʷ-trans (σ'≈ i) (pinnedᶠ τ' boxτ' i irr (q i)
-                              (≤ʷ-trans (proj₁ (boxσ' i)) (proj₁ (σ'≈ i)))
-                              (≤ʷ-trans (proj₂ (σ'≈ i)) (proj₂ (boxσ' i))))
+                              (≤ʷ-trans (boxσ' i .proj₁) (σ'≈ i .proj₁))
+                              (≤ʷ-trans (σ'≈ i .proj₂) (boxσ' i .proj₂)))
 ```
 
 A step `⟨σ⟩ ⊊ ⟨τ⟩` ([DeansProblem.Chain][]) has a fresh index `f`, whose member

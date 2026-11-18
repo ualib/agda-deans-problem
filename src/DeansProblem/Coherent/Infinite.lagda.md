@@ -300,13 +300,13 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
   private
     -- A common complexity bound for the generators at link j.
     generator-bound : ℕ → ℕ
-    generator-bound j = proj₁ (bound 3 (λ v → complexity _≟ˣ_ (gens j v)))
+    generator-bound j = bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₁
 
     -- Every transition from link j has a representative in the list of elements under that bound.
     transition-covered : ∀ j e v → Any (transition c j e v ≈ʷ_) (bounded (generator-bound j))
     transition-covered j e v =
       bounded-complete (generator-bound j) (transition c j e v)
-        (≤-trans (transition-bound′ _≟ˣ_ c j e v) (proj₂ (bound 3 (λ v → complexity _≟ˣ_ (gens j v))) v))
+        (≤-trans (transition-bound′ _≟ˣ_ c j e v) (bound 3 (λ v → complexity _≟ˣ_ (gens j v)) .proj₂ v))
 
   -- Remark 5.1, from the principle.
   bottom-recurrence : InfinitePigeonhole → BottomRecurrence c
@@ -326,13 +326,13 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
 
     -- The selection, its steps, and the constancy.
     h : ℕ → ℕ
-    h = proj₁ constancy
+    h = constancy .proj₁
 
     h-inc : ∀ t → h t < h (suc t)
-    h-inc = proj₁ (proj₂ constancy)
+    h-inc = constancy .proj₂ .proj₁
 
     h-const : ∀ t i → transition c 0 (h t) i ≈ʷ transition c 0 (h 0) i
-    h-const = proj₂ (proj₂ constancy)
+    h-const = constancy .proj₂ .proj₂
 
   -- Some link's transition from the bottom recurs beyond every bound, from the principle.
   some-link-recurs : InfinitePigeonhole → Σ[ j ∈ ℕ ] Recurs _≟ˣ_ c j
@@ -342,11 +342,11 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) where
 
     -- The first link the remark gives.
     j : ℕ
-    j = proj₁ (recurs 0)
+    j = recurs 0 .proj₁
 
     -- Its transition from the bottom is Θ.
     j-recurs : ∀ v → transition c 0 j v ≈ʷ Θ v
-    j-recurs = proj₂ (proj₂ (recurs 0))
+    j-recurs = recurs 0 .proj₂ .proj₂
 
     -- Every later link the remark gives beyond m + j is a recurrence of θ_{0,j}.
     R : Recurs _≟ˣ_ c j
@@ -400,7 +400,7 @@ coherent chain.
 
       -- One level of the diagonal argument: those later members.
       next-set : (ℕ → ℕ) → ℕ → ℕ
-      next-set g t = g (suc (proj₁ (constancy g) t))
+      next-set g t = g (suc (constancy g .proj₁ t))
 
       -- The selections: every index, then S₀ ⊇ S₁ ⊇ ⋯.
       sets : ℕ → ℕ → ℕ
@@ -414,7 +414,7 @@ coherent chain.
       -- Each selection is strictly increasing.
       sets-increasing : ∀ j t → sets j t < sets j (suc t)
       sets-increasing zero     t = ≤-refl
-      sets-increasing (suc j)  t = increasing-< (sets-increasing j) (s≤s (proj₁ (proj₂ (constancy (sets j))) t))
+      sets-increasing (suc j)  t = increasing-< (sets-increasing j) (s≤s (constancy (sets j) .proj₂ .proj₁ t))
 
       -- So are the links.
       chosen-increasing : ∀ j → chosen j < chosen (suc j)
@@ -426,12 +426,12 @@ coherent chain.
 
       -- From kⱼ, the transitions to the members of Sⱼ are all Θⱼ.
       first-constant : ∀ j t i → between c (chosen j) (sets (suc j) t) i ≈ʷ Θ j i
-      first-constant j = proj₂ (proj₂ (constancy (sets j)))
+      first-constant j = constancy (sets j) .proj₂ .proj₂
 
       -- And to the members of every later selection, which selects from Sⱼ.
       later-constant : ∀ j d t i → between c (chosen j) (sets (d + suc j) t) i ≈ʷ Θ j i
       later-constant j zero     = first-constant j
-      later-constant j (suc d)  t = later-constant j d (suc (proj₁ (constancy (sets (d + suc j))) t))
+      later-constant j (suc d)  t = later-constant j d (suc (constancy (sets (d + suc j)) .proj₁ t))
 
       -- So θ_{kⱼ,k_l} is Θⱼ for every l > j.
       chosen-depends : ∀ {j l} → j < l → ∀ i → between c (chosen j) (chosen l) i ≈ʷ Θ j i

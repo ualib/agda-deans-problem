@@ -158,7 +158,7 @@ module _ {X : Type χ} (c : CopyChain X) where
     → (∀ k a → copy-map c (suc k) (θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a)
     → ∀ k a → θ k .proj₁ ⟨$⟩ a ≈ʷ copy-θ k .proj₁ ⟨$⟩ a
   copy-θ-unique θ commutes k a =
-    proj₂ (φ (suc k)) (≈ʷ-trans (commutes k a) (≈ʷ-sym (copy-θ-commutes k a)))
+    φ (suc k) .proj₂ (≈ʷ-trans (commutes k a) (≈ʷ-sym (copy-θ-commutes k a)))
 
   -- Each θₖ is injective.
   copy-θ-injective : (k : ℕ) → IsInjective (copy-θ k .proj₁)
@@ -264,7 +264,7 @@ If the next copy lay in this one, every `w` would be in the image of `θₖ`.
     -- Every w is θₖ(u) for some u.
     onto : IsSurjective (θ k .proj₁)
     onto {w} = let (u , eu) = ⊇ (w , ≈ʷ-refl) in
-      IsInRange→IsInImage (ι∞-range-step FL₃ θ limit-θ-injective k (u , proj₂ e eu))
+      IsInRange→IsInImage (ι∞-range-step FL₃ θ limit-θ-injective k (u , e .proj₂ eu))
 
   -- The images e(ιₖ(FL(3))) form a chain.
   limit→copyChain : CopyChain X

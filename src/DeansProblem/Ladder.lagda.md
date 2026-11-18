@@ -247,7 +247,7 @@ Lemma-4·4 : Setω
 Lemma-4·4 = ∀ {α ρ} (𝑳 : Lattice α ρ) (a b w : 𝕌[ 𝑳 .proj₁ ])
   → let  open Lattice-Op 𝑳 using ( _∨_ )
          open Lattice-Order 𝑳 using ( _≤_ )
-         open Setoid 𝔻[ proj₁ 𝑳 ] using ( _≈_ )
+         open Setoid 𝔻[ 𝑳 .proj₁ ] using ( _≈_ )
          A = Rungs.A 𝑳 a b w
          B = Rungs.B 𝑳 a b w
     in  (∀ k → A k ≤ w × B k ≤ w)

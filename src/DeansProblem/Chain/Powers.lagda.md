@@ -67,32 +67,39 @@ module DeansProblem.Chain.Powers where
 open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥ )
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _<_ ; s≤s ; z≤n )
-open import Data.Nat.Properties                    using ( <-trans ; m<m+n ; m≤n⇒m<n∨m≡n
-                                                         ; m≤n⇒∃[o]m+o≡n ; +-comm )
-open import Data.Product                           using ( Σ-syntax ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ )
-open import Level                                  using ( Level )
-open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst
-                                                         ; subst₂ )
-open import Relation.Nullary                       using ( ¬_ )
+open import Data.Empty                             using  ( ⊥ )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Nat.Base                          using  ( ℕ ; zero ; suc ; _+_
+                                                          ; _<_ ; s≤s ; z≤n )
+open import Data.Nat.Properties                    using  ( <-trans ; m<m+n
+                                                          ; m≤n⇒m<n∨m≡n ; +-comm
+                                                          ; m≤n⇒∃[o]m+o≡n )
+open import Data.Product                           using  ( Σ-syntax ; _,_
+                                                          ; proj₁ ; proj₂ )
+open import Data.Sum.Base                          using  ( _⊎_ ; inj₁ ; inj₂ )
+open import Level                                  using  ( Level )
+open import Relation.Binary.Definitions            using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym ; trans
+                                                          ; cong ; subst ; subst₂ )
+open import Relation.Nullary                       using  ( ¬_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Chain ; module Chain ; iter ; []-iter-+
-                                                         ; []-iter-suc ; []-iter-sucʳ )
-open import DeansProblem.Chain.Copies              using ( CopyChain ; copyChain→chain ; copy-terms )
-open import DeansProblem.Coherent                  using ( transition ; gens≈transition
-                                                         ; transition-repeats ; first-factor-injective )
-open import Lattices.Free.Generation               using ( freelyGenerates→injective ; generator-in-image )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-⨟ ; []-cong ; []-congʳ
-                                                         ; subst-hom )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
-open import Setoid.Functions                       using ( IsInjective )
+open import Lattices.Free.Canonical.Basic  using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
+open import DeansProblem.Chain             using ( Chain ; module Chain ; iter
+                                                 ; []-iter-+ ; []-iter-suc
+                                                 ; []-iter-sucʳ )
+open import DeansProblem.Chain.Copies      using ( CopyChain ; copyChain→chain
+                                                 ; copy-terms )
+open import DeansProblem.Coherent          using ( transition ; gens≈transition
+                                                 ; transition-repeats
+                                                 ; first-factor-injective )
+open import Lattices.Free.Generation       using ( freelyGenerates→injective
+                                                 ; generator-in-image )
+open import Lattices.Free.Substitution     using ( Sub ; _[_] ; []-ℊ ; []-⨟
+                                                 ; []-cong ; []-congʳ ; subst-hom )
+open import Lattices.Free.Term             using ( LatTerm ; ℊ )
+open import Lattices.Free.Whitman          using ( _≈ʷ_ )
+open import Setoid.Functions               using ( IsInjective )
 
 private variable
   χ : Level
@@ -119,8 +126,14 @@ step→strict f step {j} {suc k} (s≤s j≤k) = split (m≤n⇒m<n∨m≡n j≤
   split (inj₁ j<k)   = <-trans (step→strict f step j<k) (step k)
   split (inj₂ refl)  = step j
 
-module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) (c : Chain X) (ψ : Sub (Fin 3) (Fin 3)) (m : ℕ → ℕ)
-         (pow : ∀ k i → Chain.terms c k i ≈ʷ iter ψ (suc (m k)) i) where
+module _
+  {X     : Type χ}
+  (_≟ˣ_  : DecidableEquality X)
+  (c     : Chain X)
+  (ψ     : Sub (Fin 3) (Fin 3))
+  (m     : ℕ → ℕ)
+  (pow   : ∀ k i → Chain.terms c k i ≈ʷ iter ψ (suc (m k)) i)
+  where
   open Chain c
 
   -- The exponent of the transition from the bottom to link k.
@@ -156,19 +169,24 @@ leaves `ψ^(d + 1)(xᵢ) = xᵢ` (`power-fixes`{.AgdaFunction}).
   -- The power equal to the transition from the bottom to link j is injective.
   power-injective : ∀ j → IsInjective (subst-hom (iter ψ (exponent j)) .proj₁)
   power-injective j {s} {t} e =
-    first-factor-injective (transition c 0 j) (gens (j + 0)) (gens 0) (gens≈transition c 0 j)
+    first-factor-injective
+      (transition c 0 j)
+      (gens (j + 0)) (gens 0)
+      (gens≈transition c 0 j)
       (freelyGenerates→injective (gens 0) (gens-free 0))
       (≈ʷ-trans ([]-congʳ s (transition≈power j))
                 (≈ʷ-trans e (≈ʷ-sym ([]-congʳ t (transition≈power j)))))
 
   -- A repeat of the transitions, with the later exponent d + 1 past the earlier.
   repeat-cancels : ∀ j k d → suc d + exponent j ≡ exponent k
-                 → (∀ i → transition c 0 j i ≈ʷ transition c 0 k i)
-                 → ∀ i → iter ψ (suc d) i [ iter ψ (exponent j) ] ≈ʷ ℊ i [ iter ψ (exponent j) ]
+    → (∀ i → transition c 0 j i ≈ʷ transition c 0 k i)
+    → ∀ i → iter ψ (suc d) i [ iter ψ (exponent j) ] ≈ʷ ℊ i [ iter ψ (exponent j) ]
   repeat-cancels j k d Mk≡ e i =
-    subst (_≈ʷ iter ψ (exponent j) i)
-          (trans (cong (λ n → iter ψ n i) (sym Mk≡)) ([]-iter-+ (ℊ i) ψ (suc d) (exponent j)))
-          (≈ʷ-sym (≈ʷ-trans (≈ʷ-sym (transition≈power j i)) (≈ʷ-trans (e i) (transition≈power k i))))
+    subst  (_≈ʷ iter ψ (exponent j) i)
+           (trans  (cong (λ n → iter ψ n i) (sym Mk≡))
+                   ([]-iter-+ (ℊ i) ψ (suc d) (exponent j)))
+           (≈ʷ-sym (≈ʷ-trans  (≈ʷ-sym (transition≈power j i))
+                              (≈ʷ-trans (e i) (transition≈power k i))))
 
   -- Some positive power of ψ fixes every generator.
   power-fixes : Σ[ d ∈ ℕ ] (∀ i → iter ψ (suc d) i ≈ʷ ℊ i)
@@ -176,7 +194,9 @@ leaves `ψ^(d + 1)(xᵢ) = xᵢ` (`power-fixes`{.AgdaFunction}).
     let (j , k , j<k , e) = transition-repeats _≟ˣ_ c
         (d , Mj+d≡Mk) = m≤n⇒∃[o]m+o≡n (exponent-strict j<k)
     in d , λ i → power-injective j
-                   (repeat-cancels j k d (trans (cong suc (+-comm d (exponent j))) Mj+d≡Mk) e i)
+                   (repeat-cancels  j k d
+                                    (trans (cong suc (+-comm d (exponent j))) Mj+d≡Mk)
+                                    e i)
 ```
 
 #### The generator the bottom step misses
@@ -198,8 +218,10 @@ the bottom step `θ₀ = ψ^(m₀ + 1)`.  Corollary 2.4 makes it one of the term
 
     -- Every generator is ψ of some generator.
     gen-in-ψ : ∀ i → Σ[ j ∈ Fin 3 ] ℊ i ≈ʷ ψ j
-    gen-in-ψ i = generator-in-image ψ (iter ψ d i)
-                   (≈ʷ-sym (subst (_≈ʷ ℊ i) ([]-iter-sucʳ (ℊ i) ψ d) (power-fixes .proj₂ i)))
+    gen-in-ψ i =
+      generator-in-image ψ (iter ψ d i) (≈ʷ-sym (subst  (_≈ʷ ℊ i)
+                                                        ([]-iter-sucʳ (ℊ i) ψ d)
+                                                        (power-fixes .proj₂ i)))
 
     -- A preimage under ψ of each generator.
     pre : Sub (Fin 3) (Fin 3)
@@ -207,21 +229,27 @@ the bottom step `θ₀ = ψ^(m₀ + 1)`.  Corollary 2.4 makes it one of the term
 
     -- Every term is ψ of a term.
     ψ-onto : (t : LatTerm (Fin 3)) → t [ pre ] [ ψ ] ≈ʷ t
-    ψ-onto t = subst₂ _≈ʷ_ ([]-⨟ t pre ψ) ([]-ℊ t) ([]-congʳ t (λ i → ≈ʷ-sym (gen-in-ψ i .proj₂)))
+    ψ-onto t = subst₂  _≈ʷ_
+                       ([]-⨟ t pre ψ)
+                       ([]-ℊ t)
+                       ([]-congʳ t (λ i → ≈ʷ-sym (gen-in-ψ i .proj₂)))
 
     -- Every generator is the value of a term under every power of ψ.
     gen-in-power : ∀ n i → Σ[ t ∈ LatTerm (Fin 3) ] ℊ i ≈ʷ t [ iter ψ n ]
     gen-in-power zero     i = ℊ i , ≈ʷ-refl
     gen-in-power (suc n)  i =
       let (t , e) = gen-in-power n i
-      in t [ pre ] , ≈ʷ-trans e (≈ʷ-sym (subst (_≈ʷ t [ iter ψ n ]) (sym ([]-iter-suc (t [ pre ]) ψ n))
-                                               ([]-cong (iter ψ n) (ψ-onto t))))
+      in t [ pre ] , ≈ʷ-trans  e (≈ʷ-sym (subst  (_≈ʷ t [ iter ψ n ])
+                                                 (sym ([]-iter-suc (t [ pre ]) ψ n))
+                                                 ([]-cong (iter ψ n) (ψ-onto t))))
 
   -- Steps that are powers of one map contradict the generator the bottom step misses.
   powers→⊥ : ⊥
   powers→⊥ =
     let (t , e) = gen-in-power (suc (m 0)) (fresh 0)
-        (j , e′) = generator-in-image (terms 0) t (≈ʷ-trans e (≈ʷ-sym ([]-congʳ t (pow 0))))
+        (j , e′) = generator-in-image  (terms 0)
+                                       t
+                                       (≈ʷ-trans e (≈ʷ-sym ([]-congʳ t (pow 0))))
     in fresh∉ 0 j e′
 ```
 

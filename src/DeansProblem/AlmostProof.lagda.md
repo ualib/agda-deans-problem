@@ -100,16 +100,16 @@ open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using ( Dec ; ¬? ; _×-dec_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( _≰ʷ_ ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Step ; fresh∉⟨σ⟩ )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; ⟦⟧-[] )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Universal                using ( FL ; ≤ʷ→≤ ; ≤→≤ʷ )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤∧ ; ≤ʷ-trans
-                                                         ; ∨̇-upperˡ ; ∨̇-upperʳ ; ∧̇-lowerˡ
-                                                         ; ∧̇-lowerʳ ; module Decision )
-open import DeansProblem.Irredundant               using ( lemma-2-at )
-open import Lattices.Breadth                           using ( other₁ ; other₂ )
+open import Lattices.Free.Canonical.Basic  using  ( _≰ʷ_ ; ≈ʷ-trans )
+open import DeansProblem.Chain             using  ( Step ; fresh∉⟨σ⟩ )
+open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; ⟦⟧-[] )
+open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
+open import Lattices.Free.Universal        using  ( FL ; ≤ʷ→≤ ; ≤→≤ʷ )
+open import Lattices.Free.Whitman          using  ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤∧ ; ≤ʷ-trans
+                                                  ; ∨̇-upperˡ ; ∨̇-upperʳ ; ∧̇-lowerˡ
+                                                  ; ∧̇-lowerʳ ; module Decision )
+open import DeansProblem.Irredundant       using  ( lemma-2-at )
+open import Lattices.Breadth               using  ( other₁ ; other₂ )
 
 private variable
   χ : Level
@@ -133,8 +133,8 @@ module _ {X : Type χ} where
 
   -- Freese's conditions at one index, and at all three.
   IrredundantAt : (lo hi : Fin 3 → LatTerm X) → Fin 3 → Type χ
-  IrredundantAt lo hi i = (lo i ≰ʷ (hi (other₁ i) ∨̇ hi (other₂ i)))
-                        × ((lo (other₁ i) ∧̇ lo (other₂ i)) ≰ʷ hi i)
+  IrredundantAt lo hi i =  (lo i ≰ʷ (hi (other₁ i) ∨̇ hi (other₂ i))) ×
+                           ((lo (other₁ i) ∧̇ lo (other₂ i)) ≰ʷ hi i)
 
   StronglyIrredundant : (lo hi : Fin 3 → LatTerm X) → Type χ
   StronglyIrredundant lo hi = ∀ i → IrredundantAt lo hi i
@@ -148,18 +148,20 @@ upper ends can only make the inequalities `lo i ≤ hi j ∨ hi k` and
 ```agda
   -- Narrowing a box keeps it irredundant.
   irredundantAt-narrow : {lo hi lo' hi' : Fin 3 → LatTerm X}
-                       → (∀ j → lo j ≤ʷ lo' j) → (∀ j → hi' j ≤ʷ hi j)
-                       → (i : Fin 3) → IrredundantAt lo hi i → IrredundantAt lo' hi' i
+    → (∀ j → lo j ≤ʷ lo' j) → (∀ j → hi' j ≤ʷ hi j)
+    → (i : Fin 3) → IrredundantAt lo hi i → IrredundantAt lo' hi' i
   irredundantAt-narrow lo≤ ≤hi i (lo≰ , ≰hi) =
-    (λ p → lo≰ (≤ʷ-trans (lo≤ i) (≤ʷ-trans p (∨≤ (≤ʷ-trans (≤hi (other₁ i)) ∨̇-upperˡ)
-                                                  (≤ʷ-trans (≤hi (other₂ i)) ∨̇-upperʳ)))))
-    , (λ p → ≰hi (≤ʷ-trans (≤∧ (≤ʷ-trans ∧̇-lowerˡ (lo≤ (other₁ i)))
-                                (≤ʷ-trans ∧̇-lowerʳ (lo≤ (other₂ i))))
-                            (≤ʷ-trans p (≤hi i))))
+    (λ p → lo≰ (≤ʷ-trans  (lo≤ i)
+                          (≤ʷ-trans  p
+                                     (∨≤  (≤ʷ-trans (≤hi (other₁ i)) ∨̇-upperˡ)
+                                          (≤ʷ-trans (≤hi (other₂ i)) ∨̇-upperʳ))))) ,
+    (λ p → ≰hi (≤ʷ-trans  (≤∧  (≤ʷ-trans ∧̇-lowerˡ (lo≤ (other₁ i)))
+                               (≤ʷ-trans ∧̇-lowerʳ (lo≤ (other₂ i))))
+                          (≤ʷ-trans p (≤hi i))))
 
   stronglyIrredundant-narrow : {lo hi lo' hi' : Fin 3 → LatTerm X}
-                             → (∀ j → lo j ≤ʷ lo' j) → (∀ j → hi' j ≤ʷ hi j)
-                             → StronglyIrredundant lo hi → StronglyIrredundant lo' hi'
+    → (∀ j → lo j ≤ʷ lo' j) → (∀ j → hi' j ≤ʷ hi j)
+    → StronglyIrredundant lo hi → StronglyIrredundant lo' hi'
   stronglyIrredundant-narrow lo≤ ≤hi si i = irredundantAt-narrow lo≤ ≤hi i (si i)
 ```
 
@@ -175,20 +177,29 @@ the only element of `⟨τ⟩` in `[lo i, hi i]`.
 
 ```agda
   -- Lemma 2 in FL(X), at one index.
-  pinnedᶠ : (τ : Sub (Fin 3) X) {lo hi : Fin 3 → LatTerm X} → InBox lo hi τ
-          → (i : Fin 3) → IrredundantAt lo hi i
-          → (t : LatTerm (Fin 3)) → lo i ≤ʷ t [ τ ] → t [ τ ] ≤ʷ hi i → t [ τ ] ≈ʷ τ i
+  pinnedᶠ : (τ : Sub (Fin 3) X) {lo hi : Fin 3 → LatTerm X}
+    → InBox lo hi τ
+    → (i : Fin 3)
+    → IrredundantAt lo hi i
+    → (t : LatTerm (Fin 3))
+    → lo i ≤ʷ t [ τ ] → t [ τ ] ≤ʷ hi i → t [ τ ] ≈ʷ τ i
   pinnedᶠ τ {lo} {hi} box i (lo≰ , ≰hi) t lo≤ ≤hi =
-    subst (_≈ʷ τ i) (⟦⟧-[] τ t)
-      (lemma-2-at (FL X) τ lo hi i ((λ p → lo≰ (≤→≤ʷ p)) , (λ p → ≰hi (≤→≤ʷ p)))
-                  (λ j → ≤ʷ→≤ (box j .proj₁) , ≤ʷ→≤ (box j .proj₂))
-                  t (≤ʷ→≤ (subst (lo i ≤ʷ_) (sym (⟦⟧-[] τ t)) lo≤))
-                    (≤ʷ→≤ (subst (_≤ʷ hi i) (sym (⟦⟧-[] τ t)) ≤hi)))
+    subst  (_≈ʷ τ i)
+           (⟦⟧-[] τ t)
+           (lemma-2-at (FL X) τ lo hi i
+             ((λ p → lo≰ (≤→≤ʷ p)) , λ p → ≰hi (≤→≤ʷ p))
+             (λ j → ≤ʷ→≤ (box j .proj₁) , ≤ʷ→≤ (box j .proj₂))
+             t
+             (≤ʷ→≤ (subst (lo i ≤ʷ_) (sym (⟦⟧-[] τ t)) lo≤))
+             (≤ʷ→≤ (subst (_≤ʷ hi i) (sym (⟦⟧-[] τ t)) ≤hi)))
 
   -- Freese's Lemma 2 in FL(X).
   lemma-2ᶠ : (τ : Sub (Fin 3) X) {lo hi : Fin 3 → LatTerm X}
-           → StronglyIrredundant lo hi → InBox lo hi τ → (i : Fin 3)
-           → (t : LatTerm (Fin 3)) → lo i ≤ʷ t [ τ ] → t [ τ ] ≤ʷ hi i → t [ τ ] ≈ʷ τ i
+    → StronglyIrredundant lo hi
+    → InBox lo hi τ
+    → (i : Fin 3)
+    → (t : LatTerm (Fin 3))
+    → lo i ≤ʷ t [ τ ] → t [ τ ] ≤ʷ hi i → t [ τ ] ≈ʷ τ i
   lemma-2ᶠ τ si box i = pinnedᶠ τ box i (si i)
 ```
 
@@ -201,14 +212,17 @@ two triples agree (`box-agree`{.AgdaFunction}): `σ' i = q i [ τ' ]` lies in
 freely generate.
 
 ```agda
-  -- Two triples in one box, one inside the other's sublattice, agree where the box is irredundant.
-  box-agree : {σ' τ' : Sub (Fin 3) X} (q : Sub (Fin 3) (Fin 3)) → (∀ j → σ' j ≈ʷ q j [ τ' ])
-            → {lo hi : Fin 3 → LatTerm X} → InBox lo hi σ' → InBox lo hi τ'
-            → (i : Fin 3) → IrredundantAt lo hi i → σ' i ≈ʷ τ' i
+  -- Two triples in one box, one inside the other's sublattice, agree where the
+  -- box is irredundant.
+  box-agree : {σ' τ' : Sub (Fin 3) X} (q : Sub (Fin 3) (Fin 3))
+    → (∀ j → σ' j ≈ʷ q j [ τ' ])
+    → {lo hi : Fin 3 → LatTerm X} → InBox lo hi σ' → InBox lo hi τ'
+    → (i : Fin 3) → IrredundantAt lo hi i → σ' i ≈ʷ τ' i
   box-agree {σ'} {τ'} q σ'≈ boxσ' boxτ' i irr =
-    ≈ʷ-trans (σ'≈ i) (pinnedᶠ τ' boxτ' i irr (q i)
-                              (≤ʷ-trans (boxσ' i .proj₁) (σ'≈ i .proj₁))
-                              (≤ʷ-trans (σ'≈ i .proj₂) (boxσ' i .proj₂)))
+    ≈ʷ-trans  (σ'≈ i)
+              (pinnedᶠ τ' boxτ' i irr (q i)
+                (≤ʷ-trans (boxσ' i .proj₁) (σ'≈ i .proj₁))
+                (≤ʷ-trans (σ'≈ i .proj₂) (boxσ' i .proj₂)))
 ```
 
 A step `⟨σ⟩ ⊊ ⟨τ⟩` ([DeansProblem.Chain][]) has a fresh index `f`, whose member
@@ -221,17 +235,18 @@ and at most one link of any chain ([DeansProblem.AlmostProof.Links][]).
 ```agda
   -- No step has both triples in a box irredundant at its fresh index.
   no-step-in-box : (s : Step X) {lo hi : Fin 3 → LatTerm X}
-                 → InBox lo hi (Step.σ s) → InBox lo hi (Step.τ s)
-                 → ¬ IrredundantAt lo hi (Step.fresh s)
+    → InBox lo hi (Step.σ s) → InBox lo hi (Step.τ s)
+    → ¬ IrredundantAt lo hi (Step.fresh s)
   no-step-in-box s boxσ boxτ irr =
     fresh∉⟨σ⟩ s (ℊ fresh) (box-agree p σ≈p[τ] boxσ boxτ fresh irr)
     where open Step s
 
   -- No step has both triples in a strongly irredundant box.
   no-step-in-irredundant-box : (s : Step X) {lo hi : Fin 3 → LatTerm X}
-                             → StronglyIrredundant lo hi
-                             → InBox lo hi (Step.σ s) → ¬ InBox lo hi (Step.τ s)
-  no-step-in-irredundant-box s si boxσ boxτ = no-step-in-box s boxσ boxτ (si (Step.fresh s))
+    → StronglyIrredundant lo hi
+    → InBox lo hi (Step.σ s) → ¬ InBox lo hi (Step.τ s)
+  no-step-in-irredundant-box s si boxσ boxτ =
+    no-step-in-box s boxσ boxτ (si (Step.fresh s))
 ```
 
 #### Deciding the predicate
@@ -245,11 +260,13 @@ module DecideBox {X : Type χ} (_≟_ : DecidableEquality X) where
   open Decision _≟_ using ( _≤ʷ?_ )
 
   -- Irredundance at one index, and at all three.
-  irredundantAt? : (lo hi : Fin 3 → LatTerm X) (i : Fin 3) → Dec (IrredundantAt lo hi i)
-  irredundantAt? lo hi i = ¬? (lo i ≤ʷ? hi (other₁ i) ∨̇ hi (other₂ i))
-                     ×-dec ¬? (lo (other₁ i) ∧̇ lo (other₂ i) ≤ʷ? hi i)
+  irredundantAt? : (lo hi : Fin 3 → LatTerm X) (i : Fin 3)
+    → Dec (IrredundantAt lo hi i)
+  irredundantAt? lo hi i =  ¬? (lo i ≤ʷ? hi (other₁ i) ∨̇ hi (other₂ i)) ×-dec
+                            ¬? (lo (other₁ i) ∧̇ lo (other₂ i) ≤ʷ? hi i)
 
-  stronglyIrredundant? : (lo hi : Fin 3 → LatTerm X) → Dec (StronglyIrredundant lo hi)
+  stronglyIrredundant? : (lo hi : Fin 3 → LatTerm X)
+    → Dec (StronglyIrredundant lo hi)
   stronglyIrredundant? lo hi = all? (irredundantAt? lo hi)
 
   -- A triple in a box.

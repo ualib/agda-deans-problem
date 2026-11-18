@@ -56,16 +56,21 @@ open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Unary                         using ( _⊆_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-sym )
-open import DeansProblem.AlmostProof               using ( InBox ; IrredundantAt ; StronglyIrredundant
-                                                         ; box-agree ; no-step-in-box )
-open import DeansProblem.Chain                     using ( Step ; module Step ; Chain ; module Chain )
-open import DeansProblem.Chain.Condition           using ( ⟨_⟩ ; gen∈ ; gens⊆ ; StrictlyAscending
-                                                         ; strict→ascending ; ascends-≤ ; chain→strict )
-open import Lattices.Free.Generation               using ( FreelyGenerates )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
+open import Lattices.Free.Canonical.Basic          using  ( ≈ʷ-sym )
+open import DeansProblem.AlmostProof               using  ( InBox ; IrredundantAt
+                                                          ; StronglyIrredundant
+                                                          ; box-agree
+                                                          ; no-step-in-box )
+open import DeansProblem.Chain                     using  ( Step ; module Step
+                                                          ; Chain ; module Chain )
+open import DeansProblem.Chain.Condition           using  ( ⟨_⟩ ; gen∈ ; gens⊆
+                                                          ; StrictlyAscending
+                                                          ; strict→ascending
+                                                          ; ascends-≤ ; chain→strict )
+open import Lattices.Free.Generation               using  ( FreelyGenerates )
+open import Lattices.Free.Substitution             using  ( Sub ; _[_] )
+open import Lattices.Free.Term                     using  ( LatTerm ; ℊ )
+open import Lattices.Free.Whitman                  using  ( _≈ʷ_ )
 
 private variable
   χ : Level
@@ -87,7 +92,7 @@ module _ {X : Type χ} (c : StrictlyAscending 3 X) where
 
   -- For j < k, links j and k do not both lie in a strongly irredundant box.
   no-two-links-in-box : {lo hi : Fin 3 → LatTerm X} → StronglyIrredundant lo hi
-                      → ∀ {j k} → j < k → InBox lo hi (links j) → ¬ InBox lo hi (links k)
+    → ∀ {j k} → j < k → InBox lo hi (links j) → ¬ InBox lo hi (links k)
   no-two-links-in-box {lo} {hi} si {j} {k} j<k boxj boxk =
     ascends j .proj₂ (λ p → back (ascends-≤ (strict→ascending c) j<k p))
     where
@@ -101,15 +106,18 @@ module _ {X : Type χ} (c : StrictlyAscending 3 X) where
 
     -- The two links agree at every index.
     agree : ∀ i → links j i ≈ʷ links k i
-    agree i = box-agree q (λ i′ → ≈ʷ-sym (below (gen∈ (links j) i′) .proj₂)) boxj boxk i (si i)
+    agree i = box-agree  q (λ i′ → ≈ʷ-sym (below (gen∈ (links j) i′) .proj₂))
+                         boxj boxk
+                         i (si i)
 
     -- So link k lies in the sublattice of link j.
     back : ⟨ links k ⟩ ⊆ ⟨ links j ⟩
     back = gens⊆ λ i → ℊ i , agree i
 
-  -- Theorem 9.2, last clause: two links in one strongly irredundant box are the same link.
+  -- Theorem 9.2, last clause: two links in one strongly irredundant box are the
+  -- same link.
   at-most-one-link : {lo hi : Fin 3 → LatTerm X} → StronglyIrredundant lo hi
-                   → ∀ {j k} → InBox lo hi (links j) → InBox lo hi (links k) → j ≡ k
+    → ∀ {j k} → InBox lo hi (links j) → InBox lo hi (links k) → j ≡ k
   at-most-one-link si {j} {k} boxj boxk = compare (<-cmp j k)
     where
     -- By the order of j and k.
@@ -127,8 +135,9 @@ triples (`chain→strict`{.AgdaFunction}), so the clause holds of it as stated
 
 ```agda
 -- Theorem 9.2, last clause, for a chain of free triples.
-at-most-one-linkᶜ : {X : Type χ} (c : Chain X) {lo hi : Fin 3 → LatTerm X} → StronglyIrredundant lo hi
-                  → ∀ {j k} → InBox lo hi (Chain.gens c j) → InBox lo hi (Chain.gens c k) → j ≡ k
+at-most-one-linkᶜ : {X : Type χ} (c : Chain X) {lo hi : Fin 3 → LatTerm X}
+  → StronglyIrredundant lo hi
+  → ∀ {j k} → InBox lo hi (Chain.gens c j) → InBox lo hi (Chain.gens c k) → j ≡ k
 at-most-one-linkᶜ c = at-most-one-link (chain→strict c)
 ```
 
@@ -141,27 +150,28 @@ strongly irredundant box.  The freeness of `σ'` and `τ'` is the paper's
 hypothesis, and `box-agree`{.AgdaFunction} does not use it.
 
 ```agda
--- Theorem 9.2: triples in one box, one inside the other's sublattice, agree where the box is
--- irredundant; so no step lies in a box irredundant at its missed generator, and at most one
--- link of a chain lies in a strongly irredundant box.
+-- Theorem 9.2: triples in one box, one inside the other's sublattice, agree where
+-- the box is irredundant; so no step lies in a box irredundant at its missed
+-- generator, and at most one link of a chain lies in a strongly irredundant box.
 Theorem-9·2 : Setω
 Theorem-9·2 =
   ∀ {χ} {X : Type χ} (lo hi : Fin 3 → LatTerm X)
-  →  ((σ' τ' : Sub (Fin 3) X) → FreelyGenerates σ' → FreelyGenerates τ'
-      → InBox lo hi σ' → InBox lo hi τ' → (∀ j → ⟨ τ' ⟩ (σ' j))
-      → (i : Fin 3) → IrredundantAt lo hi i → σ' i ≈ʷ τ' i)
-   × ((s : Step X) → InBox lo hi (Step.σ s) → InBox lo hi (Step.τ s)
-      → ¬ IrredundantAt lo hi (Step.fresh s))
-   × ((c : Chain X) → StronglyIrredundant lo hi
-      → ∀ {j k} → InBox lo hi (Chain.gens c j) → InBox lo hi (Chain.gens c k) → j ≡ k)
+  →    ( (σ' τ' : Sub (Fin 3) X) → FreelyGenerates σ' → FreelyGenerates τ'
+       → InBox lo hi σ' → InBox lo hi τ' → (∀ j → ⟨ τ' ⟩ (σ' j))
+       → (i : Fin 3) → IrredundantAt lo hi i → σ' i ≈ʷ τ' i )
+     × ( (s : Step X) → InBox lo hi (Step.σ s) → InBox lo hi (Step.τ s)
+       → ¬ IrredundantAt lo hi (Step.fresh s) )
+     × ( (c : Chain X) → StronglyIrredundant lo hi
+         → ∀ {j k} → InBox lo hi (Chain.gens c j)
+         → InBox lo hi (Chain.gens c k) → j ≡ k )
 
 -- The proof of Theorem 9.2.
 theorem-9·2 : Theorem-9·2
 theorem-9·2 lo hi =
-    (λ σ' τ' _ _ σ'∈ τ'∈ in⟨τ'⟩ →
-       box-agree (λ j → in⟨τ'⟩ j .proj₁) (λ j → ≈ʷ-sym (in⟨τ'⟩ j .proj₂)) σ'∈ τ'∈)
-  , (λ s → no-step-in-box s)
-  , (λ c → at-most-one-linkᶜ c)
+  ( λ σ' τ' _ _ σ'∈ τ'∈ in⟨τ'⟩ →
+      box-agree (λ j → in⟨τ'⟩ j .proj₁) (λ j → ≈ʷ-sym (in⟨τ'⟩ j .proj₂)) σ'∈ τ'∈ )
+  , ( λ s → no-step-in-box s)
+  , ( λ c → at-most-one-linkᶜ c )
 ```
 
 --------------------------------------

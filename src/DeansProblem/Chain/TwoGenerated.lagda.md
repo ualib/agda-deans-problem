@@ -49,27 +49,32 @@ module DeansProblem.Chain.TwoGenerated where
 open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥ ; ⊥-elim )
-open import Data.Fin.Base                          using ( Fin ; toℕ )
-open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F ; 3F )
-open import Data.Fin.Properties                    using ( _≟_ ; any? ; all? ; pigeonhole ; toℕ<n )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _≤_ ; _<_ ; z≤n ; s≤s )
-open import Data.Nat.Properties                    using ( n<1+n )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Level                                  using ( Level )
-open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; subst )
-open import Relation.Nullary                       using ( ¬_ ; Dec ; yes ; no )
-open import Relation.Nullary.Decidable.Core        using ( from-yes ; map′ )
-open import Relation.Unary                         using ( _⊆_ )
+open import Data.Empty                             using  ( ⊥ ; ⊥-elim )
+open import Data.Fin.Base                          using  ( Fin ; toℕ )
+open import Data.Fin.Patterns                      using  ( 0F ; 1F ; 2F ; 3F )
+open import Data.Fin.Properties                    using  ( _≟_ ; any? ; all?
+                                                          ; pigeonhole ; toℕ<n )
+open import Data.Nat.Base                          using  ( ℕ ; zero ; suc ; _≤_
+                                                          ; _<_ ; z≤n ; s≤s )
+open import Data.Nat.Properties                    using  ( n<1+n )
+open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
+                                                          ; proj₁ ; proj₂ )
+open import Level                                  using  ( Level )
+open import Relation.Binary.Definitions            using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym ; subst )
+open import Relation.Nullary                       using  ( ¬_ ; Dec ; yes ; no )
+open import Relation.Nullary.Decidable.Core        using  ( from-yes ; map′ )
+open import Relation.Unary                         using  ( _⊆_ )
 
 -- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ∧̇-cong ; ∨̇-cong )
-open import DeansProblem.Chain.Condition           using ( ⟨_⟩ ; ⟨⟩-resp ; gen∈ ; gens⊆ ; StrictlyAscending
-                                                         ; ChainCondition ; strict→ascending ; ascends-≤ )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-cong )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ ; module Decision )
+open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
+                                                  ; ∧̇-cong ; ∨̇-cong )
+open import DeansProblem.Chain.Condition   using  ( ⟨_⟩ ; ⟨⟩-resp ; gen∈ ; gens⊆
+                                                  ; StrictlyAscending ; ChainCondition
+                                                  ; strict→ascending ; ascends-≤ )
+open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-cong )
+open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
+open import Lattices.Free.Whitman          using  ( _≈ʷ_ ; module Decision )
 
 private variable
   χ : Level
@@ -89,24 +94,32 @@ four 3F = ℊ 0F ∨̇ ℊ 1F
 open Decision (_≟_ {2}) using () renaming ( _≈ʷ?_ to _≈₂?_ )
 
 -- The four are closed under meets and joins, by Whitman's procedure.
-closed : (∀ i j → Σ[ k ∈ Fin 4 ] four i ∧̇ four j ≈ʷ four k)
-       × (∀ i j → Σ[ k ∈ Fin 4 ] four i ∨̇ four j ≈ʷ four k)
-closed = from-yes (all? (λ i → all? (λ j → any? (λ k → four i ∧̇ four j ≈₂? four k))))
-       , from-yes (all? (λ i → all? (λ j → any? (λ k → four i ∨̇ four j ≈₂? four k))))
+closed :  (∀ i j → Σ[ k ∈ Fin 4 ] four i ∧̇ four j ≈ʷ four k) ×
+          (∀ i j → Σ[ k ∈ Fin 4 ] four i ∨̇ four j ≈ʷ four k)
+closed =  from-yes (all? (λ i → all? (λ j → any? (λ k → four i ∧̇ four j ≈₂? four k)))) ,
+          from-yes (all? (λ i → all? (λ j → any? (λ k → four i ∨̇ four j ≈₂? four k))))
 
 -- Every term over two generators is one of the four.
 one-of-four : (t : LatTerm (Fin 2)) → Σ[ k ∈ Fin 4 ] t ≈ʷ four k
-one-of-four (ℊ 0F)   = 0F , ≈ʷ-refl
-one-of-four (ℊ 1F)   = 1F , ≈ʷ-refl
-one-of-four (s ∧̇ t)  = let (i , s≈) = one-of-four s ; (j , t≈) = one-of-four t ; (k , e) = closed .proj₁ i j
-                       in k , ≈ʷ-trans (∧̇-cong s≈ t≈) e
-one-of-four (s ∨̇ t)  = let (i , s≈) = one-of-four s ; (j , t≈) = one-of-four t ; (k , e) = closed .proj₂ i j
-                       in k , ≈ʷ-trans (∨̇-cong s≈ t≈) e
+one-of-four (ℊ 0F) = 0F , ≈ʷ-refl
+one-of-four (ℊ 1F) = 1F , ≈ʷ-refl
+one-of-four (s ∧̇ t) =
+  let  (i , s≈) = one-of-four s
+       (j , t≈) = one-of-four t
+       (k , e) = closed .proj₁ i j
+  in k , ≈ʷ-trans (∧̇-cong s≈ t≈) e
+one-of-four (s ∨̇ t) =
+  let  (i , s≈) = one-of-four s
+       (j , t≈) = one-of-four t
+       (k , e) = closed .proj₂ i j
+  in k , ≈ʷ-trans (∨̇-cong s≈ t≈) e
 
 -- Two elements generate a sublattice of at most four elements.
-two-generate-four : {X : Type χ} (σ : Sub (Fin 2) X) {w : LatTerm X} → ⟨ σ ⟩ w
-                  → Σ[ k ∈ Fin 4 ] w ≈ʷ four k [ σ ]
-two-generate-four σ (t , e) = let (k , t≈) = one-of-four t in k , ≈ʷ-trans (≈ʷ-sym e) ([]-cong σ t≈)
+two-generate-four : {X : Type χ} (σ : Sub (Fin 2) X) {w : LatTerm X}
+  → ⟨ σ ⟩ w → Σ[ k ∈ Fin 4 ] w ≈ʷ four k [ σ ]
+two-generate-four σ (t , e) =
+  let (k , t≈) = one-of-four t
+  in k , ≈ʷ-trans (≈ʷ-sym e) ([]-cong σ t≈)
 ```
 
 #### The chain condition for two generators
@@ -117,18 +130,22 @@ module _ {X : Type χ} (_≟ˣ_ : DecidableEquality X) where
 
   -- Membership in a 2-generated sublattice is decidable.
   member? : (σ : Sub (Fin 2) X) (w : LatTerm X) → Dec (⟨ σ ⟩ w)
-  member? σ w = map′ (λ (k , e) → four k , ≈ʷ-sym e) (two-generate-four σ) (any? (λ k → w ≈ʷ? four k [ σ ]))
+  member? σ w = map′  (λ (k , e) → four k , ≈ʷ-sym e)
+                      (two-generate-four σ)
+                      (any? (λ k → w ≈ʷ? four k [ σ ]))
 
   private
     -- The search for a generator of τ outside ⟨ σ ⟩, on the two membership decisions.
-    search : {σ τ : Sub (Fin 2) X} → ¬ (⟨ τ ⟩ ⊆ ⟨ σ ⟩) → Dec (⟨ σ ⟩ (τ 0F)) → Dec (⟨ σ ⟩ (τ 1F))
-           → Σ[ w ∈ LatTerm X ] ⟨ τ ⟩ w × ¬ ⟨ σ ⟩ w
+    search : {σ τ : Sub (Fin 2) X}
+      → ¬ (⟨ τ ⟩ ⊆ ⟨ σ ⟩) → Dec (⟨ σ ⟩ (τ 0F)) → Dec (⟨ σ ⟩ (τ 1F))
+      → Σ[ w ∈ LatTerm X ] ⟨ τ ⟩ w × ¬ ⟨ σ ⟩ w
     search {τ = τ} _  (no n)   _        = τ 0F , gen∈ τ 0F , n
     search {τ = τ} _  (yes _)  (no n)   = τ 1F , gen∈ τ 1F , n
     search         ⊉  (yes p)  (yes q)  = ⊥-elim (⊉ (gens⊆ λ { 0F → p ; 1F → q }))
 
   -- A proper step names a member of the upper sublattice outside the lower.
-  new-element : {σ τ : Sub (Fin 2) X} → ¬ (⟨ τ ⟩ ⊆ ⟨ σ ⟩) → Σ[ w ∈ LatTerm X ] ⟨ τ ⟩ w × ¬ ⟨ σ ⟩ w
+  new-element : {σ τ : Sub (Fin 2) X}
+    → ¬ (⟨ τ ⟩ ⊆ ⟨ σ ⟩) → Σ[ w ∈ LatTerm X ] ⟨ τ ⟩ w × ¬ ⟨ σ ⟩ w
   new-element {σ} {τ} ⊉ = search ⊉ (member? σ (τ 0F)) (member? σ (τ 1F))
 ```
 
@@ -162,15 +179,17 @@ four values that generate it.
     -- Witnesses at different places are unequal.
     apart : ∀ {m m′} → m < m′ → ¬ (witness m ≈ʷ witness m′)
     apart {m} {suc k} (s≤s m≤k) e =
-      new k .proj₂ .proj₂ (⟨⟩-resp (links k) (ascends-≤ (strict→ascending c) m≤k (witness∈ m)) e)
+      new k .proj₂ .proj₂
+        (⟨⟩-resp (links k) (ascends-≤ (strict→ascending c) m≤k (witness∈ m)) e)
 
     -- Two generators: no strictly ascending chain of 2-generated sublattices.
     no-chain₂ : ⊥
     no-chain₂ =
       let (i , j , i<j , e) = pigeonhole (n<1+n 4) idx
-      in apart i<j (≈ʷ-trans (at i .proj₂) (subst (λ k → four k [ links 4 ] ≈ʷ witness (toℕ j))
-                                                    (sym e)
-                                                    (≈ʷ-sym (at j .proj₂))))
+      in apart i<j (≈ʷ-trans  (at i .proj₂)
+                              (subst  (λ k → four k [ links 4 ] ≈ʷ witness (toℕ j))
+                                      (sym e)
+                                      (≈ʷ-sym (at j .proj₂))))
       where
       -- The first five witnesses lie in link 4, and so equal values of the four terms.
       at : (i : Fin 5) → Σ[ k ∈ Fin 4 ] witness (toℕ i) ≈ʷ four k [ links 4 ]

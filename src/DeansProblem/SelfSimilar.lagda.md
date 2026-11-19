@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.SelfSimilar][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 A step `⟨σ⟩ ⊊ ⟨τ⟩` toward Dean's problem ([DeansProblem.Chain][]) is
 *self-similar* if some injective endomorphism `Φ` of the ambient free lattice

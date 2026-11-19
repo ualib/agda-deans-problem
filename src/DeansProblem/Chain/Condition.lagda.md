@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Chain.Condition][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Takahasi proved that in a free group every ascending chain of subgroups of
 bounded rank stabilizes (his note of 1950, recalled in his note of 1951;

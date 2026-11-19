@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Chain.TwoGenerated][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Section 4.2 of [the paper][] asks whether every ascending chain of
 3-generated sublattices of a free lattice stabilizes, and remarks: "For two

@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Chain.Copies][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Dean's problem asks whether a free lattice `FL(X)` can contain an infinite
 strictly ascending chain `L₀ ⊊ L₁ ⊊ L₂ ⊊ ⋯` of sublattices, each isomorphic to

@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Preliminaries][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Section 2 of [the paper][] collects what the paper uses from
 [Freese, Ježek, and Nation (1995)][] (FJN below), and adds Theorem B and

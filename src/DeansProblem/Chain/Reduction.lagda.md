@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Chain.Reduction][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Section 1.1(i) of [the paper][] says: "Whitman proved that `FL(ω)`, the free
 lattice on countably many generators, embeds in `FL(3)` (FJN, Theorem 1.28).

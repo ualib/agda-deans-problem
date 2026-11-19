@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.LengthThree][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 A coherent chain of length three ([DeansProblem.Coherent.Finite][]) is three
 proper self-embeddings `Θ₀, Θ₁, Θ₂` of `FL(3)` with `Θ₁ ∘ Θ₀ = Θ₀` and

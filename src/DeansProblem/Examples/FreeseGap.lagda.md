@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Examples.FreeseGap][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Section 9.3 of [the paper][] says that the gap of Freese's almost-proof does
 not move inside `FL(3)`: the ends of the box of a labeled pattern are elements

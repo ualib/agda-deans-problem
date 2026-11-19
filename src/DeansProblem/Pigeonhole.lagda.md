@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Pigeonhole][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 The *infinite pigeonhole principle* says that a sequence `u : ℕ → Fin k` takes
 some value `i` infinitely often: for every `m` there is `n ≥ m` with

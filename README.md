@@ -12,7 +12,7 @@
 The formal development, in [Agda][], of the paper
 
 > William DeMeo and Ralph Freese, *No free lattice contains an infinite
-> ascending chain of copies of FL(3)*, [arXiv:YYMM.NNNNN][paper].
+> ascending chain of copies of FL(3)*, [arXiv:2611.18541][paper].
 
 The paper answers R. A. Dean's question in the negative: no free lattice
 contains an infinite strictly ascending chain of sublattices, each isomorphic
@@ -461,5 +461,5 @@ statement and proof.
 [Cachix]: https://www.cachix.org/
 [cost]: #the-cost
 [Nix]: https://nixos.org/
-[paper]: https://arxiv.org/abs/YYMM.NNNNN
+[paper]: https://arxiv.org/abs/2611.18541
 [FJN]: https://doi.org/10.1090/surv/042

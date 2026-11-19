@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Coherent.Finite][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 A *coherent chain of length `n`* is a sequence `Θ₀, …, Θₙ₋₁` of proper
 self-embeddings of `FL(3)` with `Θₖ ∘ Θⱼ = Θⱼ` for every `j < k`: each later

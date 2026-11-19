@@ -47,8 +47,9 @@ way from the directory it unpacks to.
 `make check` first runs `scripts/check-safety.sh` (below), then generates
 `src/EverythingDeansProblem.agda`, which imports every module under `src/`
 and the two modules of agda-lattices that the tables below name and no
-module here imports (`Lattices.Free.Membership` and `Lattices.Free.Small`),
-type-checks it with a heap limit of 6 GiB (`+RTS -M6G -A128M`), the limit
+module here names in an import (`Lattices.Free.Membership` and
+`Lattices.Free.Small`, which come in through the library's barrel
+`Lattices.Free`), type-checks it with a heap limit of 6 GiB (`+RTS -M6G -A128M`), the limit
 under which the paper's costs are measured, and last runs
 `scripts/check-paper.sh` (below).  It exits 0 when every module checks and
 the tables agree with the development, and its last line is the following:
@@ -432,8 +433,9 @@ check it, and how a pull request is reviewed.
 
 The development is licensed under the Apache License 2.0 (`LICENSE`);
 `NOTICE` records the attribution it carries from the Agda Universal Algebra
-Library.  `CITATION.cff` gives the metadata for citing it; the paper cites
-the release tagged `v0.1.0`, whose archived copy will have a DOI, and whose
+Library.  `CITATION.cff` gives the metadata for citing it, with the paper,
+[arXiv:2611.18541][paper], as its preferred citation; the paper cites the
+release tagged `v0.1.0`, whose archived copy will have a DOI, and whose
 notes are [`docs/releases/v0.1.0.md`](docs/releases/v0.1.0.md).
 
 ## Acknowledgment

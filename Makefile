@@ -51,9 +51,10 @@ AGDA      ?= agda
 RTS_OPTS  := +RTS -M6G -A128M -RTS
 AGDA_OPTS ?=
 # The modules of the pinned agda-lattices that the README's tables of the
-# paper's results and claims name and no module under src/ imports.  The
-# aggregator imports them too, so that `make check` checks every module the
-# tables name.
+# paper's results and claims name and no module under src/ names in an
+# import (they come in through the library's barrel Lattices.Free).  The
+# aggregator imports them by name, so that `make check` checks every module
+# the tables name whatever the imports.
 TABLE_LIBRARY_MODULES := Lattices.Free.Membership Lattices.Free.Small
 
 .DEFAULT_GOAL := help

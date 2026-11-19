@@ -59,50 +59,55 @@ module DeansProblem.Fixed where
 open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.List.Base                         using ( List ; [] ; _∷_ ; allFin ; map )
-open import Data.List.Membership.Propositional     using ( _∈_ ; find ; lose )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Fin.Properties                    using  ( _≟_ )
+open import Data.List.Base                         using  ( List ; [] ; _∷_
+                                                          ; allFin ; map )
+open import Data.List.Membership.Propositional     using  ( _∈_ ; find ; lose )
 open import Data.List.Membership.Propositional.Properties
-                                                   using ( ∈-allFin ; ∈-map⁺ )
-open import Data.List.Relation.Unary.All           using ( lookup )
-open import Data.List.Relation.Unary.Any           using ( Any ; here ; there )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _*_ ; _⊔_ ; _≤_ ; _<_
-                                                         ; s≤s )
-open import Data.Nat.Properties                    using ( ≤-trans ; ≤-reflexive ; ≤-total ; +-comm
-                                                         ; m≤n⇒∃[o]m+o≡n ; m≤m*n ; 0≢1+n
-                                                         ; suc-injective ; m≤n⇒m⊔n≡n ; m≥n⇒m⊔n≡m )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
-open import Function                               using ( _⇔_ ; mk⇔ ; _∘_ )
-open import Level                                  using ( Level )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst )
-open import Relation.Nullary                       using ( ¬_ )
+                                                   using  ( ∈-allFin ; ∈-map⁺ )
+open import Data.List.Relation.Unary.All           using  ( lookup )
+open import Data.List.Relation.Unary.Any           using  ( Any ; here ; there )
+open import Data.Nat.Base                          using  ( ℕ ; zero ; suc ; _+_ ; _*_
+                                                          ; _⊔_ ; _≤_ ; _<_ ; s≤s )
+open import Data.Nat.Properties                    using  ( ≤-trans ; ≤-reflexive
+                                                          ; ≤-total ; +-comm ; m≤m*n
+                                                          ; 0≢1+n ; m≤n⇒∃[o]m+o≡n
+                                                          ; suc-injective ; m≤n⇒m⊔n≡n
+                                                          ; m≥n⇒m⊔n≡m )
+open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
+                                                          ; proj₁ ; proj₂ )
+open import Data.Sum.Base                          using  ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
+open import Function                               using  ( _⇔_ ; mk⇔ ; _∘_ )
+open import Level                                  using  ( Level )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym ; trans
+                                                          ; cong ; subst )
+open import Relation.Nullary                       using  ( ¬_ )
 
 import Data.List.Relation.Unary.Any as Any
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Algorithm      using ( module Canonicalization )
-open import Lattices.Free.Canonical.Basic
-  using  ( CTerm ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; CMand ; ⌊_⌋ ; ⌊_⌋ᴶ
-         ; ⌊_⌋ᴹ ; ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; IsCanonical ; cjoin ; cmeet ; asListJ ; asListM
-         ; joinandsOf ; meetandsOf )
-open import Lattices.Free.Canonical.Joinands       using ( canonicalJoinands ; canonicalMeetands
-                                                         ; canonicalJoinand-resp ; canonicalMeetand-resp )
-open import DeansProblem.Chain                     using ( iter ; []-iter-suc ; []-iter-sucʳ ; []-iter-+
-                                                         ; iter-injective )
-open import Lattices.Free.Complexity
-  using  ( complexity ; complexity-resp ; complexity-mono ; complexityᴶ ; complexityᴹ ; depth ; depthJ
-         ; depthM ; depthΣJ ; depthΣM ; module Bounded ; pigeonhole-≈ ; image-gen )
-open import Lattices.Free.Embedding                using ( embedding-canonicalJoinand
-                                                         ; embedding-canonicalMeetand )
-open import Lattices.Free.Generation               using ( FreelyGenerates ; freelyGenerates→injective
-                                                         ; injective→freelyGenerates )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-cong
-                                                         ; subst-hom )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
+-- Imports from agda-algebras --------------------------------------------------
 open import Setoid.Functions                       using ( IsInjective )
+
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( module Canonicalization ; module Bounded ; CTerm
+                                 ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; CMand ; ⌊_⌋ ; ⌊_⌋ᴶ
+                                 ; ⌊_⌋ᴹ ; ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; IsCanonical
+                                 ; cjoin ; cmeet ; asListJ ; asListM ; joinandsOf
+                                 ; meetandsOf ; canonicalJoinands ; canonicalMeetands
+                                 ; canonicalJoinand-resp ; canonicalMeetand-resp
+                                 ; complexity ; complexity-resp ; complexity-mono
+                                 ; complexityᴶ ; complexityᴹ ; depth ; depthJ ; depthM
+                                 ; depthΣJ ; depthΣM ; pigeonhole-≈ ; image-gen
+                                 ; embedding-canonicalJoinand ; FreelyGenerates
+                                 ; embedding-canonicalMeetand ; Sub ; _[_] ; []-ℊ
+                                 ; freelyGenerates→injective ; []-cong ; subst-hom
+                                 ; injective→freelyGenerates ; LatTerm ; ℊ ; _≈ʷ_ )
+
+-- Imports from agda-deans-problem ------------------------------------
+open import DeansProblem.Chain using  ( iter ; []-iter-suc ; []-iter-sucʳ ; []-iter-+
+                                      ; iter-injective )
+
 
 private variable
   χ : Level

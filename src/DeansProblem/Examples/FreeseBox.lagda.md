@@ -84,44 +84,57 @@ module DeansProblem.Examples.FreeseBox where
 open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥ ; ⊥-elim )
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F ; 3F ; 4F ; 5F ; 6F
-                                                         ; 7F ; 8F )
-open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.List.Base                         using ( List ; [] ; _∷_ ; map )
-open import Data.List.Membership.Propositional     using ( _∈_ )
-open import Data.List.Relation.Unary.Any           using ( Any ; here ; there )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ )
-open import Function                               using ( _∘_ )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; cong₂ ; subst )
-open import Relation.Nullary                       using ( ¬_ )
-open import Relation.Nullary.Decidable.Core        using ( from-yes ; from-no )
+open import Data.Empty                             using  ( ⊥ ; ⊥-elim )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Fin.Patterns                      using  ( 0F ; 1F ; 2F
+                                                          ; 3F ; 4F ; 5F
+                                                          ; 6F ; 7F ; 8F )
+open import Data.Fin.Properties                    using  ( _≟_ )
+open import Data.List.Base                         using  ( List ; [] ; _∷_
+                                                          ; map )
+open import Data.List.Membership.Propositional     using  ( _∈_ )
+open import Data.List.Relation.Unary.Any           using  ( Any ; here ; there )
+open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
+                                                          ; proj₁ ; proj₂ )
+open import Data.Sum.Base                          using  ( _⊎_ ; inj₁ ; inj₂ )
+open import Function                               using  ( _∘_ )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
+                                                          ; cong₂ ; subst )
+open import Relation.Nullary                       using  ( ¬_ )
+open import Relation.Nullary.Decidable.Core        using  ( from-yes ; from-no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import DeansProblem.Examples.FreeseStep
-  using  ( a₁ ; a₂₁ ; a₂₂ ; b₁ ; b₂₁ ; b₂₂ ; c₁ ; c₂₁ ; c₂₂ ; π ; ā₁ ; ā₂₁ ; ā₂₂ ; b̄₂₁ ; b̄₂₂
-         ; c̄₂₁ ; c̄₂₂ ; a ; b ; c ; a' ; abc ; abc' ; abc-free ; abc'-free ; abc≈ ; ρ ; x∉ρ
-         ; â ; a≈â ; a'≈a″ ; relation-1ᵇ ; relation-2ᶜ ; relation-3ᵇ ; relation-4ᶜ )
-open import DeansProblem.AlmostProof
-  using  ( InBox ; StronglyIrredundant ; stronglyIrredundant-narrow ; lemma-2ᶠ ; box-agree
-         ; no-step-in-irredundant-box ; module DecideBox )
-open import Lattices.Free.Canonical.Basic
-  using  ( CTerm ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; jgen ; jmeet ; CMand ; mgen ; mjoin ; ⌊_⌋
-         ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ ; ⋁ᴶ ; ⋀ᴹ ; ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; IsCanonical ; asListJ
-         ; joinandsOf )
-open import Lattices.Free.Canonical.Recognition    using ( module Recognize )
-open import DeansProblem.Chain                     using ( Step )
-open import Lattices.Free.Generation               using ( FreelyGenerates ; freelyGenerates→injective )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; subst-hom ; []-mono ; []-cong
-                                                         ; []-congʳ )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import DeansProblem.Truncation                using ( module Truncates ; truncation )
-open import Lattices.Free.Whitman
-  using  ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤∧ ; ≤ʷ-refl ; ≤ʷ-trans ; ∨̇-upperˡ ; ∧̇-lowerˡ ; ∧̇-lowerʳ
-         ; ℊ≤∨-inv ; module Decision )
-open import Setoid.Functions                       using ( IsInjective )
+-- Imports from agda-algebras ---------------------------------------------------
+open import Setoid.Functions                     using  ( IsInjective )
+
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free  using  ( module Recognize ; FreelyGenerates ; []-mono
+                                  ; freelyGenerates→injective ; Sub ; _[_] ; subst-hom
+                                  ; []-cong ; []-congʳ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_
+                                  ; _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤∧ ; ≤ʷ-refl ; ≤ʷ-trans
+                                  ; ∨̇-upperˡ ; ∧̇-lowerˡ ; ∧̇-lowerʳ ; ℊ≤∨-inv
+                                  ; module Decision ; CTerm ; genᶜ ; joinᶜ ; meetᶜ
+                                  ; CJand ; jgen ; jmeet ; CMand ; mgen ; mjoin
+                                  ; ⌊_⌋ ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ ; ⋁ᴶ ; ⋀ᴹ ; ≈ʷ-refl ; ≈ʷ-sym
+                                  ; ≈ʷ-trans ; IsCanonical ; asListJ ; joinandsOf )
+
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.Examples.FreeseStep  using  ( a₁ ; a₂₁ ; a₂₂ ; b₁ ; b₂₁
+                                                     ; b₂₂ ; c₁ ; c₂₁ ; c₂₂ ; π
+                                                     ; ā₁ ; ā₂₁ ; ā₂₂ ; b̄₂₁ ; b̄₂₂
+                                                     ; c̄₂₁ ; c̄₂₂ ; a ; b ; c ; a'
+                                                     ; abc ; abc' ; abc-free
+                                                     ; abc'-free ; abc≈ ; ρ ; x∉ρ
+                                                     ; â ; a≈â ; a'≈a″ ; relation-1ᵇ
+                                                     ; relation-2ᶜ ; relation-3ᵇ
+                                                     ; relation-4ᶜ )
+open import DeansProblem.AlmostProof          using  ( InBox ; StronglyIrredundant
+                                                     ; stronglyIrredundant-narrow
+                                                     ; lemma-2ᶠ ; box-agree
+                                                     ; no-step-in-irredundant-box
+                                                     ; module DecideBox )
+open import DeansProblem.Chain                using  ( Step )
+open import DeansProblem.Truncation           using  ( module Truncates ; truncation )
+
 ```
 -->
 
@@ -188,13 +201,14 @@ loᵍ≤lo 1F = []-mono π (loᵍ≤lo 0F)
 loᵍ≤lo 2F = []-mono π ([]-mono π (loᵍ≤lo 0F))
 
 hi≤hiᵍ : ∀ j → hi j ≤ʷ hiᵍ j
-hi≤hiᵍ 0F = ≤ʷ-trans (proj₁ a'≈a″) ∧̇-lowerʳ
+hi≤hiᵍ 0F = ≤ʷ-trans (a'≈a″ .proj₁) ∧̇-lowerʳ
 hi≤hiᵍ 1F = []-mono π (hi≤hiᵍ 0F)
 hi≤hiᵍ 2F = []-mono π ([]-mono π (hi≤hiᵍ 0F))
 
 -- Freese's box is strongly irredundant.
 freese-box-irredundant : StronglyIrredundant lo hi
-freese-box-irredundant = stronglyIrredundant-narrow loᵍ≤lo hi≤hiᵍ generator-box-irredundant
+freese-box-irredundant =
+  stronglyIrredundant-narrow loᵍ≤lo hi≤hiᵍ generator-box-irredundant
 ```
 
 #### Freese's step lies in his box
@@ -211,10 +225,10 @@ footnote, decided on the canonical form `â` (`b̄₂≤a`{.AgdaFunction},
 ```agda
 -- Freese's footnote: b̄₂ and c̄₂ lie below a.
 b̄₂≤a : b̄₂ ≤ʷ a
-b̄₂≤a = ≤ʷ-trans (from-yes (b̄₂ ≤ʷ? â)) (proj₂ a≈â)
+b̄₂≤a = ≤ʷ-trans (from-yes (b̄₂ ≤ʷ? â)) (a≈â .proj₂)
 
 c̄₂≤a : c̄₂ ≤ʷ a
-c̄₂≤a = ≤ʷ-trans (from-yes (c̄₂ ≤ʷ? â)) (proj₂ a≈â)
+c̄₂≤a = ≤ʷ-trans (from-yes (c̄₂ ≤ʷ? â)) (a≈â .proj₂)
 
 -- The lower end at the first index lies below a'.
 lo≤a' : lo 0F ≤ʷ a'
@@ -229,8 +243,8 @@ freese-in-box 1F = []-mono π lo≤a' , ≤ʷ-refl
 freese-in-box 2F = []-mono π ([]-mono π lo≤a') , ≤ʷ-refl
 
 freese-in-generator-box : InBox loᵍ hiᵍ abc'
-freese-in-generator-box j = ≤ʷ-trans (loᵍ≤lo j) (proj₁ (freese-in-box j))
-                          , ≤ʷ-trans (proj₂ (freese-in-box j)) (hi≤hiᵍ j)
+freese-in-generator-box j =  ≤ʷ-trans (loᵍ≤lo j) (freese-in-box j .proj₁) ,
+                             ≤ʷ-trans (freese-in-box j .proj₂) (hi≤hiᵍ j)
 ```
 
 #### Lemma 2 on Freese's step
@@ -246,13 +260,15 @@ step inside the generator box.
 
 ```agda
 -- Lemma 2 for Freese's step.
-freese-pinned : (i : Fin 3) (t : LatTerm (Fin 3)) → lo i ≤ʷ t [ abc' ] → t [ abc' ] ≤ʷ hi i
-              → t [ abc' ] ≈ʷ abc' i
+freese-pinned : (i : Fin 3) (t : LatTerm (Fin 3))
+  → lo i ≤ʷ t [ abc' ] → t [ abc' ] ≤ʷ hi i → t [ abc' ] ≈ʷ abc' i
 freese-pinned = lemma-2ᶠ abc' freese-box-irredundant freese-in-box
 
 -- No step has both triples in the generator box.
-no-step-in-generator-box : (s : Step (Fin 9)) → InBox loᵍ hiᵍ (Step.σ s) → ¬ InBox loᵍ hiᵍ (Step.τ s)
-no-step-in-generator-box s = no-step-in-irredundant-box s generator-box-irredundant
+no-step-in-generator-box : (s : Step (Fin 9))
+  → InBox loᵍ hiᵍ (Step.σ s) → ¬ InBox loᵍ hiᵍ (Step.τ s)
+no-step-in-generator-box s =
+  no-step-in-irredundant-box s generator-box-irredundant
 
 -- Freese's step, as a step.
 freese-step : Step (Fin 9)
@@ -268,8 +284,9 @@ freese-step = record
   }
 
 -- A triple of the generator box above Freese's is Freese's.
-above-freese : (τ' : Sub (Fin 3) (Fin 9)) (q : Sub (Fin 3) (Fin 3)) → (∀ j → abc' j ≈ʷ q j [ τ' ])
-             → InBox loᵍ hiᵍ τ' → ∀ i → abc' i ≈ʷ τ' i
+above-freese : (τ' : Sub (Fin 3) (Fin 9)) (q : Sub (Fin 3) (Fin 3))
+  → (∀ j → abc' j ≈ʷ q j [ τ' ])
+  → InBox loᵍ hiᵍ τ' → ∀ i → abc' i ≈ʷ τ' i
 above-freese τ' q abc'≈ box' i =
   box-agree q abc'≈ freese-in-generator-box box' i (generator-box-irredundant i)
 ```
@@ -303,36 +320,38 @@ module _ {X Y : Type} (f : X → Y) where
   renᴶs  : List (CJand X) → List (CJand Y)
   renᴹs  : List (CMand X) → List (CMand Y)
 
-  renᶜ (genᶜ x)      = genᶜ (f x)
-  renᶜ (joinᶜ h t)   = joinᶜ (renᴶ h) (renᴶs t)
-  renᶜ (meetᶜ h t)   = meetᶜ (renᴹ h) (renᴹs t)
-  renᴶ (jgen x)      = jgen (f x)
-  renᴶ (jmeet h t)   = jmeet (renᴹ h) (renᴹs t)
-  renᴹ (mgen x)      = mgen (f x)
-  renᴹ (mjoin h t)   = mjoin (renᴶ h) (renᴶs t)
-  renᴶs []           = []
-  renᴶs (a ∷ as)     = renᴶ a ∷ renᴶs as
-  renᴹs []           = []
-  renᴹs (a ∷ as)     = renᴹ a ∷ renᴹs as
+  renᶜ (genᶜ x) = genᶜ (f x)
+  renᶜ (joinᶜ h t) = joinᶜ (renᴶ h) (renᴶs t)
+  renᶜ (meetᶜ h t) = meetᶜ (renᴹ h) (renᴹs t)
+  renᴶ (jgen x) = jgen (f x)
+  renᴶ (jmeet h t) = jmeet (renᴹ h) (renᴹs t)
+  renᴹ (mgen x) = mgen (f x)
+  renᴹ (mjoin h t) = mjoin (renᴶ h) (renᴶs t)
+  renᴶs [] = []
+  renᴶs (a ∷ as) = renᴶ a ∷ renᴶs as
+  renᴹs [] = []
+  renᴹs (a ∷ as) = renᴹ a ∷ renᴹs as
 
   -- Renaming commutes with the embedding.
   ⌊renᶜ⌋  : (C : CTerm X) → ⌊ renᶜ C ⌋ ≡ ⌊ C ⌋ [ ℊ ∘ f ]
   ⌊renᴶ⌋  : (a : CJand X) → ⌊ renᴶ a ⌋ᴶ ≡ ⌊ a ⌋ᴶ [ ℊ ∘ f ]
   ⌊renᴹ⌋  : (a : CMand X) → ⌊ renᴹ a ⌋ᴹ ≡ ⌊ a ⌋ᴹ [ ℊ ∘ f ]
-  ⋁ᴶ-ren  : (h : CJand X) (t : List (CJand X)) → ⋁ᴶ (renᴶ h) (renᴶs t) ≡ ⋁ᴶ h t [ ℊ ∘ f ]
-  ⋀ᴹ-ren  : (h : CMand X) (t : List (CMand X)) → ⋀ᴹ (renᴹ h) (renᴹs t) ≡ ⋀ᴹ h t [ ℊ ∘ f ]
+  ⋁ᴶ-ren  : (h : CJand X) (t : List (CJand X))
+    → ⋁ᴶ (renᴶ h) (renᴶs t) ≡ ⋁ᴶ h t [ ℊ ∘ f ]
+  ⋀ᴹ-ren  : (h : CMand X) (t : List (CMand X))
+    → ⋀ᴹ (renᴹ h) (renᴹs t) ≡ ⋀ᴹ h t [ ℊ ∘ f ]
 
-  ⌊renᶜ⌋ (genᶜ x)     = refl
-  ⌊renᶜ⌋ (joinᶜ h t)  = ⋁ᴶ-ren h t
-  ⌊renᶜ⌋ (meetᶜ h t)  = ⋀ᴹ-ren h t
-  ⌊renᴶ⌋ (jgen x)     = refl
-  ⌊renᴶ⌋ (jmeet h t)  = ⋀ᴹ-ren h t
-  ⌊renᴹ⌋ (mgen x)     = refl
-  ⌊renᴹ⌋ (mjoin h t)  = ⋁ᴶ-ren h t
-  ⋁ᴶ-ren h []         = ⌊renᴶ⌋ h
-  ⋁ᴶ-ren h (a ∷ as)   = cong₂ _∨̇_ (⌊renᴶ⌋ h) (⋁ᴶ-ren a as)
-  ⋀ᴹ-ren h []         = ⌊renᴹ⌋ h
-  ⋀ᴹ-ren h (a ∷ as)   = cong₂ _∧̇_ (⌊renᴹ⌋ h) (⋀ᴹ-ren a as)
+  ⌊renᶜ⌋ (genᶜ x) = refl
+  ⌊renᶜ⌋ (joinᶜ h t) = ⋁ᴶ-ren h t
+  ⌊renᶜ⌋ (meetᶜ h t) = ⋀ᴹ-ren h t
+  ⌊renᴶ⌋ (jgen x) = refl
+  ⌊renᴶ⌋ (jmeet h t) = ⋀ᴹ-ren h t
+  ⌊renᴹ⌋ (mgen x) = refl
+  ⌊renᴹ⌋ (mjoin h t) = ⋁ᴶ-ren h t
+  ⋁ᴶ-ren h [] = ⌊renᴶ⌋ h
+  ⋁ᴶ-ren h (a ∷ as) = cong₂ _∨̇_ (⌊renᴶ⌋ h) (⋁ᴶ-ren a as)
+  ⋀ᴹ-ren h [] = ⌊renᴹ⌋ h
+  ⋀ᴹ-ren h (a ∷ as) = cong₂ _∧̇_ (⌊renᴹ⌋ h) (⋀ᴹ-ren a as)
 
 -- The renaming of the generators that π performs.
 πᵍ : Fin 9 → Fin 9
@@ -364,15 +383,24 @@ gens g gs = mjoin (jgen g) (map jgen gs)
 -- The canonical forms of a, b and c.
 âᶜ bᶜ cᶜ : CTerm (Fin 9)
 âᶜ = joinᶜ (jgen 0F)
-  ( jmeet (gens 0F (4F ∷ 8F ∷ [])) ( gens 6F (1F ∷ 5F ∷ []) ∷ gens 0F (3F ∷ 2F ∷ 4F ∷ 7F ∷ [])
-                                   ∷ gens 3F (6F ∷ 2F ∷ 5F ∷ 7F ∷ []) ∷ gens 0F (3F ∷ 6F ∷ 1F ∷ 4F ∷ 7F ∷ [])
-                                   ∷ gens 0F (3F ∷ 6F ∷ 2F ∷ 5F ∷ 8F ∷ []) ∷ [] )
-  ∷ jmeet (gens 0F (4F ∷ 8F ∷ [])) ( gens 3F (2F ∷ 7F ∷ []) ∷ gens 0F (6F ∷ 1F ∷ 5F ∷ 8F ∷ [])
-                                   ∷ gens 3F (6F ∷ 1F ∷ 5F ∷ 7F ∷ []) ∷ gens 0F (3F ∷ 6F ∷ 1F ∷ 4F ∷ 7F ∷ [])
-                                   ∷ gens 0F (3F ∷ 6F ∷ 2F ∷ 5F ∷ 8F ∷ []) ∷ [] )
-  ∷ jmeet (gens 1F (5F ∷ 6F ∷ [])) ( gens 0F (1F ∷ 4F ∷ 6F ∷ 8F ∷ []) ∷ gens 0F (1F ∷ 3F ∷ 4F ∷ 6F ∷ 7F ∷ [])
-                                   ∷ gens 2F (3F ∷ 7F ∷ []) ∷ gens 0F (2F ∷ 3F ∷ 4F ∷ 8F ∷ [])
-                                   ∷ gens 0F (2F ∷ 3F ∷ 5F ∷ 6F ∷ 8F ∷ []) ∷ [] )
+  ( jmeet (gens 0F (4F ∷ 8F ∷ [])) ( gens 6F (1F ∷ 5F ∷ [])
+                                   ∷ gens 0F (3F ∷ 2F ∷ 4F ∷ 7F ∷ [])
+                                   ∷ gens 3F (6F ∷ 2F ∷ 5F ∷ 7F ∷ [])
+                                   ∷ gens 0F (3F ∷ 6F ∷ 1F ∷ 4F ∷ 7F ∷ [])
+                                   ∷ gens 0F (3F ∷ 6F ∷ 2F ∷ 5F ∷ 8F ∷ [])
+                                   ∷ [] )
+  ∷ jmeet (gens 0F (4F ∷ 8F ∷ [])) ( gens 3F (2F ∷ 7F ∷ [])
+                                   ∷ gens 0F (6F ∷ 1F ∷ 5F ∷ 8F ∷ [])
+                                   ∷ gens 3F (6F ∷ 1F ∷ 5F ∷ 7F ∷ [])
+                                   ∷ gens 0F (3F ∷ 6F ∷ 1F ∷ 4F ∷ 7F ∷ [])
+                                   ∷ gens 0F (3F ∷ 6F ∷ 2F ∷ 5F ∷ 8F ∷ [])
+                                   ∷ [] )
+  ∷ jmeet (gens 1F (5F ∷ 6F ∷ [])) ( gens 0F (1F ∷ 4F ∷ 6F ∷ 8F ∷ [])
+                                   ∷ gens 0F (1F ∷ 3F ∷ 4F ∷ 6F ∷ 7F ∷ [])
+                                   ∷ gens 2F (3F ∷ 7F ∷ [])
+                                   ∷ gens 0F (2F ∷ 3F ∷ 4F ∷ 8F ∷ [])
+                                   ∷ gens 0F (2F ∷ 3F ∷ 5F ∷ 6F ∷ 8F ∷ [])
+                                   ∷ [] )
   ∷ [] )
 bᶜ = renᶜ πᵍ âᶜ
 cᶜ = renᶜ πᵍ bᶜ
@@ -391,8 +419,11 @@ cᶜ-canonical = from-yes (isCanonical? cᶜ)
 âᶜ-sound : ⌊ âᶜ ⌋ ≈ʷ a
 âᶜ-sound = ≈ʷ-trans (from-yes (⌊ âᶜ ⌋ ≈ʷ? â)) (≈ʷ-sym a≈â)
 
-ren-sound : {C : CTerm (Fin 9)} {w : LatTerm (Fin 9)} → ⌊ C ⌋ ≈ʷ w → ⌊ renᶜ πᵍ C ⌋ ≈ʷ w [ π ]
-ren-sound {C} e = subst (_≈ʷ _) (sym (⌊renᶜ⌋ πᵍ C)) (≈ʷ-trans ([]-congʳ ⌊ C ⌋ π≈) ([]-cong π e))
+ren-sound : {C : CTerm (Fin 9)} {w : LatTerm (Fin 9)}
+  → ⌊ C ⌋ ≈ʷ w → ⌊ renᶜ πᵍ C ⌋ ≈ʷ w [ π ]
+ren-sound {C} e = subst  (_≈ʷ _)
+                         (sym (⌊renᶜ⌋ πᵍ C))
+                         (≈ʷ-trans ([]-congʳ ⌊ C ⌋ π≈) ([]-cong π e))
 
 bᶜ-sound : ⌊ bᶜ ⌋ ≈ʷ b
 bᶜ-sound = ren-sound {C = âᶜ} âᶜ-sound
@@ -446,68 +477,83 @@ c₁≤c : c₁ ≤ʷ c
 c₁≤c = []-mono π b₁≤b
 
 a₁≰b : ¬ (a₁ ≤ʷ b)
-a₁≰b p = from-no (a₁ ≤ʷ? ⌊ bᶜ ⌋) (≤ʷ-trans p (proj₂ bᶜ-sound))
+a₁≰b p = from-no (a₁ ≤ʷ? ⌊ bᶜ ⌋) (≤ʷ-trans p (bᶜ-sound .proj₂))
 
 b₁≰c : ¬ (b₁ ≤ʷ c)
-b₁≰c p = from-no (b₁ ≤ʷ? ⌊ cᶜ ⌋) (≤ʷ-trans p (proj₂ cᶜ-sound))
+b₁≰c p = from-no (b₁ ≤ʷ? ⌊ cᶜ ⌋) (≤ʷ-trans p (cᶜ-sound .proj₂))
 
 c₁≰a : ¬ (c₁ ≤ʷ a)
-c₁≰a p = from-no (c₁ ≤ʷ? ⌊ âᶜ ⌋) (≤ʷ-trans p (proj₂ âᶜ-sound))
+c₁≰a p = from-no (c₁ ≤ʷ? ⌊ âᶜ ⌋) (≤ʷ-trans p (âᶜ-sound .proj₂))
 
-module _ (τ : Sub (Fin 3) (Fin 9)) (inj : IsInjective (subst-hom τ .proj₁))
-         (abc≈ρ : ∀ i → abc i ≈ʷ ρ i [ τ ]) where
+module _
+  (τ      : Sub (Fin 3) (Fin 9))
+  (inj    : IsInjective (subst-hom τ .proj₁))
+  (abc≈ρ  : ∀ i → abc i ≈ʷ ρ i [ τ ])
+  where
   open Truncates τ
 
   -- The lower ends: join primality of the generators.
   a₁≤τx : a₁ ≤ʷ τ 0F
-  a₁≤τx with ℊ≤∨-inv (≤ʷ-trans a₁≤a (proj₁ (abc≈ρ 0F)))
+  a₁≤τx with ℊ≤∨-inv (≤ʷ-trans a₁≤a (abc≈ρ 0F .proj₁))
   ... | inj₁ p  = p
-  ... | inj₂ q  = ⊥-elim (a₁≰b (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (proj₂ (abc≈ρ 1F))))))
+  ... | inj₂ q  =
+    ⊥-elim (a₁≰b (≤ʷ-trans  q
+                            (≤ʷ-trans  ∧̇-lowerˡ
+                                       (≤ʷ-trans ∨̇-upperˡ (abc≈ρ 1F .proj₂)))))
 
   b₁≤τy : b₁ ≤ʷ τ 1F
-  b₁≤τy with ℊ≤∨-inv (≤ʷ-trans b₁≤b (proj₁ (abc≈ρ 1F)))
+  b₁≤τy with ℊ≤∨-inv (≤ʷ-trans b₁≤b (abc≈ρ 1F .proj₁))
   ... | inj₁ p  = p
-  ... | inj₂ q  = ⊥-elim (b₁≰c (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (proj₂ (abc≈ρ 2F))))))
+  ... | inj₂ q  =
+    ⊥-elim (b₁≰c (≤ʷ-trans  q
+                            (≤ʷ-trans  ∧̇-lowerˡ
+                                       (≤ʷ-trans ∨̇-upperˡ (abc≈ρ 2F .proj₂)))))
 
   c₁≤τz : c₁ ≤ʷ τ 2F
-  c₁≤τz with ℊ≤∨-inv (≤ʷ-trans c₁≤c (proj₁ (abc≈ρ 2F)))
+  c₁≤τz with ℊ≤∨-inv (≤ʷ-trans c₁≤c (abc≈ρ 2F .proj₁))
   ... | inj₁ p  = p
-  ... | inj₂ q  = ⊥-elim (c₁≰a (≤ʷ-trans q (≤ʷ-trans ∧̇-lowerˡ (≤ʷ-trans ∨̇-upperˡ (proj₂ (abc≈ρ 0F))))))
+  ... | inj₂ q  =
+    ⊥-elim (c₁≰a (≤ʷ-trans  q
+                            (≤ʷ-trans  ∧̇-lowerˡ
+                                       (≤ʷ-trans ∨̇-upperˡ (abc≈ρ 0F .proj₂)))))
 
   -- The truncations of the canonical forms of a, b and c by Freese's terms.
   trunc-a : ρᶜ 0F ⊑ âᶜ
-  trunc-a = truncation τ inj (ρᶜ 0F) âᶜ (ρᶜ-canonical 0F) âᶜ-canonical
-                       (≈ʷ-trans (≈ʷ-sym (abc≈ρ 0F)) (≈ʷ-sym âᶜ-sound))
+  trunc-a = truncation  τ inj (ρᶜ 0F) âᶜ (ρᶜ-canonical 0F) âᶜ-canonical
+                        (≈ʷ-trans (≈ʷ-sym (abc≈ρ 0F)) (≈ʷ-sym âᶜ-sound))
 
   trunc-b : ρᶜ 1F ⊑ bᶜ
-  trunc-b = truncation τ inj (ρᶜ 1F) bᶜ (ρᶜ-canonical 1F) bᶜ-canonical
-                       (≈ʷ-trans (≈ʷ-sym (abc≈ρ 1F)) (≈ʷ-sym bᶜ-sound))
+  trunc-b = truncation  τ inj (ρᶜ 1F) bᶜ (ρᶜ-canonical 1F) bᶜ-canonical
+                        (≈ʷ-trans (≈ʷ-sym (abc≈ρ 1F)) (≈ʷ-sym bᶜ-sound))
 
   trunc-c : ρᶜ 2F ⊑ cᶜ
-  trunc-c = truncation τ inj (ρᶜ 2F) cᶜ (ρᶜ-canonical 2F) cᶜ-canonical
-                       (≈ʷ-trans (≈ʷ-sym (abc≈ρ 2F)) (≈ʷ-sym cᶜ-sound))
+  trunc-c = truncation  τ inj (ρᶜ 2F) cᶜ (ρᶜ-canonical 2F) cᶜ-canonical
+                        (≈ʷ-trans (≈ʷ-sym (abc≈ρ 2F)) (≈ʷ-sym cᶜ-sound))
 
-  -- A cut child of a node matched with a meet of two generators lies above one of them.
+  -- A cut child of a node matched with a meet of two generators lies above one
+  -- of them.
   cut-of-two : {i j : Fin 3} {v : CMand (Fin 9)}
-             → Any (_⊑ᴹ v) (mgen i ∷ mgen j ∷ [])
-               ⊎ (Σ[ k ∈ Fin 3 ] mgen k ∈ mgen i ∷ mgen j ∷ [] × τ k ≤ʷ ⌊ v ⌋ᴹ)
-             → τ i ≤ʷ ⌊ v ⌋ᴹ ⊎ τ j ≤ʷ ⌊ v ⌋ᴹ
+    → Any (_⊑ᴹ v) (mgen i ∷ mgen j ∷ [])
+      ⊎ (Σ[ k ∈ Fin 3 ] mgen k ∈ mgen i ∷ mgen j ∷ [] × τ k ≤ʷ ⌊ v ⌋ᴹ)
+    → τ i ≤ʷ ⌊ v ⌋ᴹ ⊎ τ j ≤ʷ ⌊ v ⌋ᴹ
   cut-of-two (inj₁ (here ()))
   cut-of-two (inj₁ (there (here ())))
-  cut-of-two (inj₂ (_ , here refl , le))          = inj₁ le
-  cut-of-two (inj₂ (_ , there (here refl) , le))  = inj₂ le
+  cut-of-two (inj₂ (_ , here refl , le)) = inj₁ le
+  cut-of-two (inj₂ (_ , there (here refl) , le)) = inj₂ le
 
-  -- A meetand above neither generator below the two members is above neither member.
+  -- A meetand above neither generator below the two members is above neither
+  -- member.
   neither : {i j : Fin 3} {g h u : LatTerm (Fin 9)} → g ≤ʷ τ i → h ≤ʷ τ j
-          → ¬ (g ≤ʷ u) → ¬ (h ≤ʷ u) → τ i ≤ʷ u ⊎ τ j ≤ʷ u → ⊥
-  neither g≤ _  g≰ _  (inj₁ p) = g≰ (≤ʷ-trans g≤ p)
-  neither _  h≤ _  h≰ (inj₂ p) = h≰ (≤ʷ-trans h≤ p)
+    → ¬ (g ≤ʷ u) → ¬ (h ≤ʷ u) → τ i ≤ʷ u ⊎ τ j ≤ʷ u → ⊥
+  neither g≤ _ g≰ _ (inj₁ p) = g≰ (≤ʷ-trans g≤ p)
+  neither _ h≤ _ h≰ (inj₂ p) = h≰ (≤ʷ-trans h≤ p)
 
-  -- A meetand not above the generator below the first member is above the second.
-  second : {i j : Fin 3} {g u : LatTerm (Fin 9)} → g ≤ʷ τ i → ¬ (g ≤ʷ u) → τ i ≤ʷ u ⊎ τ j ≤ʷ u
-         → τ j ≤ʷ u
+  -- A meetand not above the generator below the first member is above the
+  -- second.
+  second : {i j : Fin 3} {g u : LatTerm (Fin 9)}
+    → g ≤ʷ τ i → ¬ (g ≤ʷ u) → τ i ≤ʷ u ⊎ τ j ≤ʷ u → τ j ≤ʷ u
   second g≤ g≰ (inj₁ p) = ⊥-elim (g≰ (≤ʷ-trans g≤ p))
-  second _  _  (inj₂ p) = p
+  second _ _ (inj₂ p) = p
 ```
 
 The three readings follow the same plan.  The term's meet child is matched with
@@ -519,7 +565,8 @@ generator below the member the coordinate is about, so that member lies below
 it, and it lies below the upper end of the generator box.
 
 ```agda
-  -- The upper end at x, from the tree of b, whose matched node z ∧ x has the meetands z and x.
+  -- The upper end at x, from the tree of b, whose matched node z ∧ x has the
+  -- meetands z and x.
   τx≤ : τ 0F ≤ʷ hiᵍ 0F
   τx≤ = from-tree trunc-b
     where
@@ -527,23 +574,28 @@ it, and it lies below the upper end of the generator box.
     v₁ = ⌊ gens 3F (7F ∷ 2F ∷ []) ⌋ᴹ
     v₃ = ⌊ gens 4F (8F ∷ 0F ∷ []) ⌋ᴹ
 
-    from-match : Any (jmeet (mgen 2F) (mgen 0F ∷ []) ⊑ᴶ_) (asListJ (joinandsOf bᶜ)) → τ 0F ≤ʷ hiᵍ 0F
+    from-match : Any (jmeet (mgen 2F) (mgen 0F ∷ []) ⊑ᴶ_) (asListJ (joinandsOf bᶜ))
+      → τ 0F ≤ʷ hiᵍ 0F
     from-match (here ())
     from-match (there (here (jmeet⊑ (meet⊑ _ _ cut)))) =
-      ⊥-elim (neither {u = v₁} c₁≤τz a₁≤τx (from-no (c₁ ≤ʷ? v₁)) (from-no (a₁ ≤ʷ? v₁))
-                      (cut-of-two (cut (here refl))))
+      ⊥-elim (neither  {u = v₁} c₁≤τz a₁≤τx
+                       (from-no (c₁ ≤ʷ? v₁)) (from-no (a₁ ≤ʷ? v₁))
+                       (cut-of-two (cut (here refl))))
     from-match (there (there (here (jmeet⊑ (meet⊑ _ _ cut))))) =
-      ⊥-elim (neither {u = v₁} c₁≤τz a₁≤τx (from-no (c₁ ≤ʷ? v₁)) (from-no (a₁ ≤ʷ? v₁))
-                      (cut-of-two (cut (here refl))))
+      ⊥-elim (neither  {u = v₁} c₁≤τz a₁≤τx
+                       (from-no (c₁ ≤ʷ? v₁)) (from-no (a₁ ≤ʷ? v₁))
+                       (cut-of-two (cut (here refl))))
     from-match (there (there (there (here (jmeet⊑ (meet⊑ _ _ cut)))))) =
-      ≤ʷ-trans (second {u = v₃} c₁≤τz (from-no (c₁ ≤ʷ? v₃)) (cut-of-two (cut (here refl))))
-               (from-yes (v₃ ≤ʷ? hiᵍ 0F))
+      ≤ʷ-trans  (second  {u = v₃} c₁≤τz (from-no (c₁ ≤ʷ? v₃))
+                         (cut-of-two (cut (here refl))))
+                (from-yes (v₃ ≤ʷ? hiᵍ 0F))
     from-match (there (there (there (there ()))))
 
     from-tree : ρᶜ 1F ⊑ bᶜ → τ 0F ≤ʷ hiᵍ 0F
     from-tree (join⊑ _ matched _) = from-match (matched (there (here refl)))
 
-  -- The upper end at y, from the tree of c, whose matched node x ∧ y has the meetands x and y.
+  -- The upper end at y, from the tree of c, whose matched node x ∧ y has the
+  -- meetands x and y.
   τy≤ : τ 1F ≤ʷ hiᵍ 1F
   τy≤ = from-tree trunc-c
     where
@@ -551,23 +603,28 @@ it, and it lies below the upper end of the generator box.
     v₁ = ⌊ gens 6F (1F ∷ 5F ∷ []) ⌋ᴹ
     v₃ = ⌊ gens 7F (2F ∷ 3F ∷ []) ⌋ᴹ
 
-    from-match : Any (jmeet (mgen 0F) (mgen 1F ∷ []) ⊑ᴶ_) (asListJ (joinandsOf cᶜ)) → τ 1F ≤ʷ hiᵍ 1F
+    from-match : Any (jmeet (mgen 0F) (mgen 1F ∷ []) ⊑ᴶ_) (asListJ (joinandsOf cᶜ))
+      → τ 1F ≤ʷ hiᵍ 1F
     from-match (here ())
     from-match (there (here (jmeet⊑ (meet⊑ _ _ cut)))) =
-      ⊥-elim (neither {u = v₁} a₁≤τx b₁≤τy (from-no (a₁ ≤ʷ? v₁)) (from-no (b₁ ≤ʷ? v₁))
-                      (cut-of-two (cut (here refl))))
+      ⊥-elim (neither  {u = v₁} a₁≤τx b₁≤τy
+                       (from-no (a₁ ≤ʷ? v₁)) (from-no (b₁ ≤ʷ? v₁))
+                       (cut-of-two (cut (here refl))))
     from-match (there (there (here (jmeet⊑ (meet⊑ _ _ cut))))) =
-      ⊥-elim (neither {u = v₁} a₁≤τx b₁≤τy (from-no (a₁ ≤ʷ? v₁)) (from-no (b₁ ≤ʷ? v₁))
-                      (cut-of-two (cut (here refl))))
+      ⊥-elim (neither  {u = v₁} a₁≤τx b₁≤τy
+                       (from-no (a₁ ≤ʷ? v₁)) (from-no (b₁ ≤ʷ? v₁))
+                       (cut-of-two (cut (here refl))))
     from-match (there (there (there (here (jmeet⊑ (meet⊑ _ _ cut)))))) =
-      ≤ʷ-trans (second {u = v₃} a₁≤τx (from-no (a₁ ≤ʷ? v₃)) (cut-of-two (cut (here refl))))
-               (from-yes (v₃ ≤ʷ? hiᵍ 1F))
+      ≤ʷ-trans  (second  {u = v₃} a₁≤τx (from-no (a₁ ≤ʷ? v₃))
+                         (cut-of-two (cut (here refl))))
+                (from-yes (v₃ ≤ʷ? hiᵍ 1F))
     from-match (there (there (there (there ()))))
 
     from-tree : ρᶜ 2F ⊑ cᶜ → τ 1F ≤ʷ hiᵍ 1F
     from-tree (join⊑ _ matched _) = from-match (matched (there (here refl)))
 
-  -- The upper end at z, from the tree of a, whose matched node y ∧ z has the meetands y and z.
+  -- The upper end at z, from the tree of a, whose matched node y ∧ z has the
+  -- meetands y and z.
   τz≤ : τ 2F ≤ʷ hiᵍ 2F
   τz≤ = from-tree trunc-a
     where
@@ -575,23 +632,28 @@ it, and it lies below the upper end of the generator box.
     v₁ = ⌊ gens 0F (4F ∷ 8F ∷ []) ⌋ᴹ
     v₃ = ⌊ gens 1F (5F ∷ 6F ∷ []) ⌋ᴹ
 
-    from-match : Any (jmeet (mgen 1F) (mgen 2F ∷ []) ⊑ᴶ_) (asListJ (joinandsOf âᶜ)) → τ 2F ≤ʷ hiᵍ 2F
+    from-match : Any (jmeet (mgen 1F) (mgen 2F ∷ []) ⊑ᴶ_) (asListJ (joinandsOf âᶜ))
+      → τ 2F ≤ʷ hiᵍ 2F
     from-match (here ())
     from-match (there (here (jmeet⊑ (meet⊑ _ _ cut)))) =
-      ⊥-elim (neither {u = v₁} b₁≤τy c₁≤τz (from-no (b₁ ≤ʷ? v₁)) (from-no (c₁ ≤ʷ? v₁))
-                      (cut-of-two (cut (here refl))))
+      ⊥-elim (neither  {u = v₁} b₁≤τy c₁≤τz
+                       (from-no (b₁ ≤ʷ? v₁)) (from-no (c₁ ≤ʷ? v₁))
+                       (cut-of-two (cut (here refl))))
     from-match (there (there (here (jmeet⊑ (meet⊑ _ _ cut))))) =
-      ⊥-elim (neither {u = v₁} b₁≤τy c₁≤τz (from-no (b₁ ≤ʷ? v₁)) (from-no (c₁ ≤ʷ? v₁))
-                      (cut-of-two (cut (here refl))))
+      ⊥-elim (neither  {u = v₁} b₁≤τy c₁≤τz
+                       (from-no (b₁ ≤ʷ? v₁)) (from-no (c₁ ≤ʷ? v₁))
+                       (cut-of-two (cut (here refl))))
     from-match (there (there (there (here (jmeet⊑ (meet⊑ _ _ cut)))))) =
-      ≤ʷ-trans (second {u = v₃} b₁≤τy (from-no (b₁ ≤ʷ? v₃)) (cut-of-two (cut (here refl))))
-               (from-yes (v₃ ≤ʷ? hiᵍ 2F))
+      ≤ʷ-trans  (second  {u = v₃} b₁≤τy (from-no (b₁ ≤ʷ? v₃))
+                         (cut-of-two (cut (here refl))))
+                (from-yes (v₃ ≤ʷ? hiᵍ 2F))
     from-match (there (there (there (there ()))))
 
     from-tree : ρᶜ 0F ⊑ âᶜ → τ 2F ≤ʷ hiᵍ 2F
     from-tree (join⊑ _ matched _) = from-match (matched (there (here refl)))
 
-  -- Every triple expressing a, b, c by Freese's terms lies in the generator box.
+  -- Every triple expressing a, b, c by Freese's terms lies in the generator
+  -- box.
   freese-terms-in-box : InBox loᵍ hiᵍ τ
   freese-terms-in-box 0F = a₁≤τx , τx≤
   freese-terms-in-box 1F = b₁≤τy , τy≤
@@ -610,22 +672,30 @@ for at most one `k`.  The finiteness theorem says that some term recurs; this
 one cannot.
 
 ```agda
--- Two triples expressing a, b, c by Freese's terms, one inside the other's sublattice, are equal.
-freese-terms-once : (τ₁ τ₂ : Sub (Fin 3) (Fin 9)) → FreelyGenerates τ₁ → FreelyGenerates τ₂
-                  → (∀ i → abc i ≈ʷ ρ i [ τ₁ ]) → (∀ i → abc i ≈ʷ ρ i [ τ₂ ])
-                  → (q : Sub (Fin 3) (Fin 3)) → (∀ j → τ₁ j ≈ʷ q j [ τ₂ ]) → ∀ i → τ₁ i ≈ʷ τ₂ i
+-- Two triples expressing a, b, c by Freese's terms, one inside the other's
+-- sublattice, are equal.
+freese-terms-once : (τ₁ τ₂ : Sub (Fin 3) (Fin 9))
+  → FreelyGenerates τ₁ → FreelyGenerates τ₂
+  → (∀ i → abc i ≈ʷ ρ i [ τ₁ ]) → (∀ i → abc i ≈ʷ ρ i [ τ₂ ])
+  → (q : Sub (Fin 3) (Fin 3)) → (∀ j → τ₁ j ≈ʷ q j [ τ₂ ])
+  → ∀ i → τ₁ i ≈ʷ τ₂ i
 freese-terms-once τ₁ τ₂ free₁ free₂ e₁ e₂ q τ₁≈ i =
-  box-agree q τ₁≈ (freese-terms-in-box τ₁ (freelyGenerates→injective τ₁ free₁) e₁)
-                  (freese-terms-in-box τ₂ (freelyGenerates→injective τ₂ free₂) e₂)
-            i (generator-box-irredundant i)
+  box-agree  q τ₁≈
+             (freese-terms-in-box τ₁ (freelyGenerates→injective τ₁ free₁) e₁)
+             (freese-terms-in-box τ₂ (freelyGenerates→injective τ₂ free₂) e₂)
+             i (generator-box-irredundant i)
 
 -- No step has both of its triples express a, b, c by Freese's terms.
-no-step-with-freese-terms : (s : Step (Fin 9)) → (∀ i → abc i ≈ʷ ρ i [ Step.σ s ])
-                          → ¬ (∀ i → abc i ≈ʷ ρ i [ Step.τ s ])
+no-step-with-freese-terms : (s : Step (Fin 9))
+  → (∀ i → abc i ≈ʷ ρ i [ Step.σ s ]) → ¬ (∀ i → abc i ≈ʷ ρ i [ Step.τ s ])
 no-step-with-freese-terms s eσ eτ =
   no-step-in-irredundant-box s generator-box-irredundant
-    (freese-terms-in-box (Step.σ s) (freelyGenerates→injective (Step.σ s) (Step.σ-free s)) eσ)
-    (freese-terms-in-box (Step.τ s) (freelyGenerates→injective (Step.τ s) (Step.τ-free s)) eτ)
+    (freese-terms-in-box  (Step.σ s)
+                          (freelyGenerates→injective (Step.σ s) (Step.σ-free s))
+                          eσ)
+    (freese-terms-in-box  (Step.τ s)
+                          (freelyGenerates→injective (Step.τ s) (Step.τ-free s))
+                          eτ)
 ```
 
 --------------------------------------

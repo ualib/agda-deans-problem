@@ -84,35 +84,32 @@ module DeansProblem.Chain.Limit where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Nat.Base                          using ( ℕ ; suc )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Function                               using ( Func ; _∘_ )
-open import Level                                  using ( Level ; 0ℓ )
-open import Relation.Nullary                       using ( ¬_ )
-open import Relation.Unary                         using ( _⊆_ ; _≐_ ; ⋃ )
+open import Data.Fin.Base          using ( Fin )
+open import Data.Nat.Base          using ( ℕ ; suc )
+open import Data.Product           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
+open import Function               using ( Func ; _∘_ )
+open import Level                  using ( Level ; 0ℓ )
+open import Relation.Nullary       using ( ¬_ )
+open import Relation.Unary         using ( _⊆_ ; _≐_ ; ⋃ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Classical.Structures.Lattice.Basic     using ( Lattice )
-open import Setoid.Functions                       using ( IsInjective ; IsSurjective ; IsInRange
-                                                         ; IsInRange→IsInImage ; eq )
-open import Setoid.Homomorphisms.Basic             using ( hom )
-open import Setoid.Homomorphisms.Isomorphisms      using ( _≅_ )
-open import Setoid.Subalgebras.Basic               using ( _≤_ )
-open import Setoid.Subalgebras.Properties          using ( ≤-trans )
+-- Imports from agda-algebras ---------------------------------------------------
+open import Classical.Structures.Lattice  using  ( Lattice )
+open import Setoid.Functions              using  ( IsInjective ; IsSurjective ; eq
+                                                 ; IsInRange ; IsInRange→IsInImage )
+open import Setoid.Homomorphisms          using  ( hom ; _≅_ )
+open import Setoid.Subalgebras            using  ( _≤_ ; ≤-trans )
 
 -- Imports from agda-lattices ---------------------------------------------------
-open import Lattices.DirectLimit                   using ( DirectLimit ; ι∞ ; ι∞-cocone ; ι∞-embedding
-                                                         ; ι∞-range-step ; limit-extend-embedding )
-open import Lattices.DirectLimit.Union             using ( step ; step-commutes ; step-injective
-                                                         ; rangeUnion ; rangeUnion≅limit )
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import Lattices.Free.Term                     using ( LatTerm )
-open import Lattices.Free.Universal                using ( FL )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
+open import Lattices.DirectLimit        using  ( DirectLimit ; ι∞ ; ι∞-cocone
+                                               ; ι∞-embedding ; ι∞-range-step
+                                               ; limit-extend-embedding )
+open import Lattices.DirectLimit.Union  using  ( step ; step-commutes ; step-injective
+                                               ; rangeUnion ; rangeUnion≅limit )
+open import Lattices.Free               using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
+                                               ; LatTerm ; FL ; _≈ʷ_ )
 
--- Imports from this development ------------------------------------------------
-open import DeansProblem.Chain.Copies              using ( CopyChain ; copy ; copy-map )
+-- Imports from agda-deans-problem ----------------------------------------------
+open import DeansProblem.Chain.Copies using ( CopyChain ; copy ; copy-map )
 
 open Func using ( cong ) renaming ( to to _⟨$⟩_ )
 
@@ -158,7 +155,7 @@ module _ {X : Type χ} (c : CopyChain X) where
     → (∀ k a → copy-map c (suc k) (θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a)
     → ∀ k a → θ k .proj₁ ⟨$⟩ a ≈ʷ copy-θ k .proj₁ ⟨$⟩ a
   copy-θ-unique θ commutes k a =
-    proj₂ (φ (suc k)) (≈ʷ-trans (commutes k a) (≈ʷ-sym (copy-θ-commutes k a)))
+    φ (suc k) .proj₂ (≈ʷ-trans (commutes k a) (≈ʷ-sym (copy-θ-commutes k a)))
 
   -- Each θₖ is injective.
   copy-θ-injective : (k : ℕ) → IsInjective (copy-θ k .proj₁)
@@ -217,7 +214,8 @@ both limits, at a cost of ten seconds.
 
   -- The embedding sends ιₖ(a) to φₖ(a).
   copyLimit-ι : (k : ℕ) (a : LatTerm (Fin 3))
-    → copyLimit-embedding .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ copy-θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a
+    →  copyLimit-embedding .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ copy-θ k .proj₁ ⟨$⟩ a)
+       ≈ʷ copy-map c k a
   copyLimit-ι k a = ≈ʷ-refl
 
   -- Its image is the union of the copies.
@@ -226,7 +224,8 @@ both limits, at a cost of ten seconds.
 
   -- The union of the chain is the direct limit of the θₖ.
   copyUnion≅copyLimit : copyUnion .proj₁ ≅ copyLimit .proj₁
-  copyUnion≅copyLimit = rangeUnion≅limit FL₃ copy-θ (FL X) copy-hom copy-θ-commutes copy-injective
+  copyUnion≅copyLimit =
+    rangeUnion≅limit FL₃ copy-θ (FL X) copy-hom copy-θ-commutes copy-injective
 ```
 
 #### Proposition 4.2(b)
@@ -236,9 +235,11 @@ Fix self-embeddings `θ k` of `FL(3)`, injective and not onto, and an embedding
 `e ∘ ιₖ`.
 
 ```agda
-module _ {X : Type χ} (θ : (k : ℕ) → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁))
-         (proper : (k : ℕ) → IsInjective (θ k .proj₁) × ¬ IsSurjective (θ k .proj₁))
-         (e : DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁) where
+module _
+  {X       : Type χ}
+  (θ       : ∀ k → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁))
+  (proper  : ∀ k → IsInjective (θ k .proj₁) × ¬ IsSurjective (θ k .proj₁))
+  (e       : DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁) where
 
   -- Each θₖ is injective.
   limit-θ-injective : (k : ℕ) → IsInjective (θ k .proj₁)
@@ -250,8 +251,9 @@ module _ {X : Type χ} (θ : (k : ℕ) → hom (FL (Fin 3) .proj₁) (FL (Fin 3)
 
   -- Each copy lies in the next, since ιₖ = ιₖ₊₁ ∘ θₖ.
   limit-⊆ : (k : ℕ) → copy (limit-φ k) ⊆ copy (limit-φ (suc k))
-  limit-⊆ k (a , y≈) = θ k .proj₁ ⟨$⟩ a , ≈ʷ-trans ( cong  (e .proj₁ .proj₁)
-                                                           (ι∞-cocone FL₃ θ k a) ) y≈
+  limit-⊆ k (a , y≈) =
+    θ k .proj₁ ⟨$⟩ a , ≈ʷ-trans ( cong  (e .proj₁ .proj₁)
+                                        (ι∞-cocone FL₃ θ k a) ) y≈
 ```
 
 If the next copy lay in this one, every `w` would be in the image of `θₖ`.
@@ -264,7 +266,7 @@ If the next copy lay in this one, every `w` would be in the image of `θₖ`.
     -- Every w is θₖ(u) for some u.
     onto : IsSurjective (θ k .proj₁)
     onto {w} = let (u , eu) = ⊇ (w , ≈ʷ-refl) in
-      IsInRange→IsInImage (ι∞-range-step FL₃ θ limit-θ-injective k (u , proj₂ e eu))
+      IsInRange→IsInImage (ι∞-range-step FL₃ θ limit-θ-injective k (u , e .proj₂ eu))
 
   -- The images e(ιₖ(FL(3))) form a chain.
   limit→copyChain : CopyChain X
@@ -296,17 +298,17 @@ construction of the limit, at a cost of two seconds.
 --       the images e(ιₖ(FL(3))).
 Proposition-4·2 : Setω
 Proposition-4·2 = ∀ {χ} {X : Type χ}
-  → ((c : CopyChain X)
-     → Σ[ θ ∈ (∀ k → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁)) ]
-         (∀ k a → copy-map c (suc k) (θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a)
-       × (copyUnion c .proj₁ ≅ DirectLimit FL₃ θ .proj₁)
-       × Σ[ e ∈ DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁ ]
-           (∀ k a → e .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a))
-  × ((θ : ∀ k → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁))
-     → (∀ k → IsInjective (θ k .proj₁) × ¬ IsSurjective (θ k .proj₁))
-     → (e : DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁)
-     → Σ[ c ∈ CopyChain X ]
-         (∀ k a → copy-map c k a ≈ʷ e .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ θ k .proj₁ ⟨$⟩ a)))
+  → ( (c : CopyChain X)
+      → Σ[ θ ∈ (∀ k → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁)) ]
+        ( ∀ k a → copy-map c (suc k) (θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a)
+        × (copyUnion c .proj₁ ≅ DirectLimit FL₃ θ .proj₁)
+        × Σ[ e ∈ DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁ ]
+          (∀ k a → e .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ θ k .proj₁ ⟨$⟩ a) ≈ʷ copy-map c k a))
+    × ( (θ : ∀ k → hom (FL (Fin 3) .proj₁) (FL (Fin 3) .proj₁))
+        → (∀ k → IsInjective (θ k .proj₁) × ¬ IsSurjective (θ k .proj₁))
+        → (e : DirectLimit FL₃ θ .proj₁ ≤ FL X .proj₁)
+        → Σ[ c ∈ CopyChain X ]
+          (∀ k a → copy-map c k a ≈ʷ e .proj₁ .proj₁ ⟨$⟩ (ι∞ FL₃ θ k .proj₁ ⟨$⟩ a)))
 
 -- The proof of Proposition 4.2.
 proposition-4·2 : Proposition-4·2

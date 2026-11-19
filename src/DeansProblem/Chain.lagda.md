@@ -92,28 +92,23 @@ module DeansProblem.Chain where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ )
-open import Data.Product                           using ( Σ-syntax ; _,_ ; proj₁ )
-open import Level                                  using ( Level )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; subst
-                                                         ; subst₂ )
-open import Relation.Nullary                       using ( ¬_ )
+open import Data.Fin.Base     using ( Fin )
+open import Data.Nat.Base     using ( ℕ ; zero ; suc ; _+_ )
+open import Data.Product      using ( Σ-syntax ; _,_ ; proj₁ )
+open import Level             using ( Level )
+open import Relation.Nullary  using ( ¬_ )
+open import Relation.Binary.PropositionalEquality
+  using ( _≡_ ; refl ; sym ; trans ; cong ; subst ; subst₂ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-sym ; ≈ʷ-trans )
-open import Lattices.Free.Generation
-                                                   using ( FreelyGenerates
-                                                         ; freelyGenerates→injective
-                                                         ; injective→freelyGenerates
-                                                         ; free-generator-in-image )
-open import Lattices.Free.Substitution
-                                                   using ( Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong
-                                                         ; []-congʳ ; subst-hom ; ⨟-injective )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
-open import Setoid.Functions                       using ( IsInjective )
+-- Imports from agda-algebras -----------------------------------------------------
+open import Setoid.Functions  using ( IsInjective )
 
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-sym ; ≈ʷ-trans ; FreelyGenerates ; Sub ; _[_]
+                                 ; freelyGenerates→injective ; _⨟_ ; []-ℊ ; []-⨟
+                                 ; injective→freelyGenerates ; []-cong ; []-congʳ
+                                 ; free-generator-in-image ; subst-hom
+                                 ; ⨟-injective ; LatTerm ; ℊ ; _≈ʷ_ )
 private variable
   ι χ υ ζ : Level
   I : Type ι

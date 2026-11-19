@@ -146,62 +146,70 @@ module DeansProblem.Chain.Condition where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥ ; ⊥-elim )
-open import Data.Fin.Base                          using ( Fin ; zero ; suc ; punchOut )
-open import Data.Fin.Properties                    using ( _≟_ ; any? ; pigeonhole ; punchOut-injective )
-                                                   renaming ( <⇒≢ to <ᶠ⇒≢ )
-open import Data.List.Base                         using ( List ; [] ; _∷_ ; _++_ ; allFin ; length
-                                                         ; lookup ; deduplicate ; map )
-open import Data.List.Membership.Propositional     using ( _∈_ )
+open import Data.Empty                               using  ( ⊥ ; ⊥-elim )
+open import Data.Fin.Base                            using  ( Fin ; zero ; suc
+                                                            ; punchOut )
+open import Data.Fin.Properties                      using  ( _≟_ ; any? ; pigeonhole
+                                                            ; punchOut-injective )
+                                                     renaming ( <⇒≢ to <ᶠ⇒≢ )
+open import Data.List.Base                           using  ( List ; [] ; _∷_ ; _++_
+                                                            ; allFin ; length
+                                                            ; lookup ; deduplicate
+                                                            ; map )
+open import Data.List.Membership.Propositional       using  ( _∈_ )
 open import Data.List.Membership.Propositional.Properties
-                                                   using ( ∈-allFin ; ∈-++⁺ˡ ; ∈-++⁺ʳ ; ∈-++⁻
-                                                         ; ∈-lookup ; ∈-deduplicate⁺ )
-open import Data.List.Relation.Unary.AllPairs      using ( _∷_ )
-open import Data.List.Relation.Unary.Any           using ( Any ; here ; index )
-open import Data.List.Relation.Unary.Any.Properties
-                                                   using ( map⁺ ; lookup-index )
+                                                     using  ( ∈-allFin ; ∈-++⁺ˡ
+                                                            ; ∈-++⁺ʳ ; ∈-++⁻
+                                                            ; ∈-lookup
+                                                            ; ∈-deduplicate⁺ )
+open import Data.List.Relation.Unary.AllPairs        using  ( _∷_ )
+open import Data.List.Relation.Unary.Any             using  ( Any ; here ; index )
+open import Data.List.Relation.Unary.Any.Properties  using  ( map⁺ ; lookup-index )
 open import Data.List.Relation.Unary.Unique.Propositional
-                                                   using ( Unique )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _*_ ; _≤_ ; _<_ ; z≤n
-                                                         ; s≤s )
-open import Data.Nat.Properties                    using ( ≤-refl ; ≤-trans ; ≤-reflexive ; <⇒≤
-                                                         ; +-comm ; +-suc ; +-identityʳ ; *-suc
-                                                         ; m≤n⇒∃[o]m+o≡n ; n<1+n )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum                               using ( [_,_]′ )
-open import Function                               using ( _∘_ ; _⇔_ ; mk⇔ )
-open import Level                                  using ( Level ; _⊔_ )
-open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; _≢_ ; refl ; sym ; trans ; cong ; cong₂
-                                                         ; subst ; subst₂ )
-open import Relation.Nullary                       using ( ¬_ ; Dec ; yes ; no )
-open import Relation.Unary                         using ( Pred ; _⊆_ ; _⊂_ ; _≐_ )
+                                                     using  ( Unique )
+open import Data.Nat.Base                            using  ( ℕ ; zero ; suc ; _+_
+                                                            ; _*_ ; _≤_ ; _<_ ; z≤n
+                                                            ; s≤s )
+open import Data.Nat.Properties                      using  ( ≤-refl ; ≤-trans
+                                                            ; ≤-reflexive ; <⇒≤
+                                                            ; +-comm ; +-suc
+                                                            ; +-identityʳ ; *-suc
+                                                            ; m≤n⇒∃[o]m+o≡n ; n<1+n )
+open import Data.Product                             using  ( Σ-syntax ; _×_ ; _,_
+                                                            ; proj₁ ; proj₂ )
+open import Data.Sum                                 using  ( [_,_]′ )
+open import Function                                 using  ( _∘_ ; _⇔_ ; mk⇔ )
+open import Level                                    using  ( Level ; _⊔_ )
+open import Relation.Binary.Definitions              using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality    using  ( _≡_ ; _≢_ ; refl ; sym
+                                                            ; trans ; cong ; cong₂
+                                                            ; subst ; subst₂ )
+open import Relation.Nullary                         using  ( ¬_ ; Dec ; yes ; no )
+open import Relation.Unary                           using  ( Pred ; _⊆_ ; _⊂_ ; _≐_ )
 
 import Data.List.Relation.Unary.All as All
 import Data.List.Relation.Unary.Any as Any
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Step ; module Step ; Chain ; module Chain ; fresh∉⟨σ⟩ ; iter
-                                                         ; []-iter-suc ; []-iter-sucʳ )
-open import DeansProblem.Chain.Copies              using ( CopyChain ; copyChain→chain ; copy
-                                                         ; ≤→freelyGenerates )
-open import Lattices.Free.Complexity               using ( complexity ; complexity-resp
-                                                         ; complexity-mono ; module Bounded
-                                                         ; pigeonhole-≈ )
-open import Lattices.Free.Generation               using ( FreelyGenerates
-                                                         ; freelyGenerates→injective
-                                                         ; freelyGenerates-reindex
-                                                         ; freelyGenerates-resp
-                                                         ; free-generator-in-image )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong
-                                                         ; []-congʳ ; subst-hom ; restriction
-                                                         ; hom-induced )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Universal                using ( FL ; ℊ-injective )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
-open import Setoid.Functions                       using ( IsInjective )
-open import Setoid.Subalgebras.Basic               using ( _IsSubalgebraOf_ )
+-- Imports from agda-algebras ------------------------------------------------------
+open import Setoid.Functions               using  ( IsInjective )
+open import Setoid.Subalgebras.Basic       using  ( _IsSubalgebraOf_ )
+
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; complexity
+                                  ; complexity-resp ; complexity-mono
+                                  ; module Bounded ; pigeonhole-≈ ; FreelyGenerates
+                                  ; freelyGenerates→injective ; freelyGenerates-reindex
+                                  ; freelyGenerates-resp ; free-generator-in-image
+                                  ; Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong ; _≈ʷ_
+                                  ; []-congʳ ; subst-hom ; restriction ; hom-induced
+                                  ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; FL ; ℊ-injective )
+
+-- Imports from agda-deans-problem -------------------------------------------------
+open import DeansProblem.Chain         using  ( module Chain ; module Step ; Step
+                                              ; Chain ; fresh∉⟨σ⟩ ; iter
+                                              ; []-iter-suc ; []-iter-sucʳ )
+open import DeansProblem.Chain.Copies  using  ( CopyChain ; copyChain→chain
+                                              ; copy ; ≤→freelyGenerates )
 
 private variable
   ι κ χ υ : Level
@@ -248,14 +256,14 @@ containment is containment of the generators (`⊆⇔gens`{.AgdaFunction}).
 -- A sublattice lies in another as soon as its generators do.
 gens⊆ : {σ : Sub I X} {τ : Sub J X} → (∀ i → ⟨ τ ⟩ (σ i)) → ⟨ σ ⟩ ⊆ ⟨ τ ⟩
 gens⊆ {σ = σ} {τ} g (t , e) =
-  t [ p ] , subst (_≈ʷ _) ([]-⨟ t p τ) (≈ʷ-trans ([]-congʳ t (λ i → proj₂ (g i))) e)
+  t [ p ] , subst (_≈ʷ _) ([]-⨟ t p τ) (≈ʷ-trans ([]-congʳ t (λ i → g i .proj₂)) e)
   where
   -- The term expressing each generator of σ in τ.
   p : Sub _ _
-  p i = proj₁ (g i)
+  p i = g i .proj₁
 
 -- Containment is containment of the generators.
-⊆⇔gens : {σ : Sub I X} {τ : Sub J X} → (⟨ σ ⟩ ⊆ ⟨ τ ⟩) ⇔ (∀ i → ⟨ τ ⟩ (σ i))
+⊆⇔gens : {σ : Sub I X} {τ : Sub J X} →  ⟨ σ ⟩ ⊆ ⟨ τ ⟩  ⇔  (∀ i → ⟨ τ ⟩ (σ i))
 ⊆⇔gens {σ = σ} = mk⇔ (λ h i → h (gen∈ σ i)) gens⊆
 ```
 
@@ -266,10 +274,12 @@ image under `Φ` of the value of `t` at `σ`, and conversely.
 ```agda
 -- The image of ⟨ σ ⟩ under substitution by Φ is ⟨ σ ⨟ Φ ⟩.
 image⇔ : (σ : Sub I X) (Φ : Sub X Y) {w : LatTerm Y}
-       → ⟨ σ ⨟ Φ ⟩ w ⇔ (Σ[ v ∈ LatTerm X ] ⟨ σ ⟩ v × v [ Φ ] ≈ʷ w)
-image⇔ σ Φ = mk⇔ (λ (t , e) → t [ σ ] , (t , ≈ʷ-refl) , subst (_≈ʷ _) ([]-⨟ t σ Φ) e)
-                 (λ (v , (t , e) , e') →
-                    t , subst (_≈ʷ _) (sym ([]-⨟ t σ Φ)) (≈ʷ-trans ([]-cong Φ e) e'))
+  → ⟨ σ ⨟ Φ ⟩ w  ⇔  (Σ[ v ∈ LatTerm X ] ⟨ σ ⟩ v × v [ Φ ] ≈ʷ w)
+image⇔ σ Φ =
+  mk⇔  ( λ (t , e) → t [ σ ] , (t , ≈ʷ-refl) , subst (_≈ʷ _) ([]-⨟ t σ Φ) e )
+       ( λ (v , (t , e) , e') → t , subst  (_≈ʷ _)
+                                           (sym ([]-⨟ t σ Φ))
+                                           (≈ʷ-trans ([]-cong Φ e) e') )
 ```
 
 #### Chains and the chain condition
@@ -297,7 +307,7 @@ module _ (c : Ascending n X) where
 
   -- Each link lies in every later one.
   ascends-≤ : ∀ {j k} → j ≤ k → ⟨ links j ⟩ ⊆ ⟨ links k ⟩
-  ascends-≤ {j} {k} j≤k {w} p =
+  ascends-≤ {j} j≤k {w} p =
     let (d , j+d≡k) = m≤n⇒∃[o]m+o≡n j≤k
     in subst (λ i → ⟨ links i ⟩ w) (trans (+-comm d j) j+d≡k) (ascends-+ j d p)
 
@@ -325,10 +335,11 @@ record StrictlyAscending (n : ℕ) (X : Type χ) : Type χ where
 strict→ascending : StrictlyAscending n X → Ascending n X
 strict→ascending c = record
   { links    = StrictlyAscending.links c
-  ; ascends  = λ k → proj₁ (StrictlyAscending.ascends c k)
+  ; ascends  = λ k → StrictlyAscending.ascends c k .proj₁
   }
 
--- The chain condition for n-generated sublattices of FL(X): no strictly ascending chain.
+-- The chain condition for n-generated sublattices of FL(X): no strictly
+-- ascending chain.
 ChainCondition : ℕ → Type χ → Type χ
 ChainCondition n X = ¬ StrictlyAscending n X
 
@@ -336,7 +347,7 @@ ChainCondition n X = ¬ StrictlyAscending n X
 stabilizes→chainCondition : ((c : Ascending n X) → Stabilizes c) → ChainCondition n X
 stabilizes→chainCondition every c =
   let (N , st) = every (strict→ascending c)
-  in proj₂ (StrictlyAscending.ascends c N) (st N ≤-refl)
+  in StrictlyAscending.ascends c N .proj₂ (st N ≤-refl)
 ```
 
 #### Chains of copies of FL(3) are chains
@@ -366,8 +377,8 @@ chain→strict c = record
 
 -- A step is a strict containment of generated sublattices.
 step→⊂ : (s : Step X) → ⟨ Step.σ s ⟩ ⊂ ⟨ Step.τ s ⟩
-step→⊂ s =  gens⊆ (λ i → Step.p s i , ≈ʷ-sym (Step.σ≈p[τ] s i))
-          , λ ⊇ → let (t , e) = ⊇ (gen∈ (Step.τ s) (Step.fresh s)) in fresh∉⟨σ⟩ s t e
+step→⊂ s =  gens⊆ (λ i → Step.p s i , ≈ʷ-sym (Step.σ≈p[τ] s i)) ,
+            λ ⊇ → let (t , e) = ⊇ (gen∈ (Step.τ s) (Step.fresh s)) in fresh∉⟨σ⟩ s t e
 
 -- A chain of copies of FL(3) is a strictly ascending chain of 3-generated sublattices.
 copyChain→strict : CopyChain X → StrictlyAscending 3 X
@@ -377,7 +388,8 @@ copyChain→strict c = chain→strict (copyChain→chain c)
 chainCondition→no-chain : ChainCondition 3 X → ¬ Chain X
 chainCondition→no-chain cc c = cc (chain→strict c)
 
--- The chain condition for 3-generated sublattices excludes every chain of copies of FL(3).
+-- The chain condition for 3-generated sublattices excludes every chain of copies
+-- of FL(3).
 chainCondition→no-copy-chain : ChainCondition 3 X → ¬ CopyChain X
 chainCondition→no-copy-chain cc c = cc (copyChain→strict c)
 ```
@@ -392,12 +404,17 @@ equal to a member.  The module `Orbit`{.AgdaModule} runs the argument at the
 top of this module under these hypotheses.
 
 ```agda
-module Orbit {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (Fin n) X)
-             (cover : (B : ℕ) → Σ[ L ∈ List (LatTerm X) ]
-                        ((t : LatTerm (Fin n)) → complexity _≟ˣ_ (t [ σ ]) ≤ B
-                                               → Any (t [ σ ] ≈ʷ_) L))
-             (Φ : Sub X X) (Φ-inj : IsInjective (subst-hom Φ .proj₁))
-             (σ⊆Φσ : ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩) where
+module Orbit
+  {X      : Type χ}
+  (_≟ˣ_   : DecidableEquality X)
+  {n      : ℕ}
+  (σ      : Sub (Fin n) X)
+  (cover  : ∀ B → Σ[ L ∈ List (LatTerm X) ]
+                  ( ∀ t → complexity _≟ˣ_ (t [ σ ]) ≤ B → Any (t [ σ ] ≈ʷ_) L))
+  (Φ      : Sub X X)
+  (Φ-inj  : IsInjective (subst-hom Φ .proj₁))
+  (σ⊆Φσ   : ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩)
+  where
 
   private
     -- Complexity in FL(X).
@@ -406,15 +423,17 @@ module Orbit {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (
 
   -- The terms expressing each generator in the image: σ i ≈ θ i [ σ ⨟ Φ ].
   θ : Sub (Fin n) (Fin n)
-  θ i = proj₁ (σ⊆Φσ (gen∈ σ i))
+  θ i = σ⊆Φσ (gen∈ σ i) .proj₁
 
   -- The defining equation of θ.
   θ≈ : ∀ i → θ i [ σ ⨟ Φ ] ≈ʷ σ i
-  θ≈ i = proj₂ (σ⊆Φσ (gen∈ σ i))
+  θ≈ i = σ⊆Φσ (gen∈ σ i) .proj₂
 
   -- Applying θ, then σ, then Φ, is applying σ.
   turn : (w : LatTerm (Fin n)) → w [ θ ] [ σ ] [ Φ ] ≈ʷ w [ σ ]
-  turn w = subst (_≈ʷ w [ σ ]) (trans ([]-⨟ w θ (σ ⨟ Φ)) ([]-⨟ (w [ θ ]) σ Φ)) ([]-congʳ w θ≈)
+  turn w = subst  (_≈ʷ w [ σ ])
+                  (trans ([]-⨟ w θ (σ ⨟ Φ)) ([]-⨟ (w [ θ ]) σ Φ))
+                  ([]-congʳ w θ≈)
 
   -- The orbit of the j-th generator: θᵏ(xⱼ) evaluated at σ, an element of ⟨ σ ⟩.
   orbit : Fin n → ℕ → LatTerm X
@@ -422,14 +441,17 @@ module Orbit {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (
 
   -- Φ steps the orbit back by one.
   back : ∀ j k → orbit j (suc k) [ Φ ] ≈ʷ orbit j k
-  back j k = subst (λ v → v [ σ ] [ Φ ] ≈ʷ orbit j k) (sym ([]-iter-sucʳ (ℊ j) θ k))
-                   (turn (iter θ k j))
+  back j k = subst  (λ v → v [ σ ] [ Φ ] ≈ʷ orbit j k)
+                    (sym ([]-iter-sucʳ (ℊ j) θ k))
+                    (turn (iter θ k j))
 
   -- The d-th iterate of Φ steps the orbit back by d.
   back-by : ∀ j d k → orbit j (d + k) [ iter Φ d ] ≈ʷ orbit j k
-  back-by j zero     k = ≡→≈ʷ ([]-ℊ (orbit j k))
-  back-by j (suc d)  k = subst (_≈ʷ orbit j k) (sym ([]-iter-suc (orbit j (suc (d + k))) Φ d))
-                               (≈ʷ-trans ([]-cong (iter Φ d) (back j (d + k))) (back-by j d k))
+  back-by j zero k = ≡→≈ʷ ([]-ℊ (orbit j k))
+  back-by j (suc d) k =
+    subst  (_≈ʷ orbit j k)
+           (sym ([]-iter-suc (orbit j (suc (d + k))) Φ d))
+           (≈ʷ-trans ([]-cong (iter Φ d) (back j (d + k))) (back-by j d k))
 ```
 
 Along the orbit, complexity never rises above that of the generator
@@ -441,10 +463,11 @@ lies in the cover at the bound `c(gⱼ)`, and repeats
 ```agda
   -- The orbit has at most the complexity of the generator.
   orbit-bound : ∀ j k → c (orbit j k) ≤ c (σ j)
-  orbit-bound j zero     = ≤-refl
-  orbit-bound j (suc k)  =
-    ≤-trans (complexity-mono _≟ˣ_ _≟ˣ_ Φ Φ-inj (orbit j (suc k)))
-            (≤-trans (≤-reflexive (complexity-resp _≟ˣ_ (back j k))) (orbit-bound j k))
+  orbit-bound j zero = ≤-refl
+  orbit-bound j (suc k) =
+    ≤-trans  (complexity-mono _≟ˣ_ _≟ˣ_ Φ Φ-inj (orbit j (suc k)))
+             (≤-trans  (≤-reflexive (complexity-resp _≟ˣ_ (back j k)))
+                       (orbit-bound j k))
 
   -- The orbit repeats.
   orbit-repeats : ∀ j → Σ[ a ∈ ℕ ] Σ[ b ∈ ℕ ] a < b × orbit j a ≈ʷ orbit j b
@@ -464,25 +487,29 @@ A repeat `mₐ ≈ m_b`, with `b = a + (1 + o)`, puts `gⱼ` at `m_(1+o)` (`gen�
   image-gen j = iter θ o j , ≈ʷ-sym (≈ʷ-trans ([]-cong Φ gen≈) (back j o))
     where
     a b o : ℕ
-    a = proj₁ (orbit-repeats j)
-    b = proj₁ (proj₂ (orbit-repeats j))
-    o = proj₁ (m≤n⇒∃[o]m+o≡n (proj₁ (proj₂ (proj₂ (orbit-repeats j)))))
+    a = orbit-repeats j .proj₁
+    b = orbit-repeats j .proj₂ .proj₁
+    o = m≤n⇒∃[o]m+o≡n (orbit-repeats j .proj₂ .proj₂ .proj₁) .proj₁
 
     -- The repeat.
     ma≈mb : orbit j a ≈ʷ orbit j b
-    ma≈mb = proj₂ (proj₂ (proj₂ (orbit-repeats j)))
+    ma≈mb = orbit-repeats j .proj₂ .proj₂ .proj₂
 
     -- b is a + (1 + o).
     b≡ : b ≡ a + suc o
-    b≡ = trans (sym (proj₂ (m≤n⇒∃[o]m+o≡n (proj₁ (proj₂ (proj₂ (orbit-repeats j)))))))
+    b≡ = trans (sym (m≤n⇒∃[o]m+o≡n (orbit-repeats j .proj₂ .proj₂ .proj₁) .proj₂))
                (sym (+-suc a o))
 
     -- The generator is the (1 + o)-th element of its orbit.
     gen≈ : σ j ≈ʷ orbit j (suc o)
     gen≈ =
-      ≈ʷ-trans (≈ʷ-sym (subst (λ i → orbit j i [ iter Φ a ] ≈ʷ σ j) (+-identityʳ a) (back-by j a 0)))
-        (≈ʷ-trans ([]-cong (iter Φ a) ma≈mb)
-          (subst (λ i → orbit j i [ iter Φ a ] ≈ʷ orbit j (suc o)) (sym b≡) (back-by j a (suc o))))
+      ≈ʷ-trans ( ≈ʷ-sym ( subst  (λ i → orbit j i [ iter Φ a ] ≈ʷ σ j)
+                                 (+-identityʳ a)
+                                 (back-by j a 0) ) )
+               ( ≈ʷ-trans  ([]-cong (iter Φ a) ma≈mb)
+                           ( subst (λ i → orbit j i [ iter Φ a ] ≈ʷ orbit j (suc o))
+                                   (sym b≡)
+                                   (back-by j a (suc o)) ) )
 
   -- Φ maps ⟨ σ ⟩ into itself.
   image⊆ : ⟨ σ ⨟ Φ ⟩ ⊆ ⟨ σ ⟩
@@ -507,44 +534,45 @@ the `i`-th generator is `i` (`position-lookup`{.AgdaFunction}), so `ρ` undoes
 ```agda
 -- The generators occurring in a term, from left to right.
 vars : LatTerm X → List X
-vars (ℊ x)    = x ∷ []
-vars (s ∧̇ t)  = vars s ++ vars t
-vars (s ∨̇ t)  = vars s ++ vars t
+vars (ℊ x) = x ∷ []
+vars (s ∧̇ t) = vars s ++ vars t
+vars (s ∨̇ t) = vars s ++ vars t
 
 -- The generators occurring in a family of n terms.
 varsᶠ : (n : ℕ) → Sub (Fin n) X → List X
-varsᶠ zero     σ = []
-varsᶠ (suc n)  σ = vars (σ zero) ++ varsᶠ n (σ ∘ suc)
+varsᶠ zero σ = []
+varsᶠ (suc n) σ = vars (σ zero) ++ varsᶠ n (σ ∘ suc)
 
 -- A generator of a member of the family occurs in the family.
 ∈varsᶠ : (σ : Sub (Fin n) X) (i : Fin n) {x : X} → x ∈ vars (σ i) → x ∈ varsᶠ n σ
-∈varsᶠ σ zero     p = ∈-++⁺ˡ p
-∈varsᶠ σ (suc i)  p = ∈-++⁺ʳ (vars (σ zero)) (∈varsᶠ (σ ∘ suc) i p)
+∈varsᶠ σ zero p = ∈-++⁺ˡ p
+∈varsᶠ σ (suc i) p = ∈-++⁺ʳ (vars (σ zero)) (∈varsᶠ (σ ∘ suc) i p)
 
 -- A generator of a value t [ σ ] occurs in some member of σ.
 vars-[] : (σ : Sub I X) (t : LatTerm I) {x : X} → x ∈ vars (t [ σ ]) → Σ[ i ∈ I ] x ∈ vars (σ i)
-vars-[] σ (ℊ i)    p = i , p
-vars-[] σ (s ∧̇ t)  p = [ vars-[] σ s , vars-[] σ t ]′ (∈-++⁻ (vars (s [ σ ])) p)
-vars-[] σ (s ∨̇ t)  p = [ vars-[] σ s , vars-[] σ t ]′ (∈-++⁻ (vars (s [ σ ])) p)
+vars-[] σ (ℊ i) p = i , p
+vars-[] σ (s ∧̇ t) p = [ vars-[] σ s , vars-[] σ t ]′ (∈-++⁻ (vars (s [ σ ])) p)
+vars-[] σ (s ∨̇ t) p = [ vars-[] σ s , vars-[] σ t ]′ (∈-++⁻ (vars (s [ σ ])) p)
 
 -- The leftmost generator of a term.
 first : LatTerm X → X
-first (ℊ x)    = x
-first (s ∧̇ _)  = first s
-first (s ∨̇ _)  = first s
+first (ℊ x) = x
+first (s ∧̇ _) = first s
+first (s ∨̇ _) = first s
 
 -- The leftmost generator occurs in the term.
 first∈ : (t : LatTerm X) → first t ∈ vars t
-first∈ (ℊ x)    = here refl
-first∈ (s ∧̇ _)  = ∈-++⁺ˡ (first∈ s)
-first∈ (s ∨̇ _)  = ∈-++⁺ˡ (first∈ s)
+first∈ (ℊ x) = here refl
+first∈ (s ∧̇ _) = ∈-++⁺ˡ (first∈ s)
+first∈ (s ∨̇ _) = ∈-++⁺ˡ (first∈ s)
 
 -- In a list without repetitions, lookup is injective.
-lookup-injective : {xs : List X} → Unique xs → ∀ i j → lookup xs i ≡ lookup xs j → i ≡ j
-lookup-injective (_ ∷ _)   zero     zero     _ = refl
-lookup-injective (x≢ ∷ _)  zero     (suc j)  e = ⊥-elim (All.lookup x≢ (∈-lookup j) e)
-lookup-injective (x≢ ∷ _)  (suc i)  zero     e = ⊥-elim (All.lookup x≢ (∈-lookup i) (sym e))
-lookup-injective (_ ∷ u)   (suc i)  (suc j)  e = cong suc (lookup-injective u i j e)
+lookup-injective : {xs : List X}
+  → Unique xs → ∀ i j → lookup xs i ≡ lookup xs j → i ≡ j
+lookup-injective (_ ∷ _) zero zero _ = refl
+lookup-injective (x≢ ∷ _) zero (suc j) e = ⊥-elim (All.lookup x≢ (∈-lookup j) e)
+lookup-injective (x≢ ∷ _) (suc i) zero e = ⊥-elim (All.lookup x≢ (∈-lookup i) (sym e))
+lookup-injective (_ ∷ u) (suc i) (suc j) e = cong suc (lookup-injective u i j e)
 
 -- There is no lattice term over no generators.
 no-term : LatTerm (Fin 0) → ⊥
@@ -552,7 +580,12 @@ no-term (ℊ ())
 no-term (s ∧̇ _)  = no-term s
 no-term (s ∨̇ _)  = no-term s
 
-module Local {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (Fin (suc n)) X) where
+module Local
+  {X     : Type χ}
+  (_≟ˣ_  : DecidableEquality X)
+  {n     : ℕ}
+  (σ     : Sub (Fin (suc n)) X)
+  where
   open import Data.List.Membership.DecPropositional _≟ˣ_ using ( _∈?_ )
   open import Data.List.Relation.Unary.Unique.DecPropositional.Properties _≟ˣ_
     using ( deduplicate-! )
@@ -575,13 +608,14 @@ module Local {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (
 
   -- The position a decision of membership finds, or the default.
   position : {x : X} → Dec (x ∈ gens) → Fin r
-  position (yes p)  = index p
-  position (no _)   = default
+  position (yes p) = index p
+  position (no _) = default
 
   -- A generator in the list sits at the position found for it.
-  position-sound : {x : X} (d : Dec (x ∈ gens)) → x ∈ gens → lookup gens (position d) ≡ x
-  position-sound (yes p)   _ = sym (lookup-index p)
-  position-sound (no ∉gs)  p = ⊥-elim (∉gs p)
+  position-sound : {x : X} (d : Dec (x ∈ gens))
+    → x ∈ gens → lookup gens (position d) ≡ x
+  position-sound (yes p) _ = sym (lookup-index p)
+  position-sound (no ∉gs) p = ⊥-elim (∉gs p)
 
   -- The position found for the i-th generator is i.
   position-lookup : (i : Fin r) (d : Dec (lookup gens i ∈ gens)) → position d ≡ i
@@ -599,14 +633,21 @@ module Local {X : Type χ} (_≟ˣ_ : DecidableEquality X) {n : ℕ} (σ : Sub (
 
   -- Localizing a term over gens and reading it back returns it.
   ρν : (t : LatTerm X) → (∀ {x} → x ∈ vars t → x ∈ gens) → t [ ρ ] [ ν ] ≡ t
-  ρν (ℊ x)    h = cong ℊ (position-sound (x ∈? gens) (h (here refl)))
-  ρν (s ∧̇ t)  h = cong₂ _∧̇_ (ρν s (λ p → h (∈-++⁺ˡ p))) (ρν t (λ p → h (∈-++⁺ʳ (vars s) p)))
-  ρν (s ∨̇ t)  h = cong₂ _∨̇_ (ρν s (λ p → h (∈-++⁺ˡ p))) (ρν t (λ p → h (∈-++⁺ʳ (vars s) p)))
+  ρν (ℊ x) h = cong ℊ (position-sound (x ∈? gens) (h (here refl)))
+  ρν (s ∧̇ t) h = cong₂  _∧̇_
+                        (ρν s (λ p → h (∈-++⁺ˡ p)))
+                        (ρν t (λ p → h (∈-++⁺ʳ (vars s) p)))
+  ρν (s ∨̇ t) h = cong₂  _∨̇_
+                        (ρν s (λ p → h (∈-++⁺ˡ p)))
+                        (ρν t (λ p → h (∈-++⁺ʳ (vars s) p)))
 
   -- Reading back and localizing returns the term, up to equality.
   νρ : (s : LatTerm (Fin r)) → s [ ν ] [ ρ ] ≈ʷ s
-  νρ s = subst₂ _≈ʷ_ ([]-⨟ s ν ρ) ([]-ℊ s)
-                ([]-congʳ s (λ i → ≡→≈ʷ (cong ℊ (position-lookup i (lookup gens i ∈? gens)))))
+  νρ s =
+    subst₂  _≈ʷ_
+            ([]-⨟ s ν ρ)
+            ([]-ℊ s)
+            ([]-congʳ s λ i → ≡→≈ʷ (cong  ℊ (position-lookup i (lookup gens i ∈? gens))))
 
   -- Reading back is injective.
   ν-inj : IsInjective (subst-hom ν .proj₁)
@@ -625,13 +666,13 @@ cover that `Orbit`{.AgdaModule} asks for (`cover`{.AgdaFunction}).
 
   -- The elements of FL(r) of complexity at most B, read back, cover those of ⟨ σ ⟩.
   cover : (B : ℕ) → Σ[ L ∈ List (LatTerm X) ]
-            ((t : LatTerm (Fin (suc n))) → complexity _≟ˣ_ (t [ σ ]) ≤ B → Any (t [ σ ] ≈ʷ_) L)
+                      (∀ t → complexity _≟ˣ_ (t [ σ ]) ≤ B → Any (t [ σ ] ≈ʷ_) L)
   cover B = map (_[ ν ]) (bounded B) , covers
     where
     covers : (t : LatTerm (Fin (suc n))) → complexity _≟ˣ_ (t [ σ ]) ≤ B
-           → Any (t [ σ ] ≈ʷ_) (map (_[ ν ]) (bounded B))
-    covers t b = map⁺ (Any.map (λ e → subst (_≈ʷ _) round ([]-cong ν e))
-                               (bounded-complete B (t [ σ ] [ ρ ]) local-bound))
+      → Any (t [ σ ] ≈ʷ_) (map (_[ ν ]) (bounded B))
+    covers t b = map⁺ (Any.map  (λ e → subst (_≈ʷ _) round ([]-cong ν e))
+                                (bounded-complete B (t [ σ ] [ ρ ]) local-bound))
       where
       -- The localization reads back to the element.
       round : t [ σ ] [ ρ ] [ ν ] ≡ t [ σ ]
@@ -639,8 +680,8 @@ cover that `Orbit`{.AgdaModule} asks for (`cover`{.AgdaFunction}).
 
       -- The localization has complexity at most B.
       local-bound : complexity _≟_ (t [ σ ] [ ρ ]) ≤ B
-      local-bound = ≤-trans (complexity-mono _≟_ _≟ˣ_ ν ν-inj (t [ σ ] [ ρ ]))
-                            (subst (_≤ B) (cong (complexity _≟ˣ_) (sym round)) b)
+      local-bound = ≤-trans  (complexity-mono _≟_ _≟ˣ_ ν ν-inj (t [ σ ] [ ρ ]))
+                             (subst (_≤ B) (cong (complexity _≟ˣ_) (sym round)) b)
 ```
 
 #### Theorem A
@@ -655,15 +696,17 @@ canonical forms and so complexities.
 
 ```agda
 -- Theorem A: an injective Φ whose image of ⟨ σ ⟩ contains ⟨ σ ⟩ maps ⟨ σ ⟩ into itself.
-generated-onto : {X : Type χ} → DecidableEquality X → {n : ℕ} (σ : Sub (Fin n) X)
-               → (Φ : Sub X X) → FreelyGenerates Φ → ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ σ ⨟ Φ ⟩ ⊆ ⟨ σ ⟩
+generated-onto : {X : Type χ} → DecidableEquality X
+  → {n : ℕ} (σ : Sub (Fin n) X) (Φ : Sub X X)
+  → FreelyGenerates Φ → ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ σ ⨟ Φ ⟩ ⊆ ⟨ σ ⟩
 generated-onto _≟ˣ_ {zero}   σ Φ Φ-free σ⊆Φσ (t , _) = ⊥-elim (no-term t)
 generated-onto _≟ˣ_ {suc n}  σ Φ Φ-free σ⊆Φσ =
   Orbit.image⊆ _≟ˣ_ σ (Local.cover _≟ˣ_ σ) Φ (freelyGenerates→injective Φ Φ-free) σ⊆Φσ
 
 -- Theorem A, as the paper states it: Φ(L) = L.
-generated-onto≐ : {X : Type χ} → DecidableEquality X → {n : ℕ} (σ : Sub (Fin n) X)
-                → (Φ : Sub X X) → FreelyGenerates Φ → ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ σ ⨟ Φ ⟩ ≐ ⟨ σ ⟩
+generated-onto≐ : {X : Type χ} → DecidableEquality X
+  → {n : ℕ} (σ : Sub (Fin n) X) (Φ : Sub X X)
+  → FreelyGenerates Φ → ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ σ ⨟ Φ ⟩ ≐ ⟨ σ ⟩
 generated-onto≐ _≟ˣ_ σ Φ Φ-free σ⊆Φσ = generated-onto _≟ˣ_ σ Φ Φ-free σ⊆Φσ , σ⊆Φσ
 ```
 
@@ -679,8 +722,10 @@ needs.
 -- Theorem A: an injective endomorphism that maps a finitely generated sublattice L onto a
 -- superset of L maps it onto L.
 Theorem-A : Setω
-Theorem-A =  ∀ {χ} {X : Type χ} → DecidableEquality X → {n : ℕ} (σ : Sub (Fin n) X)
-             → (Φ : Sub X X) → FreelyGenerates Φ → ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ σ ⨟ Φ ⟩ ≐ ⟨ σ ⟩
+Theorem-A =
+  ∀ {χ} {X : Type χ} → DecidableEquality X
+  → {n : ℕ} (σ : Sub (Fin n) X) (Φ : Sub X X)
+  → FreelyGenerates Φ → ⟨ σ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ σ ⨟ Φ ⟩ ≐ ⟨ σ ⟩
 
 -- The proof of Theorem A.
 theorem-A : Theorem-A
@@ -697,8 +742,9 @@ link `j` onto link `k` (`no-image-later`{.AgdaFunction}).
 
 ```agda
 -- If ⟨ σ ⟩ ⊆ ⟨ τ ⟩ ⊆ Φ(⟨ σ ⟩) with Φ injective, then ⟨ τ ⟩ lies in ⟨ σ ⟩.
-collapse : DecidableEquality X → (σ : Sub (Fin n) X) (τ : Sub J X) (Φ : Sub X X) → FreelyGenerates Φ
-         → ⟨ σ ⟩ ⊆ ⟨ τ ⟩ → ⟨ τ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ τ ⟩ ⊆ ⟨ σ ⟩
+collapse : DecidableEquality X
+  → (σ : Sub (Fin n) X) (τ : Sub J X) (Φ : Sub X X)
+  → FreelyGenerates Φ → ⟨ σ ⟩ ⊆ ⟨ τ ⟩ → ⟨ τ ⟩ ⊆ ⟨ σ ⨟ Φ ⟩ → ⟨ τ ⟩ ⊆ ⟨ σ ⟩
 collapse _≟ˣ_ σ τ Φ Φ-free σ⊆τ τ⊆Φσ p =
   generated-onto _≟ˣ_ σ Φ Φ-free (λ q → τ⊆Φσ (σ⊆τ q)) (τ⊆Φσ p)
 
@@ -711,16 +757,20 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : StrictlyAscending n X) where
     c′ = strict→ascending c
 
   -- Corollary A3: no injective Φ maps a link onto a sublattice containing a later link.
-  no-onto-later : (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
-                → ¬ (⟨ links k ⟩ ⊆ ⟨ links j ⨟ Φ ⟩)
+  no-onto-later : (Φ : Sub X X) → FreelyGenerates Φ
+    → ∀ {j k} → j < k → ¬ (⟨ links k ⟩ ⊆ ⟨ links j ⨟ Φ ⟩)
   no-onto-later Φ Φ-free {j} {k} j<k k⊆ =
-    proj₂ (ascends j) (λ p → collapse _≟ˣ_ (links j) (links k) Φ Φ-free (ascends-≤ c′ (<⇒≤ j<k)) k⊆
-                                      (ascends-≤ c′ j<k p))
+    ascends j .proj₂  ( λ p →  collapse  _≟ˣ_
+                                         (links j) (links k)
+                                         Φ Φ-free
+                                         (ascends-≤ c′ (<⇒≤ j<k))
+                                         k⊆
+                                         (ascends-≤ c′ j<k p) )
 
   -- In particular, no injective Φ carries a link onto a later link.
-  no-image-later : (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
-                 → ¬ (⟨ links j ⨟ Φ ⟩ ≐ ⟨ links k ⟩)
-  no-image-later Φ Φ-free j<k e = no-onto-later Φ Φ-free j<k (proj₂ e)
+  no-image-later : (Φ : Sub X X) → FreelyGenerates Φ
+    → ∀ {j k} → j < k → ¬ (⟨ links j ⨟ Φ ⟩ ≐ ⟨ links k ⟩)
+  no-image-later Φ Φ-free j<k e = no-onto-later Φ Φ-free j<k (e .proj₂)
 ```
 
 #### Building and moving strictly ascending chains
@@ -740,36 +790,39 @@ The term at `2k` is `e k` and the term at `2k + 1` is `o k`
 ```agda
 -- Interleave two sequences: e 0, o 0, e 1, o 1, ….
 interleave : {A : Type ι} → (ℕ → A) → (ℕ → A) → ℕ → A
-interleave e o zero     = e zero
-interleave e o (suc n)  = interleave o (λ k → e (suc k)) n
+interleave e o zero = e zero
+interleave e o (suc n) = interleave o (λ k → e (suc k)) n
 
 -- A relation across both kinds of steps holds between consecutive interleaved terms.
 interleave-step : {A : Type ι} {ℓ : Level} (R : A → A → Type ℓ) (e o : ℕ → A)
-                → (∀ k → R (e k) (o k)) → (∀ k → R (o k) (e (suc k)))
-                → ∀ n → R (interleave e o n) (interleave e o (suc n))
-interleave-step R e o eo oe zero     = eo zero
-interleave-step R e o eo oe (suc n)  =
+  → (∀ k → R (e k) (o k)) → (∀ k → R (o k) (e (suc k)))
+  → ∀ n → R (interleave e o n) (interleave e o (suc n))
+interleave-step R e o eo oe zero = eo zero
+interleave-step R e o eo oe (suc n) =
   interleave-step R o (λ k → e (suc k)) oe (λ k → eo (suc k)) n
 
 -- A property of every term of both sequences holds of every interleaved term.
 interleave-all : {A : Type ι} {ℓ : Level} (P : A → Type ℓ) (e o : ℕ → A)
-               → (∀ k → P (e k)) → (∀ k → P (o k)) → ∀ n → P (interleave e o n)
-interleave-all P e o pe po zero     = pe zero
-interleave-all P e o pe po (suc n)  = interleave-all P o (λ k → e (suc k)) po (λ k → pe (suc k)) n
+  → (∀ k → P (e k)) → (∀ k → P (o k)) → ∀ n → P (interleave e o n)
+interleave-all P e o pe po zero = pe zero
+interleave-all P e o pe po (suc n) =
+  interleave-all P o (λ k → e (suc k)) po (λ k → pe (suc k)) n
 
 -- The interleaved term at 2k is e k, and the one at 2k + 1 is o k.
 interleave-even : {A : Type ι} (e o : ℕ → A) (k : ℕ) → interleave e o (2 * k) ≡ e k
-interleave-even e o zero     = refl
-interleave-even e o (suc k)  = trans (cong (interleave e o) (*-suc 2 k))
-                                     (interleave-even (λ k → e (suc k)) (λ k → o (suc k)) k)
+interleave-even e o zero = refl
+interleave-even e o (suc k) =
+  trans  (cong (interleave e o) (*-suc 2 k))
+         (interleave-even (λ k → e (suc k)) (λ k → o (suc k)) k)
 
-interleave-odd : {A : Type ι} (e o : ℕ → A) (k : ℕ) → interleave e o (suc (2 * k)) ≡ o k
+interleave-odd : {A : Type ι} (e o : ℕ → A) (k : ℕ)
+  → interleave e o (suc (2 * k)) ≡ o k
 interleave-odd e o k = interleave-even o (λ k → e (suc k)) k
 
 -- Two families of proper steps make a strictly ascending chain.
 interleaved-chain : (e o : ℕ → Sub (Fin n) X)
-                  → (∀ k → ⟨ e k ⟩ ⊂ ⟨ o k ⟩) → (∀ k → ⟨ o k ⟩ ⊂ ⟨ e (suc k) ⟩)
-                  → StrictlyAscending n X
+  → (∀ k → ⟨ e k ⟩ ⊂ ⟨ o k ⟩) → (∀ k → ⟨ o k ⟩ ⊂ ⟨ e (suc k) ⟩)
+  → StrictlyAscending n X
 interleaved-chain e o eo oe = record
   { links    = interleave e o
   ; ascends  = interleave-step (λ σ τ → ⟨ σ ⟩ ⊂ ⟨ τ ⟩) e o eo oe
@@ -785,22 +838,25 @@ in every free lattice that contains a copy of `FL(3)`.
 
 ```agda
 -- An injective substitution carries containment of generated sublattices.
-⊆-⨟ : {σ : Sub I X} {τ : Sub J X} (ι : Sub X Y) → ⟨ σ ⟩ ⊆ ⟨ τ ⟩ → ⟨ σ ⨟ ι ⟩ ⊆ ⟨ τ ⨟ ι ⟩
+⊆-⨟ : {σ : Sub I X} {τ : Sub J X} (ι : Sub X Y)
+  → ⟨ σ ⟩ ⊆ ⟨ τ ⟩ → ⟨ σ ⨟ ι ⟩ ⊆ ⟨ τ ⨟ ι ⟩
 ⊆-⨟ {σ = σ} {τ} ι h = gens⊆ λ i →
-  let (t , e) = h (gen∈ σ i) in t , subst (_≈ʷ _) (sym ([]-⨟ t τ ι)) ([]-cong ι e)
+  let (t , e) = h (gen∈ σ i)
+  in t , subst (_≈ʷ _) (sym ([]-⨟ t τ ι)) ([]-cong ι e)
 
 -- An injective substitution reflects containment of generated sublattices.
-⊆-⨟⁻ : {σ : Sub I X} {τ : Sub J X} (ι : Sub X Y) → IsInjective (subst-hom ι .proj₁)
-     → ⟨ σ ⨟ ι ⟩ ⊆ ⟨ τ ⨟ ι ⟩ → ⟨ σ ⟩ ⊆ ⟨ τ ⟩
+⊆-⨟⁻ : {σ : Sub I X} {τ : Sub J X} (ι : Sub X Y)
+  → IsInjective (subst-hom ι .proj₁) → ⟨ σ ⨟ ι ⟩ ⊆ ⟨ τ ⨟ ι ⟩ → ⟨ σ ⟩ ⊆ ⟨ τ ⟩
 ⊆-⨟⁻ {σ = σ} {τ} ι inj h = gens⊆ λ i →
-  let (t , e) = h (gen∈ (σ ⨟ ι) i) in t , inj (subst (_≈ʷ _) ([]-⨟ t τ ι) e)
+  let (t , e) = h (gen∈ (σ ⨟ ι) i)
+  in t , inj (subst (_≈ʷ _) ([]-⨟ t τ ι) e)
 
 -- A strictly ascending chain carried along an injective substitution.
-strict-⨟ : StrictlyAscending n X → (ι : Sub X Y) → IsInjective (subst-hom ι .proj₁)
-         → StrictlyAscending n Y
+strict-⨟ : StrictlyAscending n X → (ι : Sub X Y)
+  → IsInjective (subst-hom ι .proj₁) → StrictlyAscending n Y
 strict-⨟ c ι inj = record
   { links    = λ k → links k ⨟ ι
-  ; ascends  = λ k → ⊆-⨟ ι (proj₁ (ascends k)) , λ h → proj₂ (ascends k) (⊆-⨟⁻ ι inj h)
+  ; ascends  = λ k → ⊆-⨟ ι (ascends k .proj₁) , λ h → ascends k .proj₂ (⊆-⨟⁻ ι inj h)
   }
   where open StrictlyAscending c
 ```
@@ -815,8 +871,9 @@ two indices at one place.
 ```agda
 private
   -- The search for a preimage of k, on the decision of whether there is one.
-  onto-search : {m : ℕ} (π : Fin (suc m) → Fin (suc m)) → (∀ {i j} → π i ≡ π j → i ≡ j)
-              → (k : Fin (suc m)) → Dec (Σ[ i ∈ Fin (suc m) ] π i ≡ k) → Σ[ i ∈ Fin (suc m) ] π i ≡ k
+  onto-search : {m : ℕ} (π : Fin (suc m)
+    → Fin (suc m)) → (∀ {i j} → π i ≡ π j → i ≡ j)
+    → ∀ k → Dec (Σ[ i ∈ Fin (suc m) ] π i ≡ k) → Σ[ i ∈ Fin (suc m) ] π i ≡ k
   onto-search π inj k (yes found)  = found
   onto-search {m} π inj k (no none) =
     let (i , j , i<j , e) = pigeonhole (n<1+n m) (λ i → punchOut (miss i))
@@ -827,8 +884,8 @@ private
     miss i e = none (i , sym e)
 
 -- An injective map of Fin n into itself reaches every element.
-fin-injective→onto : {n : ℕ} (π : Fin n → Fin n) → (∀ {i j} → π i ≡ π j → i ≡ j)
-                   → ∀ k → Σ[ i ∈ Fin n ] π i ≡ k
+fin-injective→onto : {n : ℕ} (π : Fin n → Fin n)
+  → (∀ {i j} → π i ≡ π j → i ≡ j) → ∀ k → Σ[ i ∈ Fin n ] π i ≡ k
 fin-injective→onto {suc m} π inj k = onto-search π inj k (any? (λ i → π i ≟ k))
 ```
 
@@ -845,56 +902,66 @@ some `ρ (π i)`.  Distinct generators are unequal, so `π` is injective, hence
 onto, and `σ k = r (π⁻¹ k)`: the family `σ` is `r` re-indexed by a bijection.
 
 ```agda
-module _ {X : Type χ} {n : ℕ} (e : FL (Fin n) .proj₁ IsSubalgebraOf FL X .proj₁)
-         (σ : Sub (Fin n) X) (e≐ : copy e ≐ ⟨ σ ⟩) where
+module _
+  {X : Type χ}
+  {n : ℕ}
+  (e : FL (Fin n) .proj₁ IsSubalgebraOf FL X .proj₁)
+  (σ : Sub (Fin n) X) (e≐ : copy e ≐ ⟨ σ ⟩)
+  where
   private
     -- The images of the generators, which freely generate.
     r : Sub (Fin n) X
-    r = restriction (proj₁ e)
+    r = restriction (e .proj₁)
 
     r-inj : IsInjective (subst-hom r .proj₁)
     r-inj = freelyGenerates→injective r (≤→freelyGenerates e)
 
     -- A term over the generators naming each σ j in the copy.
     ρ : Sub (Fin n) (Fin n)
-    ρ j = proj₁ (proj₂ e≐ (gen∈ σ j))
+    ρ j = e≐ .proj₂ (gen∈ σ j) .proj₁
 
     σ≈ρ : ∀ j → σ j ≈ʷ ρ j [ r ]
-    σ≈ρ j = ≈ʷ-trans (≈ʷ-sym (proj₂ (proj₂ e≐ (gen∈ σ j)))) (hom-induced (proj₁ e) (ρ j))
+    σ≈ρ j = ≈ʷ-trans  (≈ʷ-sym (e≐ .proj₂ (gen∈ σ j) .proj₂))
+                      (hom-induced (e .proj₁) (ρ j))
 
     -- Each generator is one of the terms ρ (Corollary 2.4).
     hit : ∀ i → Σ[ j ∈ Fin n ] ℊ i ≈ʷ ρ j
-    hit i = let (s , s≈) = proj₁ e≐ (ℊ i , hom-induced (proj₁ e) (ℊ i))
-            in free-generator-in-image r r-inj ρ s
-                 (≈ʷ-trans (≈ʷ-sym s≈) ([]-congʳ s σ≈ρ))
+    hit i =
+      let (s , s≈) = e≐ .proj₁ (ℊ i , hom-induced (e .proj₁) (ℊ i))
+      in free-generator-in-image r r-inj ρ s (≈ʷ-trans (≈ʷ-sym s≈) ([]-congʳ s σ≈ρ))
 
     π : Fin n → Fin n
-    π i = proj₁ (hit i)
+    π i = hit i .proj₁
 
     π-inj : ∀ {i i'} → π i ≡ π i' → i ≡ i'
     π-inj {i} {i'} p =
-      ℊ-injective (≈ʷ-trans (proj₂ (hit i))
-                            (subst (λ j → ρ j ≈ʷ ℊ i') (sym p) (≈ʷ-sym (proj₂ (hit i')))))
+      ℊ-injective (≈ʷ-trans (hit i .proj₂)
+                            (subst  (λ j → ρ j ≈ʷ ℊ i')
+                                    (sym p)
+                                    (≈ʷ-sym (hit i' .proj₂))))
 
     -- The inverse of π.
     π⁻ : Fin n → Fin n
-    π⁻ k = proj₁ (fin-injective→onto π π-inj k)
+    π⁻ k = fin-injective→onto π π-inj k .proj₁
 
     ππ⁻ : ∀ k → π (π⁻ k) ≡ k
-    ππ⁻ k = proj₂ (fin-injective→onto π π-inj k)
+    ππ⁻ k = fin-injective→onto π π-inj k .proj₂
 
     π⁻-inj : ∀ {k k'} → π⁻ k ≡ π⁻ k' → k ≡ k'
     π⁻-inj {k} {k'} p = trans (sym (ππ⁻ k)) (trans (cong π p) (ππ⁻ k'))
 
     -- σ is r re-indexed by π⁻.
     rπ⁻≈σ : ∀ k → r (π⁻ k) ≈ʷ σ k
-    rπ⁻≈σ k = ≈ʷ-sym (≈ʷ-trans (σ≈ρ k) ([]-cong r (subst (λ j → ρ j ≈ʷ ℊ (π⁻ k)) (ππ⁻ k)
-                                                         (≈ʷ-sym (proj₂ (hit (π⁻ k)))))))
+    rπ⁻≈σ k = ≈ʷ-sym (≈ʷ-trans  (σ≈ρ k)
+                                ([]-cong r (subst  (λ j → ρ j ≈ʷ ℊ (π⁻ k))
+                                                   (ππ⁻ k)
+                                                   (≈ʷ-sym (hit (π⁻ k) .proj₂)))))
 
   -- A copy of FL(n) generated by n elements is freely generated by them.
   copy≐→freelyGenerates : FreelyGenerates σ
   copy≐→freelyGenerates =
-    freelyGenerates-resp rπ⁻≈σ (freelyGenerates-reindex r π⁻ π⁻-inj (≤→freelyGenerates e))
+    freelyGenerates-resp  rπ⁻≈σ
+                          (freelyGenerates-reindex r π⁻ π⁻-inj (≤→freelyGenerates e))
 ```
 
 #### Corollary A3 for links with any numbers of generators
@@ -930,8 +997,8 @@ module _ (c : StrictlyAscendingᶠ X) where
 
   -- Each link lies in the link d places later.
   ascendsᶠ-+ : ∀ j d → ⟨ links j ⟩ ⊆ ⟨ links (d + j) ⟩
-  ascendsᶠ-+ j zero     p = p
-  ascendsᶠ-+ j (suc d)  p = proj₁ (ascends (d + j)) (ascendsᶠ-+ j d p)
+  ascendsᶠ-+ j zero p = p
+  ascendsᶠ-+ j (suc d) p = ascends (d + j) .proj₁ (ascendsᶠ-+ j d p)
 
   -- Each link lies in every later one.
   ascendsᶠ-≤ : ∀ {j k} → j ≤ k → ⟨ links j ⟩ ⊆ ⟨ links k ⟩
@@ -943,16 +1010,20 @@ module _ (_≟ˣ_ : DecidableEquality X) (c : StrictlyAscendingᶠ X) where
   open StrictlyAscendingᶠ c
 
   -- Corollary A3: no injective Φ maps a link onto a sublattice containing a later link.
-  no-onto-laterᶠ : (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
-                 → ¬ (⟨ links k ⟩ ⊆ ⟨ links j ⨟ Φ ⟩)
+  no-onto-laterᶠ : (Φ : Sub X X) → FreelyGenerates Φ
+    → ∀ {j k} → j < k → ¬ (⟨ links k ⟩ ⊆ ⟨ links j ⨟ Φ ⟩)
   no-onto-laterᶠ Φ Φ-free {j} {k} j<k k⊆ =
-    proj₂ (ascends j) (λ p → collapse _≟ˣ_ (links j) (links k) Φ Φ-free (ascendsᶠ-≤ c (<⇒≤ j<k)) k⊆
-                                      (ascendsᶠ-≤ c j<k p))
+    ascends j .proj₂ ( λ p → collapse  _≟ˣ_
+                                       (links j) (links k)
+                                       Φ Φ-free
+                                       (ascendsᶠ-≤ c (<⇒≤ j<k))
+                                       k⊆
+                                       (ascendsᶠ-≤ c j<k p))
 
   -- Corollary A3 as the paper states it: no injective Φ has Φ(L j) = L k with j < k.
-  no-image-laterᶠ : (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
-                  → ¬ (⟨ links j ⨟ Φ ⟩ ≐ ⟨ links k ⟩)
-  no-image-laterᶠ Φ Φ-free j<k e = no-onto-laterᶠ Φ Φ-free j<k (proj₂ e)
+  no-image-laterᶠ : (Φ : Sub X X) → FreelyGenerates Φ
+    → ∀ {j k} → j < k → ¬ (⟨ links j ⨟ Φ ⟩ ≐ ⟨ links k ⟩)
+  no-image-laterᶠ Φ Φ-free j<k e = no-onto-laterᶠ Φ Φ-free j<k (e .proj₂)
 ```
 
 The remark after Corollary A3 says first that no chain is generated by one
@@ -966,9 +1037,10 @@ proves it from Lemma 6.1.)
 
 ```agda
   -- No injective Φ carries every link onto the link p + 1 places later.
-  no-periodic-embedding : (Φ : Sub X X) → FreelyGenerates Φ → (p : ℕ)
-                        → ¬ (∀ k → ⟨ links k ⨟ Φ ⟩ ≐ ⟨ links (suc p + k) ⟩)
-  no-periodic-embedding Φ Φ-free p every = no-image-laterᶠ Φ Φ-free {0} {suc p + 0} (s≤s z≤n) (every 0)
+  no-periodic-embedding : (Φ : Sub X X) → FreelyGenerates Φ
+    → (p : ℕ) → ¬ (∀ k → ⟨ links k ⨟ Φ ⟩ ≐ ⟨ links (suc p + k) ⟩)
+  no-periodic-embedding Φ Φ-free p every =
+    no-image-laterᶠ Φ Φ-free {0} {suc p + 0} (s≤s z≤n) (every 0)
 ```
 
 **Corollary A3** of [the paper][], as one statement: in a chain
@@ -981,9 +1053,12 @@ equality on the generators, through Theorem A.
 -- Corollary A3: in a chain of finitely generated sublattices, no injective endomorphism
 -- maps a link onto a later one.
 Corollary-A3 : Setω
-Corollary-A3 =  ∀ {χ} {X : Type χ} → DecidableEquality X → (c : StrictlyAscendingᶠ X)
-                → (Φ : Sub X X) → FreelyGenerates Φ → ∀ {j k} → j < k
-                → ¬ (⟨ StrictlyAscendingᶠ.links c j ⨟ Φ ⟩ ≐ ⟨ StrictlyAscendingᶠ.links c k ⟩)
+Corollary-A3 =
+  ∀ {χ} {X : Type χ} → DecidableEquality X
+  → (c : StrictlyAscendingᶠ X)
+  → (Φ : Sub X X) → FreelyGenerates Φ
+  → ∀ {j k} → j < k
+  → ¬ (⟨ StrictlyAscendingᶠ.links c j ⨟ Φ ⟩ ≐ ⟨ StrictlyAscendingᶠ.links c k ⟩)
 
 -- The proof of Corollary A3.
 corollary-A3 : Corollary-A3

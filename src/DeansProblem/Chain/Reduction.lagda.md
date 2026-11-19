@@ -83,47 +83,44 @@ module DeansProblem.Chain.Reduction where
 open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Patterns                      using ( 0F ; 1F ; 2F )
-open import Data.List.Base                         using ( List ; [] ; _∷_ ; _++_ )
-open import Data.List.Membership.Propositional     using ( _∈_ )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Fin.Patterns                      using  ( 0F ; 1F ; 2F )
+open import Data.List.Base                         using  ( List ; [] ; _∷_ ; _++_ )
+open import Data.List.Membership.Propositional     using  ( _∈_ )
 open import Data.List.Membership.Propositional.Properties
-                                                   using ( ∈-++⁺ˡ ; ∈-++⁺ʳ )
-open import Data.List.Relation.Unary.Any           using ( here ; tail )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc )
-open import Data.Product                           using ( _,_ ; proj₁ ; proj₂ )
-open import Function                               using ( Func ; _⇔_ ; mk⇔ ; _↣_ ; _∘_ )
-open import Level                                  using ( Level )
-open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; sym ; trans ; cong ; cong₂ )
-open import Relation.Nullary                       using ( ¬_ ; yes ; no )
-open import Relation.Unary                         using ( _⊆_ )
+                                                   using  ( ∈-++⁺ˡ ; ∈-++⁺ʳ )
+open import Data.List.Relation.Unary.Any           using  ( here ; tail )
+open import Data.Nat.Base                          using  ( ℕ ; zero ; suc )
+open import Data.Product                           using  ( _,_ ; proj₁ ; proj₂ )
+open import Function                               using  ( Func ; _⇔_ ; mk⇔
+                                                          ; _↣_ ; _∘_ )
+open import Level                                  using  ( Level )
+open import Relation.Binary.Definitions            using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym ; trans
+                                                          ; cong ; cong₂ )
+open import Relation.Nullary                       using  ( ¬_ ; yes ; no )
+open import Relation.Unary                         using  ( _⊆_ )
 
 import Relation.Binary.Reasoning.Setoid as SetoidReasoning
 
--- Imports from the Agda Universal Algebra Library ------------------------------
+-- Imports from the agda-algebras -----------------------------------------------
 open import Setoid.Functions                       using ( IsInjective )
 open import Setoid.Subalgebras.Basic               using ( _≤_ )
 open import Setoid.Subalgebras.Properties          using ( ≤-trans )
 
 -- Imports from agda-lattices ---------------------------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-trans )
-open import Lattices.Free.Countable                using ( countable-embedding ; three-generators
-                                                         ; three-generators-free )
-open import Lattices.Free.Extrema                  using ( generators ; generators-∷ )
-open import Lattices.Free.Generation               using ( FreelyGenerates ; freelyGenerates→≤
-                                                         ; freelyGenerates→injective
-                                                         ; injective→freelyGenerates )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong
-                                                         ; subst-hom )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Universal                using ( FL ; FL-setoid )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-trans ; countable-embedding
+                                 ; three-generators ; three-generators-free
+                                 ; generators ; generators-∷ ; FreelyGenerates
+                                 ; freelyGenerates→≤ ; freelyGenerates→injective
+                                 ; injective→freelyGenerates ; Sub ; _[_] ; _⨟_
+                                 ; []-ℊ ; []-⨟ ; []-cong ; subst-hom ; LatTerm
+                                 ; ℊ ; _∧̇_ ; _∨̇_ ; FL ; FL-setoid ; _≈ʷ_ )
 
--- Imports from this development ------------------------------------------------
-open import DeansProblem.Chain                     using ( Chain ; module Chain )
-open import DeansProblem.Chain.Copies              using ( CopyChain ; copy ; copyChain→chain
-                                                         ; chain→copyChain )
+-- Imports from agda-deans-problem ----------------------------------------------
+open import DeansProblem.Chain         using ( Chain ; module Chain )
+open import DeansProblem.Chain.Copies  using ( CopyChain ; copy ; copyChain→chain
+                                             ; chain→copyChain )
 
 open Func using () renaming ( cong to func-cong )
 
@@ -155,7 +152,7 @@ module _ {Y : Type υ} (h : FL Y .proj₁ ≤ FL Z .proj₁) (c : CopyChain Y) w
   -- The next copy does not lie in this one, since h is injective.
   embed-⊉ : (k : ℕ) → ¬ copy (embed-φ (suc k)) ⊆ copy (embed-φ k)
   embed-⊉ k ⊇ = ascends k .proj₂ λ (b , ey) → let (a , ea) = ⊇ (b , ≈ʷ-refl) in
-    a , ≈ʷ-trans (proj₂ h ea) ey
+    a , ≈ʷ-trans (h .proj₂ ea) ey
 
   -- The chain of copies in FL(Z).
   embed-copyChain : CopyChain Z
@@ -191,13 +188,15 @@ private
     ... | no  _ = suc (position xs y)
 
     -- Reading the list at the position of a member returns the member.
-    at-position : (d : Y) (xs : List Y) {y : Y} → y ∈ xs → at d xs (position xs y) ≡ y
+    at-position : (d : Y) (xs : List Y) {y : Y}
+      → y ∈ xs → at d xs (position xs y) ≡ y
     at-position d (x ∷ xs) {y} y∈ with x ≟ʸ y
     ... | yes x≡y  = x≡y
     ... | no  x≢y  = at-position d xs (tail (λ y≡x → x≢y (sym y≡x)) y∈)
 
     -- A member keeps its position when the list is extended.
-    position-++ : (xs ys : List Y) {y : Y} → y ∈ xs → position (xs ++ ys) y ≡ position xs y
+    position-++ : (xs ys : List Y) {y : Y}
+      → y ∈ xs → position (xs ++ ys) y ≡ position xs y
     position-++ (x ∷ xs) ys {y} y∈ with x ≟ʸ y
     ... | yes _    = refl
     ... | no  x≢y  = cong suc (position-++ xs ys (tail (λ y≡x → x≢y (sym y≡x)) y∈))
@@ -290,13 +289,17 @@ names, `unrename k`{.AgdaFunction}, are substitutions; on a member of link
   unrename k n = ℊ (name k n)
 
   -- Renaming a member of link k and renaming back is the identity.
-  rename-unrename : (k : ℕ) (i : Fin 3) → gens k i [ rename k ] [ unrename k ] ≡ gens k i
+  rename-unrename : (k : ℕ) (i : Fin 3)
+    → gens k i [ rename k ] [ unrename k ] ≡ gens k i
   rename-unrename k i = trans (sym ([]-⨟ (gens k i) (rename k) (unrename k)))
-    (trans ([]-agree (gens k i) (λ p → cong ℊ (name-number k (gens-used k i p)))) ([]-ℊ (gens k i)))
+    (trans  ([]-agree (gens k i)
+            (λ p → cong ℊ (name-number k (gens-used k i p)))) ([]-ℊ (gens k i)))
 
   -- Links k and k + 1 rename a member of link k alike.
-  rename-stable : (k : ℕ) (i : Fin 3) → gens k i [ rename k ] ≡ gens k i [ rename (suc k) ]
-  rename-stable k i = []-agree (gens k i) (λ p → cong ℊ (sym (number-extends k (gens-used k i p))))
+  rename-stable : (k : ℕ) (i : Fin 3)
+    → gens k i [ rename k ] ≡ gens k i [ rename (suc k) ]
+  rename-stable k i =
+    []-agree (gens k i) (λ p → cong ℊ (sym (number-extends k (gens-used k i p))))
 ```
 
 The `k`-th renamed triple is the `k`-th triple renamed by link `k`
@@ -313,8 +316,11 @@ as link `k` does.
   gens′≈ : (k : ℕ) (i : Fin 3) → gens′ k i ≈ʷ terms k i [ gens′ (suc k) ]
   gens′≈ k i = begin
     gens k i [ rename k ]                          ≡⟨ rename-stable k i ⟩
-    gens k i [ rename (suc k) ]                    ≈⟨ []-cong (rename (suc k)) (gens≈ k i) ⟩
-    terms k i [ gens (suc k) ] [ rename (suc k) ]  ≡⟨ []-⨟ (terms k i) (gens (suc k)) (rename (suc k)) ⟨
+    gens k i [ rename (suc k) ]                    ≈⟨ []-cong  (rename (suc k))
+                                                               (gens≈ k i) ⟩
+    terms k i [ gens (suc k) ] [ rename (suc k) ]  ≡⟨ []-⨟  (terms k i)
+                                                            (gens (suc k))
+                                                            (rename (suc k)) ⟨
     terms k i [ gens′ (suc k) ]                    ∎
     where open SetoidReasoning (FL-setoid ℕ)
 ```
@@ -327,13 +333,15 @@ renamed triple freely generates.
 ```agda
   -- Substitution by a renamed triple is injective.
   gens′-injective : (k : ℕ) → IsInjective (subst-hom (gens′ k) .proj₁)
-  gens′-injective k {s} {t} e = freelyGenerates→injective (gens k) (gens-free k) (begin
-    s [ gens k ]                  ≡⟨ []-agree s (λ {i} _ → rename-unrename k i) ⟨
-    s [ gens′ k ⨟ unrename k ]    ≡⟨ []-⨟ s (gens′ k) (unrename k) ⟩
-    s [ gens′ k ] [ unrename k ]  ≈⟨ []-cong (unrename k) e ⟩
-    t [ gens′ k ] [ unrename k ]  ≡⟨ []-⨟ t (gens′ k) (unrename k) ⟨
-    t [ gens′ k ⨟ unrename k ]    ≡⟨ []-agree t (λ {i} _ → rename-unrename k i) ⟩
-    t [ gens k ]                  ∎)
+  gens′-injective k {s} {t} e =
+    freelyGenerates→injective (gens k) (gens-free k)
+      ( begin
+        s [ gens k ]                  ≡⟨ []-agree s (λ {i} _ → rename-unrename k i) ⟨
+        s [ gens′ k ⨟ unrename k ]    ≡⟨ []-⨟ s (gens′ k) (unrename k) ⟩
+        s [ gens′ k ] [ unrename k ]  ≈⟨ []-cong (unrename k) e ⟩
+        t [ gens′ k ] [ unrename k ]  ≡⟨ []-⨟ t (gens′ k) (unrename k) ⟨
+        t [ gens′ k ⨟ unrename k ]    ≡⟨ []-agree t (λ {i} _ → rename-unrename k i) ⟩
+        t [ gens k ]                  ∎ )
     where open SetoidReasoning (FL-setoid Y)
 
   -- Each renamed triple freely generates.

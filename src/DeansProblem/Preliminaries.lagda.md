@@ -70,37 +70,35 @@ open import Relation.Binary.Definitions            using ( DecidableEquality )
 open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Unary                         using ( Pred )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
+-- Imports from agda-algebras --------------------------------------------------
 open import Classical.Structures.Lattice.Basic     using ( Lattice )
 open import Setoid.Algebras.Basic                  using ( 𝔻[_] ; 𝕌[_] )
 open import Setoid.Functions                       using ( IsInjective ; IsSurjective )
 open import Setoid.Homomorphisms.Isomorphisms      using ( _≅_ )
 
 -- Imports from agda-lattices ---------------------------------------------------
-open import Lattices.Bounded.Covers                using ( IsJoinPrime )
-open import Lattices.Dual                          using ( dualLattice )
-open import Lattices.Free.Canonical.Basic          using ( CTerm ; ⌊_⌋ ; IsCanonical ; ⋁⁺ ; ⋀⁺ )
-open import Lattices.Free.Canonical.Joinands       using ( canonicalJoinands ; canonicalMeetands
-                                                         ; canonicalMeetands-refine )
-open import Lattices.Free.Canonical.LeastRank      using ( LeastRank )
-open import Lattices.Free.Canonical.Uniqueness     using ( _≈ᶜ_ )
-open import Lattices.Free.Complexity               using ( complexity ; complexity-mono ; module Bounded
-                                                         ; pigeonhole-≈ ; pigeonhole-≈ⁿ )
-open import Lattices.Free.Embedding                using ( embedding-canonicalMeetand )
-open import Lattices.Free.FJN                      using ( fjn-1·2 ; module FJN-1·4 ; fjn-1·4
-                                                         ; module FJN-1·6 ; fjn-1·6 ; fjn-1·8
-                                                         ; module FJN-1·9 ; fjn-1·9
-                                                         ; WhitmansTheorem ; whitmans-theorem
-                                                         ; fjn-1·13 ; fjn-1·17 ; fjn-1·18
-                                                         ; module FJN-1·19 ; fjn-1·19 ; fjn-9·13 )
-open import Lattices.Free.Generation               using ( FreelyGenerates )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; subst-hom )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Universal                using ( FL ; FL-extend )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ )
-open import Lattices.Nation                        using ( Embeds )
-open import Lattices.Prime                         using ( Satisfies† ; GeneratedFilter ; GeneratedIdeal )
-open import Lattices.Semidistributive              using ( SatisfiesW )
+open import Lattices.Bounded.Covers    using  ( IsJoinPrime )
+open import Lattices.Dual              using  ( dualLattice )
+open import Lattices.Free              using  ( module Bounded ; CTerm ; ⌊_⌋ ; ⋁⁺
+                                              ; ⋀⁺ ; IsCanonical ; canonicalJoinands
+                                              ; canonicalMeetands ; LeastRank
+                                              ; canonicalMeetands-refine ; _≈ᶜ_
+                                              ; complexity ; complexity-mono
+                                              ; pigeonhole-≈ ; pigeonhole-≈ⁿ
+                                              ; embedding-canonicalMeetand
+                                              ; FreelyGenerates ; Sub ; _[_]
+                                              ; subst-hom ; LatTerm ; ℊ ; FL
+                                              ; FL-extend ; _≤ʷ_ ; _≈ʷ_ )
+open import Lattices.Free.FJN          using  ( module FJN-1·4 ; fjn-1·2 ; fjn-1·4
+                                              ; module FJN-1·6 ; fjn-1·6 ; fjn-1·8
+                                              ; module FJN-1·9 ; fjn-1·9 ; fjn-1·13
+                                              ; module FJN-1·19 ; fjn-1·19 ; fjn-9·13
+                                              ; fjn-1·17 ; fjn-1·18 ; WhitmansTheorem
+                                              ; whitmans-theorem )
+open import Lattices.Nation            using  ( Embeds )
+open import Lattices.Prime             using  ( Satisfies† ; GeneratedFilter
+                                              ; GeneratedIdeal )
+open import Lattices.Semidistributive  using  ( SatisfiesW )
 ```
 -->
 

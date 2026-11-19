@@ -52,23 +52,25 @@ module DeansProblem.Irredundant where
 
 open import Agda.Primitive  using () renaming ( Set to Type )
 
--- Imports from the Agda Standard Library -----------------------------------------
-open import Data.Empty                             using ( ⊥-elim )
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Product                           using ( _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using ( _⊎_ ; inj₁ ; inj₂ )
-open import Level                                  using ( Level )
-open import Relation.Binary                        using ( Setoid )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl )
-open import Relation.Nullary                       using ( ¬_ )
+-- Imports from the Agda Standard Library ---------------------------------------
+open import Data.Empty                             using  ( ⊥-elim )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Product                           using  ( _×_ ; _,_
+                                                          ; proj₁ ; proj₂ )
+open import Data.Sum.Base                          using  ( _⊎_ ; inj₁ ; inj₂ )
+open import Level                                  using  ( Level )
+open import Relation.Binary                        using  ( Setoid )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl )
+open import Relation.Nullary                       using  ( ¬_ )
 
--- Imports from the Agda Universal Algebra Library --------------------------------
+-- Imports from agda-algebras -----------------------------------------------------
 open import Classical.Properties.Lattice        using  ( module Lattice-Order )
 open import Classical.Structures.Lattice.Basic  using  ( Lattice ; module Lattice-Op )
-open import Lattices.Breadth                    using  ( other₁ ; other₂ ; others )
-open import Lattices.Free.Term                  using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_
-                                                       ; module Evaluation )
 open import Setoid.Algebras.Basic               using  ( 𝔻[_] ; 𝕌[_] )
+
+-- Imports from agda-lattices  --------------------------------------------------------
+open import Lattices.Breadth    using ( other₁ ; other₂ ; others )
+open import Lattices.Free.Term  using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; module Evaluation )
 
 private variable
   α ρ ι : Level
@@ -88,7 +90,8 @@ each index `j`, either `j` is `i` or `η j ≤ r`.
 module _ (𝓛@(𝑳 , _) : Lattice α ρ) where
   open Lattice-Op 𝓛     using  ( _∧_ ; _∨_ )
   open Lattice-Order 𝓛  using  ( _≤_ ; ≤-refl ; ≤-trans ; ≤-antisym ; ∧-greatest
-                                ; ∧-lowerˡ ; ∧-lowerʳ ; ∨-least ; ∨-upperˡ ; ∨-upperʳ )
+                                ; ∧-lowerˡ ; ∧-lowerʳ ; ∨-least
+                                ; ∨-upperˡ ; ∨-upperʳ )
   open Setoid 𝔻[ 𝑳 ]    using  ( _≈_ )
   open Evaluation 𝓛     using  ( ⟦_⟧ )
 
@@ -139,19 +142,21 @@ below `r` it would put `lo` below `r`; and its dual puts it below `η i`.
 
 ```agda
     -- An element of the sublattice in [lo, hi] is η i.
-    pinned : {r m lo hi : L} → (∀ j → j ≡ i ⊎ η j ≤ r) → (∀ j → j ≡ i ⊎ m ≤ η j)
-           → ¬ (lo ≤ r) → ¬ (m ≤ hi)
-           → (t : LatTerm I) → lo ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ hi → ⟦ t ⟧ η ≈ η i
+    pinned : {r m lo hi : L}
+      → (∀ j → j ≡ i ⊎ η j ≤ r) → (∀ j → j ≡ i ⊎ m ≤ η j)
+      → ¬ (lo ≤ r) → ¬ (m ≤ hi)
+      → (t : LatTerm I) → lo ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ hi → ⟦ t ⟧ η ≈ η i
     pinned {r} {m} {lo} {hi} others≤r m≤others lo≰r m≰hi t lo≤ ≤hi =
-      ≤-antisym (below (below-or-above m≤others t)) (above (above-or-below others≤r t))
+      ≤-antisym  (below (below-or-above m≤others t))
+                 (above (above-or-below others≤r t))
       where
       above : η i ≤ ⟦ t ⟧ η ⊎ ⟦ t ⟧ η ≤ r → η i ≤ ⟦ t ⟧ η
-      above (inj₁ p)  = p
-      above (inj₂ q)  = ⊥-elim (lo≰r (≤-trans lo≤ q))
+      above (inj₁ p) = p
+      above (inj₂ q) = ⊥-elim (lo≰r (≤-trans lo≤ q))
 
       below : ⟦ t ⟧ η ≤ η i ⊎ m ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ η i
-      below (inj₁ p)  = p
-      below (inj₂ q)  = ⊥-elim (m≰hi (≤-trans q ≤hi))
+      below (inj₁ p) = p
+      below (inj₂ q) = ⊥-elim (m≰hi (≤-trans q ≤hi))
 ```
 
 #### Three intervals
@@ -182,7 +187,8 @@ module _ (𝑳 : Lattice α ρ) where
 
   module _ (η lo hi : Fin 3 → 𝕌[ 𝑳 .proj₁ ]) where
 
-    -- Freese's conditions at one index, at all three, and the family in the intervals.
+    -- Freese's conditions at one index, at all three, and the family in the
+    -- intervals.
     IrredundantAt : Fin 3 → Type ρ
     IrredundantAt i =  ¬ (lo i ≤ hi (other₁ i) ∨ hi (other₂ i)) ×
                        ¬ (lo (other₁ i) ∧ lo (other₂ i) ≤ hi i)
@@ -193,11 +199,14 @@ module _ (𝑳 : Lattice α ρ) where
     InIntervals : Type ρ
     InIntervals = ∀ i → lo i ≤ η i × η i ≤ hi i
 
-    -- Lemma 2 at one index: η i is the only element of the sublattice in [lo i, hi i].
+    -- Lemma 2 at one index: η i is the only element of the sublattice in
+    -- [lo i, hi i].
     lemma-2-at : (i : Fin 3) → IrredundantAt i → InIntervals
       → (t : LatTerm (Fin 3)) → lo i ≤ ⟦ t ⟧ η → ⟦ t ⟧ η ≤ hi i → ⟦ t ⟧ η ≈ η i
     lemma-2-at i (lo≰ , ≰hi) box =
-      pinned 𝑳 η i others≤ ≤others (λ p → lo≰ (≤-trans p ∨-mono)) (λ p → ≰hi (≤-trans ∧-mono p))
+      pinned  𝑳 η i others≤ ≤others
+              (λ p → lo≰ (≤-trans p ∨-mono))
+              (λ p → ≰hi (≤-trans ∧-mono p))
       where
       others≤ : ∀ j → j ≡ i ⊎ η j ≤ η (other₁ i) ∨ η (other₂ i)
       others≤ j with others i j
@@ -212,12 +221,12 @@ module _ (𝑳 : Lattice α ρ) where
       ... | inj₂ (inj₂ refl)      = inj₂ ∧-lowerʳ
 
       ∨-mono : η (other₁ i) ∨ η (other₂ i) ≤ hi (other₁ i) ∨ hi (other₂ i)
-      ∨-mono = ∨-least (≤-trans (box (other₁ i) .proj₂) ∨-upperˡ)
-                       (≤-trans (box (other₂ i) .proj₂) ∨-upperʳ)
+      ∨-mono = ∨-least  (≤-trans (box (other₁ i) .proj₂) ∨-upperˡ)
+                        (≤-trans (box (other₂ i) .proj₂) ∨-upperʳ)
 
       ∧-mono : lo (other₁ i) ∧ lo (other₂ i) ≤ η (other₁ i) ∧ η (other₂ i)
-      ∧-mono = ∧-greatest (≤-trans ∧-lowerˡ (proj₁ (box (other₁ i))))
-                          (≤-trans ∧-lowerʳ (proj₁ (box (other₂ i))))
+      ∧-mono = ∧-greatest  (≤-trans ∧-lowerˡ (box (other₁ i) .proj₁))
+                           (≤-trans ∧-lowerʳ (box (other₂ i) .proj₁))
 
     -- Freese's Lemma 2.
     lemma-2 : StronglyIrredundant → InIntervals → (i : Fin 3)

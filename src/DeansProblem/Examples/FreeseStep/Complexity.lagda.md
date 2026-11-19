@@ -60,17 +60,16 @@ open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using ( from-no )
 
 -- Imports from the agda-lattices library ---------------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ⌊_⌋ᴶ ; asListJ ; joinandsOf )
-open import Lattices.Free.Canonical.Joinands       using ( canonicalJoinands ; joinands-≈ˡ ; ≈ˡ-sym
-                                                         ; Any-resp-≈ˡ )
-open import Lattices.Free.Complexity               using ( complexity ; complexity-resp )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ ; ≤∧ ; ∨̇-upperˡ ; ∧̇-lowerˡ
-                                                         ; ≤ʷ-trans )
-open import Lattices.Free.Whitman.Polynomial       using ( module Decisionᵖ )
-open import DeansProblem.Examples.FreeseStep       using ( a ; a' ; ā₁ ; abc ; abc' ; abĉ
-                                                         ; abc″ ; abc≈abĉ ; abc'≈abc″ ; relation-1ᵇ
-                                                         ; relation-2ᶜ )
-open import DeansProblem.Examples.FreeseBox        using ( âᶜ ; âᶜ-canonical ; âᶜ-sound )
+open import Lattices.Free using  ( ⌊_⌋ᴶ ; asListJ ; joinandsOf ; canonicalJoinands
+                                 ; joinands-≈ˡ ; ≈ˡ-sym ; Any-resp-≈ˡ ; complexity
+                                 ; complexity-resp ; _≤ʷ_ ; _≈ʷ_ ; ≤∧ ; ∨̇-upperˡ
+                                 ; ∧̇-lowerˡ ; ≤ʷ-trans ; module Decisionᵖ )
+
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.Examples.FreeseStep  using  ( a ; a' ; ā₁ ; abc ; abc' ; abĉ
+                                                     ; abc″ ; abc≈abĉ ; abc'≈abc″
+                                                     ; relation-1ᵇ ; relation-2ᶜ )
+open import DeansProblem.Examples.FreeseBox   using ( âᶜ ; âᶜ-canonical ; âᶜ-sound )
 ```
 -->
 

@@ -34,34 +34,42 @@ repeating cannot continue past the empty set.
 
 module DeansProblem.NoChain where
 
-open import Agda.Primitive using ( Setω ) renaming ( Set to Type )
-open import Data.Empty using ( ⊥ ; ⊥-elim )
-open import Data.Fin.Base using ( Fin ; toℕ ; punchOut )
-open import Data.Fin.Properties using ( punchOut-injective ; _≟_ ; ¬∀⟶∃¬ )
-open import Data.List.Base using ( length ; allFin )
-open import Data.List.Membership.Propositional.Properties using ( ∈-allFin )
-open import Data.List.Relation.Unary.Any using ( Any )
-open import Data.Nat.Base
-  using ( ℕ ; zero ; suc ; _+_ ; _∸_ ; _^_ ; _<_ ; _≤_ ; s≤s )
-open import Data.Nat.Properties
-  using ( <-trans ; +-comm ; m≤n⇒∃[o]m+o≡n ; +-identityʳ
-        ; ≤-refl ; ≤-trans ; <⇒≤ ; ∸-monoˡ-< ; n∸n≡0 ; m∸n+n≡m
-        ; n<1+n ; m≤m+n ; m≤n+m ; +-monoˡ-< )
-open import Data.Product using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Level using ( Level )
-open import Relation.Binary.Definitions using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality
-  using ( _≡_ ; _≢_ ; sym ; trans ; cong ; subst )
+open import Agda.Primitive                using  ( Setω ) renaming ( Set to Type )
 
-open import DeansProblem.Chain using ( Chain )
-open import DeansProblem.Chain.Copies using ( CopyChain ; copyChain→chain )
-open import DeansProblem.Coherent using ( transition ; transition-bound′ ; bound )
-open import DeansProblem.Coherent.Finite using ( four-links→coherent₃ )
-open import Lattices.Free.Complexity
-  using ( complexity ; module Bounded ; tuple-code ; tuple-code-sound
-        ; finite-pigeonhole-≈ⁿ )
-open import DeansProblem.LengthThree using ( no-coherent₃ )
-open import Lattices.Free.Whitman using ( _≈ʷ_ )
+-- Imports from the Agda Standard Library ---------------------------------------
+open import Data.Empty                    using  ( ⊥ ; ⊥-elim )
+open import Data.Fin.Base                 using  ( Fin ; toℕ ; punchOut )
+open import Data.Fin.Properties           using  ( punchOut-injective ; _≟_ ; ¬∀⟶∃¬ )
+open import Data.List.Base                using  ( length ; allFin )
+open import Data.List.Membership.Propositional.Properties
+                                          using  ( ∈-allFin )
+open import Data.List.Relation.Unary.Any  using  ( Any )
+open import Data.Nat.Base                 using  ( ℕ ; zero ; suc ; _+_ ; _∸_ ; _^_
+                                                 ; _<_ ; _≤_ ; s≤s )
+open import Data.Nat.Properties           using  ( <-trans ; +-comm ; m≤n⇒∃[o]m+o≡n
+                                                 ; +-identityʳ ; ≤-refl ; ≤-trans
+                                                 ; <⇒≤ ; ∸-monoˡ-< ; n∸n≡0 ; m∸n+n≡m
+                                                 ; n<1+n ; m≤m+n ; m≤n+m ; +-monoˡ-< )
+open import Data.Product                  using  ( Σ-syntax ; _×_ ; _,_
+                                                 ; proj₁ ; proj₂ )
+open import Level                         using  ( Level )
+open import Relation.Binary.Definitions   using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality
+                                          using  ( _≡_ ; _≢_ ; sym ; trans
+                                                 ; cong ; subst )
+
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( complexity ; module Bounded ; tuple-code ; _≈ʷ_
+                                 ; tuple-code-sound ; finite-pigeonhole-≈ⁿ )
+
+-- Imports from agda-deans-problem ------------------------------------
+open import DeansProblem.Chain            using  ( Chain )
+open import DeansProblem.Chain.Copies     using  ( CopyChain ; copyChain→chain )
+open import DeansProblem.Coherent         using  ( transition ; transition-bound′
+                                                 ; bound )
+open import DeansProblem.Coherent.Finite  using  ( four-links→coherent₃ )
+open import DeansProblem.LengthThree      using  ( no-coherent₃ )
+
 
 private variable
   χ : Level

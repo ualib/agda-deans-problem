@@ -49,10 +49,11 @@ way from the directory it unpacks to.
 and the two modules of agda-lattices that the tables below name and no
 module here names in an import (`Lattices.Free.Membership` and
 `Lattices.Free.Small`, which come in through the library's barrel
-`Lattices.Free`), type-checks it with a heap limit of 6 GiB (`+RTS -M6G -A128M`), the limit
-under which the paper's costs are measured, and last runs
-`scripts/check-paper.sh` (below).  It exits 0 when every module checks and
-the tables agree with the development, and its last line is the following:
+`Lattices.Free`), type-checks it with a heap limit of 6 GiB
+(`+RTS -M6G -A128M`), the limit under which the paper's costs are measured,
+and last runs `scripts/check-paper.sh` (below).  It exits 0 when every
+module checks and the tables agree with the development, and its last line
+is the following:
 
     check-paper: 48 results agree with DeansProblem.Paper; 207 names resolve in 40 modules
 
@@ -354,66 +355,70 @@ The cost of the check is stated for the paper's tag, measured as follows:
 for wall time and peak resident memory by `/usr/bin/time -v`, the median of
 the runs reported with their range; once with the interface files of
 agda-lattices and of the Agda Universal Algebra Library built in the same run
-(a fresh clone's first check, which checks 173 modules: this repository's 38,
-39 of agda-lattices, 95 of the Agda Universal Algebra Library, and the
+(a fresh clone's first check, which checks 186 modules: this repository's 38,
+42 of agda-lattices, 105 of the Agda Universal Algebra Library, and the
 aggregator), and once with them already built (`make clean`, then the check
 again, which checks 39), which is the cost of this repository's modules
 alone.  The Agda run, the figure the paper gives, is timed on its own, by a
 timing wrapper given to the Makefile as `AGDA`; the rest of `make check` is
 `make safety` and `scripts/check-paper.sh`, whose two Agda probes load the
-development's interfaces.  The Agda run uses one core; the times below are wall
-times, which on a loaded machine can exceed its processor time.
+development's interfaces.  The Agda run uses one core; the times below are
+wall times, which on a loaded machine can exceed its processor time.
 
-Measured on 9 November 2026 at commit `9f195d3`, whose code the tag has, in
-six runs of each kind (two sets of three, from six fresh clones), on a
-machine with an Intel Core i9-12900H (6 performance and 8 efficiency cores,
-20 threads) and 62 GiB of memory, shared with other work at a load average
-of 3.1 to 4.8:
+Measured on 19 November 2026 at commit `8a1309f`, whose code the tag has,
+from six fresh clones, on a machine with an Intel Core i9-12900H (6
+performance and 8 efficiency cores, 20 threads) and 62 GiB of memory, shared
+with other work at a load average of 1.0 to 2.4:
 
 | The libraries' interfaces | `make check` | The Agda run | Peak resident memory |
 | --- | --- | --- | --- |
-| built in the run | 52.7 s (44.2 to 56.8) | 45.4 s (37.8 to 49.6) | 2.03 to 2.25 GiB |
-| already built | 26.3 s (24.1 to 28.5) | 19.1 s (17.6 to 21.2) | 1.74 to 1.77 GiB |
+| built in the run | 40.6 s (40.1 to 40.7) | 34.7 s (34.0 to 34.9) | 1.95 GiB |
+| already built | 21.5 s (21.1 to 22.0) | 15.5 s (15.2 to 15.9) | 2.10 GiB |
 
-The load is the measurement's, not the release's.  The same commit, with the
-same toolchain, measured on 31 October 2026 at a load average of 0.3 to 1.1,
-gave the paper's figures: the Agda run took 32.5 seconds from source (32.4
-to 32.6, three runs) and 15.0 seconds with the libraries built, and
-`make check` from source 37.7 seconds.  The medians above are 40 percent
-higher from source and 27 percent higher with the libraries built, and a
-check with them built, pinned to the least busy performance core, took
-16.9 seconds for the Agda run.  The peak
-follows the garbage collector's schedule, which depends on timing: each set
-of three runs from source peaked at one value, 2.25 GiB in the first and
-2.03 GiB in the second, and the runs of 31 October at 2.24, 2.24 and 2.34
-GiB.
+The first row is of five runs: the first clone's check came at a moment when
+the machine ran about three times slower, in processor time as in wall time
+(120.9 seconds for `make check`, 105.9 for the Agda run), and is left out.
+The second row is of all six.  A check from source in a fresh detached
+worktree took 40.9 seconds, at a peak of 2.16 GiB.  The peak follows the
+garbage collector's schedule, which depends on timing: each kind of run
+peaked at one value, and a run with the libraries built peaked higher than
+one from source.
 
 Pinned to one core, with Agda's per-module profile (every interface file
 deleted, then `taskset -c 0 make PROFILE=modules profile`), the check from
-source took 43.3 seconds on 9 November, and 32.4 on 31 October.  The
-costliest modules of this repository were, both times and in this order,
-`DeansProblem.Examples.FreeseStep.Complexity` (3.0 seconds on 9 November),
-`DeansProblem.Examples.FreeseBox` (2.4), `DeansProblem.Examples.FreeseStep`
-(1.8) and `DeansProblem.FixedGenerator` (1.6); no other module, of this
+source took 33.8 seconds, at a peak of 2.28 GiB.  The costliest modules
+were `DeansProblem.Examples.FreeseStep.Complexity` (2.1 seconds),
+`DeansProblem.Examples.FreeseBox` (1.9), `DeansProblem.Examples.FreeseStep`
+(1.4) and `DeansProblem.FixedGenerator` (1.2); no other module, of this
 repository or of the libraries, took a second.  The cost is where the
 Whitman decisions are, above all in the worked examples on Freese's terms.
 
+At commit `9f195d3`, before the modules here imported the libraries'
+barrels, the check read 173 modules (39 of agda-lattices and 95 of the Agda
+Universal Algebra Library); measured on 31 October 2026 at a load average of
+0.3 to 1.1, its Agda run took 32.5 seconds from source and 15.0 with the
+libraries built, and the profile 32.4.  The thirteen library modules the
+barrels add took 1.1 seconds of the profile above.
+
 ### The counts
 
-At commit `9f195d3`, with the libraries at the commits the flake pins, the
-counts the paper states are as follows:
+At commit `8a1309f`, whose code the tag has, with the libraries at the
+commits the flake pins, the counts are as follows:
 
-+  this repository's 38 modules have 15,410 lines of literate source, of
-   which 9,312 are Agda code;
-+  the 39 modules of agda-lattices that the check reads, of the 91 at its
-   pin, have 16,435 lines, of which 10,247 are code;
-+  the check reads 95 modules of the Agda Universal Algebra Library.
++  this repository's 38 modules have 16,673 lines of literate source, of
+   which 10,575 are Agda code;
++  the 42 modules of agda-lattices that the check reads, of the 91 at its
+   pin, have 16,821 lines, of which 10,375 are code;
++  the check reads 105 modules of the Agda Universal Algebra Library.
 
 A line of code is one inside a block that Agda reads, by its rules for
 literate Markdown: a block opened by a fence that is bare or marked `agda`,
 and closed by a bare fence, indented or not.  The modules of agda-lattices
-are those that this repository's modules import, directly or not, with the
-two that `make check` adds (`TABLE_LIBRARY_MODULES` in the `Makefile`).
+are those that this repository's modules import, directly or not; they
+include the two that `make check` also names (`TABLE_LIBRARY_MODULES` in the
+`Makefile`).  A check from source confirms the module counts: it prints 186
+`Checking` lines, one for each module of the three trees and one for the
+aggregator.
 
 ## Provenance
 

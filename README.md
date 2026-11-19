@@ -8,6 +8,7 @@
 [![Agda 2.9.0, pre-release](https://img.shields.io/badge/Agda-2.9.0_pre--release-purple.svg)](https://github.com/agda/agda/commit/da66a8c75f11d10699a6b38b261efdf244b66f2a)
 [![stdlib 2.3, patched for Agda 2.9.0](https://img.shields.io/badge/stdlib-2.3_patched-orange.svg)](https://github.com/formalverification/agda-stdlib/releases/tag/v2.3-agda-2.9.0)
 [![agda-lattices, pinned at v0.2.0](https://img.shields.io/badge/agda--lattices-v0.2.0-teal.svg)](https://github.com/ualib/agda-lattices/releases/tag/v0.2.0)
+[![DOI](https://zenodo.org/badge/1431825343.svg)](https://doi.org/10.5281/zenodo.24375154)
 
 The formal development, in [Agda][], of the paper
 
@@ -439,9 +440,15 @@ check it, and how a pull request is reviewed.
 The development is licensed under the Apache License 2.0 (`LICENSE`);
 `NOTICE` records the attribution it carries from the Agda Universal Algebra
 Library.  `CITATION.cff` gives the metadata for citing it, with the paper,
-[arXiv:2611.18541][paper], as its preferred citation; the paper cites the
-release tagged `v0.1.0`, whose archived copy will have a DOI, and whose
-notes are [`docs/releases/v0.1.0.md`](docs/releases/v0.1.0.md).
+[arXiv:2611.18541][paper], as its preferred citation.  The paper cites the
+release tagged [`v0.1.0`][release], whose notes are
+[`docs/releases/v0.1.0.md`](docs/releases/v0.1.0.md).  Zenodo archives
+every release, with two DOIs, as follows:
+
++  [10.5281/zenodo.24375155][version-doi] names the release `v0.1.0`, the
+   code the paper describes, and is the DOI to cite for it;
++  [10.5281/zenodo.24375154][concept-doi] names the repository as a whole
+   and resolves to its latest release.
 
 ## Acknowledgment
 
@@ -466,7 +473,10 @@ statement and proof.
 [agda-pin]: https://github.com/agda/agda/tree/da66a8c75f11d10699a6b38b261efdf244b66f2a
 [agda-stdlib]: https://github.com/agda/agda-stdlib
 [Cachix]: https://www.cachix.org/
+[concept-doi]: https://doi.org/10.5281/zenodo.24375154
 [cost]: #the-cost
 [Nix]: https://nixos.org/
 [paper]: https://arxiv.org/abs/2611.18541
+[release]: https://github.com/ualib/agda-deans-problem/releases/tag/v0.1.0
+[version-doi]: https://doi.org/10.5281/zenodo.24375155
 [FJN]: https://doi.org/10.1090/surv/042

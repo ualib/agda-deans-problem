@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Ladder][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 In any lattice, the *ladder* over elements `a`, `b` and a bound `w` is the
 pair of sequences

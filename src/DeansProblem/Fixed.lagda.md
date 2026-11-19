@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Fixed][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Let `θ` be an injective endomorphism of `FL(n)`.  This module proves three facts
 about the elements it fixes, which are the elements `w` with `θ(w) = w`, and

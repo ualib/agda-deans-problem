@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Paper][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Each of the 48 results of [the paper][] is one Agda definition here, whose
 type is the result's statement, with one proof: the statement of Theorem 4.5

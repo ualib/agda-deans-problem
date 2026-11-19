@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Examples.FreeseBox][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 [DeansProblem.AlmostProof][] isolates the gap in Freese's almost-proof as a
 predicate on a box: the intervals that a recurring truncation pattern pins the

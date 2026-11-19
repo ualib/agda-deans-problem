@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.AlmostProof][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Freese's "Notes on Dean's problem" (1997) end with "an almost proof that an
 ascending chain cannot exist".  In his words: "whenever the sublattice generated

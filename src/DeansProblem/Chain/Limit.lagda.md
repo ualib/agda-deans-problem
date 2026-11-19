@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Chain.Limit][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Definition 4.1 of [the paper][] fixes, for a chain `L₀ ⊊ L₁ ⊊ ⋯` of copies of
 `FL(3)` in `FL(X)`, isomorphisms `φₖ : FL(3) → Lₖ`, and reads the inclusion

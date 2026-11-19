@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.FixedGenerator][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Let `Θ` be a proper self-embedding of `FL(3)` whose fixed sublattice contains a
 copy of `FL(3)`, the first link of any coherent chain of length three

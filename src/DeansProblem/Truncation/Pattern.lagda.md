@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Truncation.Pattern][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Let `τ` be a family of elements of `FL(Y)` indexed by `I`, `p` a term over
 `I` with canonical form `C`, and `D` the canonical form of `p [ τ ]`.  The

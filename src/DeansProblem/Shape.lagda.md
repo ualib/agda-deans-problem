@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Shape][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Corollary E1 of [the paper][] (Section 7) says that a proper self-embedding
 `Θ` of `FL(3)` with a fixed free triple fixes exactly one generator `z`.  Put

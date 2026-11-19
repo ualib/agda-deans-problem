@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Inflationary][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 A self-embedding `Θ` of `FL(3)` (a freely generating substitution, Corollary
 1.13 of [Freese, Ježek, and Nation (1995)][]) is *inflationary* when `g ≤ Θ g`

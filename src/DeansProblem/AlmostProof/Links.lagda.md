@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.AlmostProof.Links][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Theorem 9.2 of [the paper][] ends: "at most one link of a chain lies in a
 strongly irredundant box."  [DeansProblem.AlmostProof][] proves the theorem

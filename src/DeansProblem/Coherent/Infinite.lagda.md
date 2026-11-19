@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Coherent.Infinite][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 Three statements of [the paper][] rest on the infinite pigeonhole principle,
 which is classically true and not provable in Agda's constructive logic.  This

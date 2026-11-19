@@ -10,7 +10,7 @@ author: "the agda-lattices development team"
 
 This is the [DeansProblem.Coherent][] module of this repository.
 
-[the paper]: https://arxiv.org/abs/YYMM.NNNNN
+[the paper]: https://arxiv.org/abs/2611.18541
 
 A chain toward Dean's problem ([DeansProblem.Chain][]) is a sequence of freely
 generating triples `gens k` in `FL(X)`, each expressed in the next by terms

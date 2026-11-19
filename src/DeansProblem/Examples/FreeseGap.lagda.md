@@ -43,15 +43,15 @@ open import Data.Product                     using  ( _,_ ; proj₂ )
 open import Relation.Nullary                 using  ( ¬_ )
 open import Relation.Nullary.Decidable.Core  using  ( from-yes ; from-no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic     using  ( ≈ʷ-sym ; ≈ʷ-trans )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-sym ; ≈ʷ-trans ; generator-in-image ; _≤ʷ_
+                                 ; _≈ʷ_ ; ≤ʷ-trans ; module Decisionᵖ )
+
+-- Imports from agda-deans-problem ------------------------------------------------
 open import DeansProblem.Chain.Condition      using  ( ⟨_⟩ )
-open import DeansProblem.Examples.FreeseStep  using  ( a₁ ; a' ; a″ ; abc'
-                                                     ; abc″ ; a'≈a″
-                                                     ; abc'≈abc″ )
-open import Lattices.Free.Generation          using  ( generator-in-image )
-open import Lattices.Free.Whitman             using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans )
-open import Lattices.Free.Whitman.Polynomial  using  ( module Decisionᵖ )
+open import DeansProblem.Examples.FreeseStep  using  ( a₁ ; a' ; a″ ; abc' ; abc″
+                                                     ; a'≈a″ ; abc'≈abc″ )
+
 ```
 -->
 

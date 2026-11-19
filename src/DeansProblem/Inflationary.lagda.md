@@ -118,44 +118,25 @@ open import Relation.Binary.PropositionalEquality    using  ( _≡_ ; _≢_ ; re
 open import Relation.Nullary                         using  ( ¬_ )
 open import Relation.Nullary.Decidable.Core          using  ( Dec ; yes ; no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic       using  ( ≈ʷ-refl ; ≈ʷ-sym
-                                                       ; ≈ʷ-trans ; ⋀⁺
-                                                       ; ⋀⁺-gen-below )
-open import Lattices.Free.Canonical.Joinands    using  ( canonicalJoinands
-                                                       ; canonicalMeetands
-                                                       ; canonicalMeetands-lower )
-open import Lattices.Free.Canonical.Uniqueness  using  ( antichain-≤ )
-open import DeansProblem.Chain                  using  ( iter ; []-iter-suc
-                                                       ; []-iter-sucʳ )
-open import Lattices.Free.Embedding             using  ( canonicalJoinands-antichain
-                                                       ; canonicalMeetands-antichain
-                                                       ; meetand-representation
-                                                       ; meetand₀ ; meetands₊ )
-open import DeansProblem.Fixed                  using  ( fixed-joinand
-                                                       ; fixed-meetand
-                                                       ; iter-free )
-open import Lattices.Free.Generation            using  ( FreelyGenerates
-                                                       ; freelyGenerates→injective
-                                                       ; generator-in-image )
-open import DeansProblem.Partition              using  ( other ; other' ; cover₃
-                                                       ; ∉others₃
-                                                       ; module Partition
-                                                       ; fix-two-generators )
-open import Lattices.Free.Substitution          using  ( Sub ; _[_] ; []-ℊ
-                                                       ; []-mono ; []-cong
-                                                       ; ⋀⁺-[]
-                                                       ; injective→reflects )
-open import Lattices.Free.Term                  using  ( LatTerm ; ℊ ; _∧̇_
-                                                       ; _∨̇_ )
-open import Lattices.Free.Whitman               using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl
-                                                       ; ≤ʷ-trans ; ∨≤ ; ∨≤-inv
-                                                       ; ℊ≤∧ ; ℊ≤ℊ ; ℊ≤ℊ-inv
-                                                       ; ℊ≤∨ˡ ; ℊ≤∨ʳ ; ℊ≤∨-inv
-                                                       ; ≤∧ ; ≤∧-inv ; ∧≤ℊ-inv
-                                                       ; ≤∨ˡ ; ≤∨ʳ ; ∧ˡ≤ ; ∧ʳ≤
-                                                       ; ∨̇-upperˡ ; ∨̇-upperʳ
-                                                       ; module Decision )
+-- Imports from agda-lattices  --------------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ⋀⁺ ; ⋀⁺-gen-below
+                                 ; canonicalJoinands ; canonicalMeetands
+                                 ; canonicalMeetands-lower ; antichain-≤
+                                 ; canonicalJoinands-antichain ; meetand₀ ; meetands₊
+                                 ; canonicalMeetands-antichain ; []-mono ; []-cong
+                                 ; meetand-representation ; FreelyGenerates
+                                 ; freelyGenerates→injective ; generator-in-image
+                                 ; Sub ; _[_] ; []-ℊ ; ⋀⁺-[] ; injective→reflects
+                                 ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl
+                                 ; ≤ʷ-trans ; ∨≤ ; ∨≤-inv ; ℊ≤∧ ; ℊ≤ℊ ; ℊ≤ℊ-inv ; ℊ≤∨ˡ
+                                 ; ℊ≤∨ʳ ; ℊ≤∨-inv ; ≤∧ ; ≤∧-inv ; ∧≤ℊ-inv ; ≤∨ˡ ; ≤∨ʳ
+                                 ; ∧ˡ≤ ; ∧ʳ≤ ; ∨̇-upperˡ ; ∨̇-upperʳ ; module Decision )
+
+-- Imports from agda-deans-problem -----------------------------------------------------
+open import DeansProblem.Chain      using  ( iter ; []-iter-suc ; []-iter-sucʳ )
+open import DeansProblem.Fixed      using  ( fixed-joinand ; fixed-meetand ; iter-free )
+open import DeansProblem.Partition  using  ( module Partition ; other ; other' ; cover₃
+                                           ; ∉others₃ ; fix-two-generators )
 
 private variable
   ℓ χ υ : Level

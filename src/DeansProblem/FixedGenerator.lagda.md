@@ -64,130 +64,78 @@ module DeansProblem.FixedGenerator where
 open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                               using  ( ⊥ ; ⊥-elim )
-open import Data.Fin.Base                            using  ( Fin )
-open import Data.Fin.Patterns                        using  ( 0F ; 1F ; 2F )
-open import Data.Fin.Properties                      using  ( _≟_ )
-open import Data.List.Base                           using  ( List ; [] ; _∷_
-                                                            ; map ; allFin
-                                                            ; length )
-open import Data.List.Properties                     using  ( map-∘ ; map-cong )
-open import Data.List.Membership.Propositional       using  ( _∈_ ; find
-                                                            ; lose )
+open import Data.Empty                          using  ( ⊥ ; ⊥-elim )
+open import Data.Fin.Base                       using  ( Fin )
+open import Data.Fin.Patterns                   using  ( 0F ; 1F ; 2F )
+open import Data.Fin.Properties                 using  ( _≟_ )
+open import Data.List.Base                      using  ( List ; [] ; _∷_ ; map
+                                                       ; allFin ; length )
+open import Data.List.Properties                using  ( map-∘ ; map-cong )
+open import Data.List.Membership.Propositional  using  ( _∈_ ; find ; lose )
 open import Data.List.Membership.Propositional.Properties
-                                                     using  ( ∈-allFin ; ∈-map⁺
-                                                            ; ∈-map⁻ )
-open import Data.List.Relation.Unary.All             using  ( All ; [] ; _∷_
-                                                            ; all? ; lookup
-                                                            ; tabulate )
-open import Data.List.Relation.Unary.AllPairs        using  ( AllPairs
-                                                            ; allPairs? )
-open import Data.List.Relation.Unary.Any             using  ( Any ; here ; there
-                                                            ; any? )
-open import Data.List.Relation.Unary.Any.Properties  using  ( map⁻ )
-open import Data.Nat.Base                            using  ( ℕ ; zero ; suc
-                                                            ; _+_ ; _*_ ; _≤_
-                                                            ; s≤s )
-open import Data.Nat.Properties                      using  ( ≤-refl ; ≤-trans
-                                                            ; _≤?_ ; ≤-pred
-                                                            ; m≤n⇒∃[o]m+o≡n )
-open import Data.Product                             using  ( Σ-syntax ; _×_
-                                                            ; _,_ ; proj₁
-                                                            ; proj₂ )
-open import Data.Sum.Base                            using  ( _⊎_ ; inj₁ ; inj₂
-                                                            ; [_,_]′ )
-open import Function                                 using  ( _⇔_ ; mk⇔ )
-open import Relation.Binary.PropositionalEquality    using  ( _≡_ ; refl ; sym
-                                                            ; trans ; cong
-                                                            ; subst ; subst₂ )
-open import Relation.Nullary                         using  ( ¬_ )
-open import Relation.Nullary.Decidable.Core          using  ( Dec ; yes ; no
-                                                            ; from-yes ; map′
-                                                            ; ¬? ; _×-dec_ )
+                                                using  ( ∈-allFin ; ∈-map⁺ ; ∈-map⁻ )
+open import Data.List.Relation.Unary.All        using  ( All ; [] ; _∷_ ; all?
+                                                       ; lookup ; tabulate )
+open import Data.List.Relation.Unary.AllPairs   using  ( AllPairs ; allPairs? )
+open import Data.List.Relation.Unary.Any        using  ( Any ; here ; there ; any? )
+open import Data.List.Relation.Unary.Any.Properties
+                                                using  ( map⁻ )
+open import Data.Nat.Base                       using  ( ℕ ; zero ; suc ; _+_
+                                                       ; _*_ ; _≤_ ; s≤s )
+open import Data.Nat.Properties                 using  ( ≤-refl ; ≤-trans ; _≤?_
+                                                       ; ≤-pred ; m≤n⇒∃[o]m+o≡n )
+open import Data.Product                        using  ( Σ-syntax ; _×_ ; _,_
+                                                       ; proj₁ ; proj₂ )
+open import Data.Sum.Base                       using  ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
+open import Function                            using  ( _⇔_ ; mk⇔ )
+open import Relation.Binary.PropositionalEquality
+                                                using  ( _≡_ ; refl ; sym ; trans ; cong
+                                                       ; subst ; subst₂ )
+open import Relation.Nullary                    using  ( ¬_ )
+open import Relation.Nullary.Decidable.Core     using  ( Dec ; yes ; no ; from-yes
+                                                       ; map′ ; ¬? ; _×-dec_ )
 
 import Data.List.Relation.Unary.Any as Any
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Algorithm    using  ( module Canonicalization )
-open import Lattices.Free.Canonical.Basic        using  ( CTerm ; genᶜ ; joinᶜ
-                                                        ; meetᶜ ; CJand ; jgen
-                                                        ; jmeet ; CMand ; mgen
-                                                        ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ
-                                                        ; ⌊_⌋ᴹ ; ⋁ᴶ≡⋁⁺ ; ⋀ᴹ≡⋀⁺
-                                                        ; ≈ʷ-refl ; ≈ʷ-sym
-                                                        ; ≈ʷ-trans ; ∨̇-cong
-                                                        ; ∧̇-cong ; IsCanonical
-                                                        ; cjoin ; cmeet
-                                                        ; IsCanonicalJ ; cjgen
-                                                        ; cjmeet ; IsCanonicalM
-                                                        ; cmgen ; cmjoin ; ⋁⁺
-                                                        ; ⋀⁺ ; asListJ ; asListM
-                                                        ; joinandsOf
-                                                        ; meetandsOf )
-open import Lattices.Free.Canonical.Joinands     using  ( canonicalJoinands
-                                                        ; canonicalMeetands
-                                                        ; canonicalJoinands-upper
-                                                        ; canonicalJoinands-least
-                                                        ; canonicalMeetands-lower
-                                                        ; canonicalMeetands-greatest
-                                                        ; joinands-≈ˡ
-                                                        ; meetands-≈ˡ
-                                                        ; Any-resp-≈ˡ ; ≈ˡ-sym )
-open import Lattices.Free.Canonical.Recognition  using  ( module Recognize )
-open import Lattices.Free.Canonical.Uniqueness   using  ( gen≉join ; gen≉meet
-                                                        ; antichain-≤ )
-open import DeansProblem.Chain                   using  ( iter ; []-iter-suc )
-open import Lattices.Free.Complexity             using  ( complexity
-                                                        ; complexity-resp
-                                                        ; complexity-mono
-                                                        ; complexityᴶ
-                                                        ; complexityᴹ ; depth
-                                                        ; depthΣJ-upper
-                                                        ; depthΣM-upper
-                                                        ; module Bounded )
-open import Lattices.Free.Embedding              using  ( canonicalJoinands-antichain
-                                                        ; canonicalMeetands-antichain )
-open import DeansProblem.Fixed                   using  ( fixed→image
-                                                        ; positive-not-gen
-                                                        ; descent-parent
-                                                        ; joinand-periodic
-                                                        ; meetand-periodic
-                                                        ; iter-free
-                                                        ; []-iter-* )
-open import Lattices.Free.Duality                using  ( dual ; dual-involutive
-                                                        ; dual-cong
-                                                        ; dual-reflects
-                                                        ; dual-reflects-≈
-                                                        ; dual-antitone )
-open import Lattices.Free.Generation             using  ( FreelyGenerates
-                                                        ; JoinCondition ; _≤⋁_
-                                                        ; MeetCondition ; _⋀≤_
-                                                        ; freelyGenerates→injective
-                                                        ; MeetCondition→JoinConditionᵈ )
-open import DeansProblem.Inflationary            using  ( Inflationary
-                                                        ; Deflationary
-                                                        ; fixes-join
-                                                        ; fixes-join-third
-                                                        ; fixes-join-swapped
-                                                        ; iter-two
-                                                        ; power-fixes→fixes
-                                                        ; Node ; root ; joinand
-                                                        ; meetand
-                                                        ; NoGeneratorMeetand
-                                                        ; S-node
-                                                        ; strict-fixed-no-generator-meetand )
-open import DeansProblem.Partition               using  ( other ; other'
-                                                        ; cover₃ )
-open import Lattices.Free.Substitution           using  ( Sub ; _[_] ; []-ℊ
-                                                        ; []-⨟ ; []-cong
-                                                        ; []-congʳ ; dual-[] )
-open import Lattices.Free.Term                   using  ( LatTerm ; ℊ ; _∧̇_
-                                                        ; _∨̇_ )
-open import Lattices.Free.Whitman                using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl
-                                                        ; ≤ʷ-trans ; ∨≤ ; ≤∧
-                                                        ; ∧ˡ≤ ; ∧ʳ≤ ; ℊ≤ℊ ; ℊ≤∨ˡ
-                                                        ; ℊ≤∨ʳ ; ≤∨ˡ
-                                                        ; module Decision )
+-- Imports from agda-lattices  ---------------------------------------------------
+open import Lattices.Free  using  ( module Canonicalization ; module Recognize
+                                  ; module Decision ; module Bounded ; CTerm ; genᶜ
+                                  ; joinᶜ ; meetᶜ ; CJand ; jgen ; jmeet ; CMand
+                                  ; mgen ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ ; ⋁ᴶ≡⋁⁺ ; ⋀ᴹ≡⋀⁺
+                                  ; ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ∨̇-cong ; ∧̇-cong
+                                  ; IsCanonical ; cjoin ; cmeet ; IsCanonicalJ
+                                  ; cjgen ; cjmeet ; IsCanonicalM ; cmgen ; cmjoin
+                                  ; ⋁⁺ ; ⋀⁺ ; asListJ ; asListM ; joinandsOf ; ≤ʷ-refl
+                                  ; meetandsOf ; canonicalJoinands ; ≈ˡ-sym ; ≤ʷ-trans
+                                  ; canonicalMeetands ; canonicalJoinands-upper
+                                  ; canonicalJoinands-least ; Any-resp-≈ˡ ; gen≉meet
+                                  ; canonicalMeetands-lower ; joinands-≈ˡ ; dual-cong
+                                  ; canonicalMeetands-greatest; gen≉join ; depth
+                                  ; antichain-≤ ; meetands-≈ˡ ; complexity ; dual
+                                  ; complexity-resp ; complexity-mono ; complexityᴶ
+                                  ; complexityᴹ ; depthΣJ-upper ; depthΣM-upper
+                                  ; dual-reflects ; canonicalJoinands-antichain
+                                  ; dual-involutive ; canonicalMeetands-antichain
+                                  ; dual-reflects-≈ ; dual-antitone ; FreelyGenerates
+                                  ; JoinCondition ; _≤⋁_ ; MeetCondition ; Sub ; _[_]
+                                  ; freelyGenerates→injective ; _⋀≤_ ; []-ℊ ; []-⨟
+                                  ; MeetCondition→JoinConditionᵈ ; []-cong ; []-congʳ
+                                  ; dual-[] ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ;  _≤ʷ_ ; _≈ʷ_
+                                  ; ∨≤ ; ≤∧ ; ∧ˡ≤ ; ∧ʳ≤ ; ℊ≤ℊ ; ℊ≤∨ˡ ; ℊ≤∨ʳ ; ≤∨ˡ )
+
+-- Imports from agda-deans-problem ----------------------------------------------
+open import DeansProblem.Chain        using  ( iter ; []-iter-suc )
+open import DeansProblem.Fixed        using  ( fixed→image ; positive-not-gen
+                                             ; descent-parent ; joinand-periodic
+                                             ; meetand-periodic ; iter-free
+                                             ; []-iter-* )
+open import DeansProblem.Inflationary using  ( Inflationary ; Deflationary ; S-node
+                                             ; fixes-join ; fixes-join-third
+                                             ; fixes-join-swapped ; iter-two
+                                             ; power-fixes→fixes ; Node ; root
+                                             ; joinand ; meetand ; NoGeneratorMeetand
+                                             ; strict-fixed-no-generator-meetand )
+open import DeansProblem.Partition    using  ( other ; other' ; cover₃ )
 
 open Decision (_≟_ {3}) using ( _≈ʷ?_ )
 open Recognize (_≟_ {3}) using ( isCanonical? )
@@ -1155,52 +1103,33 @@ module _
       ⊥-elim (genat v 1F κv e)
     cases u v κu E fixv v∈ κv (there (there (there (there (there (here e)))))) =
       ⊥-elim (genat v 2F κv e)
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (here e)))))))
-      = joinat 0F E v fixv e
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (here e))))))))
-      = joinat 2F E v fixv e
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there (here e)))))))))
-      = joinat 1F E v fixv e
-    cases u v κu E fixv v∈ κv
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there
+      (here e))))))) = joinat 0F E v fixv e
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there
+      (here e)))))))) = joinat 2F E v fixv e
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (here e))))))))) = joinat 1F E v fixv e
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (there (here e)))))))))) = ⊥-elim (top-not-child u v κu e v∈)
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (there (there (here e))))))))))) = ⊥-elim (genat v 0F κv e)
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (there (there (there (here e)))))))))))) = ⊥-elim (genat v 1F κv e)
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (there (there (there (there (here e))))))))))))) = ⊥-elim (genat v 2F κv e)
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (there (there (there (there (there (here e)))))))))))))) = meetat 0F E v fixv e
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (there (there (there (there (there (there (here e))))))))))))))) =
+        meetat 2F E v fixv e
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (there (there (there (there (there (there (there (here e)))))))))))))))) =
+        meetat 1F E v fixv e
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
       (there (there (there (there (there (there (there (there
-      (there (here e))))))))))
-      = ⊥-elim (top-not-child u v κu e v∈)
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there
-      (there (there (here e)))))))))))
-      = ⊥-elim (genat v 0F κv e)
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there
-      (there (there (there (here e))))))))))))
-      = ⊥-elim (genat v 1F κv e)
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there
-      (there (there (there (there (here e)))))))))))))
-      = ⊥-elim (genat v 2F κv e)
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there
-      (there (there (there (there (there (here e))))))))))))))
-      = meetat 0F E v fixv e
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there
-      (there (there (there (there (there (there (here e)))))))))))))))
-      = meetat 2F E v fixv e
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there
-      (there (there (there (there (there (there (there (here e))))))))))))))))
-      = meetat 1F E v fixv e
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there
-      (there (there (there (there (there (there (there (there
-      (here e)))))))))))))))))
-      = ⊥-elim (bot-not-child u v κu e v∈)
-    cases u v κu E fixv v∈ κv
-      (there (there (there (there (there (there (there (there
-      (there (there (there (there (there (there (there (there
-      (there ())))))))))))))))))
+        (here e))))))))))))))))) = ⊥-elim (bot-not-child u v κu e v∈)
+    cases u v κu E fixv v∈ κv (there (there (there (there (there (there (there (there
+      (there (there (there (there (there (there (there (there (there ())))))))))))))))))
 
   -- Every proper self-embedding of FL(3) with a fixed free triple fixes a
   -- generator.

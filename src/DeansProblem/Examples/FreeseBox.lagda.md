@@ -103,34 +103,38 @@ open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
 open import Relation.Nullary                       using  ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using  ( from-yes ; from-no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import DeansProblem.Examples.FreeseStep
-  using  ( a₁ ; a₂₁ ; a₂₂ ; b₁ ; b₂₁ ; b₂₂ ; c₁ ; c₂₁ ; c₂₂ ; π ; ā₁ ; ā₂₁ ; ā₂₂
-         ; b̄₂₁ ; b̄₂₂ ; c̄₂₁ ; c̄₂₂ ; a ; b ; c ; a' ; abc ; abc' ; abc-free
-         ; abc'-free ; abc≈ ; ρ ; x∉ρ ; â ; a≈â ; a'≈a″ ; relation-1ᵇ
-         ; relation-2ᶜ ; relation-3ᵇ ; relation-4ᶜ )
-open import DeansProblem.AlmostProof
-  using  ( InBox ; StronglyIrredundant ; stronglyIrredundant-narrow ; lemma-2ᶠ
-         ; box-agree ; no-step-in-irredundant-box ; module DecideBox )
-open import Lattices.Free.Canonical.Basic
-  using  ( CTerm ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; jgen ; jmeet ; CMand ; mgen
-         ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ ; ⋁ᴶ ; ⋀ᴹ ; ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
-         ; IsCanonical ; asListJ ; joinandsOf )
-open import Lattices.Free.Canonical.Recognition  using  ( module Recognize )
-open import DeansProblem.Chain                   using  ( Step )
-open import Lattices.Free.Generation             using  ( FreelyGenerates
-                                                        ; freelyGenerates→injective )
-open import Lattices.Free.Substitution           using  ( Sub ; _[_] ; subst-hom
-                                                        ; []-mono ; []-cong
-                                                        ; []-congʳ )
-open import Lattices.Free.Term                   using  ( LatTerm ; ℊ ; _∧̇_
-                                                        ; _∨̇_ )
-open import DeansProblem.Truncation              using  ( module Truncates
-                                                        ; truncation )
-open import Lattices.Free.Whitman
-  using  ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤∧ ; ≤ʷ-refl ; ≤ʷ-trans ; ∨̇-upperˡ ; ∧̇-lowerˡ
-         ; ∧̇-lowerʳ ; ℊ≤∨-inv ; module Decision )
+-- Imports from agda-algebras ---------------------------------------------------
 open import Setoid.Functions                     using  ( IsInjective )
+
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free  using  ( module Recognize ; FreelyGenerates ; []-mono
+                                  ; freelyGenerates→injective ; Sub ; _[_] ; subst-hom
+                                  ; []-cong ; []-congʳ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_
+                                  ; _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤∧ ; ≤ʷ-refl ; ≤ʷ-trans
+                                  ; ∨̇-upperˡ ; ∧̇-lowerˡ ; ∧̇-lowerʳ ; ℊ≤∨-inv
+                                  ; module Decision ; CTerm ; genᶜ ; joinᶜ ; meetᶜ
+                                  ; CJand ; jgen ; jmeet ; CMand ; mgen ; mjoin
+                                  ; ⌊_⌋ ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ ; ⋁ᴶ ; ⋀ᴹ ; ≈ʷ-refl ; ≈ʷ-sym
+                                  ; ≈ʷ-trans ; IsCanonical ; asListJ ; joinandsOf )
+
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.Examples.FreeseStep  using  ( a₁ ; a₂₁ ; a₂₂ ; b₁ ; b₂₁
+                                                     ; b₂₂ ; c₁ ; c₂₁ ; c₂₂ ; π
+                                                     ; ā₁ ; ā₂₁ ; ā₂₂ ; b̄₂₁ ; b̄₂₂
+                                                     ; c̄₂₁ ; c̄₂₂ ; a ; b ; c ; a'
+                                                     ; abc ; abc' ; abc-free
+                                                     ; abc'-free ; abc≈ ; ρ ; x∉ρ
+                                                     ; â ; a≈â ; a'≈a″ ; relation-1ᵇ
+                                                     ; relation-2ᶜ ; relation-3ᵇ
+                                                     ; relation-4ᶜ )
+open import DeansProblem.AlmostProof          using  ( InBox ; StronglyIrredundant
+                                                     ; stronglyIrredundant-narrow
+                                                     ; lemma-2ᶠ ; box-agree
+                                                     ; no-step-in-irredundant-box
+                                                     ; module DecideBox )
+open import DeansProblem.Chain                using  ( Step )
+open import DeansProblem.Truncation           using  ( module Truncates ; truncation )
+
 ```
 -->
 

@@ -63,15 +63,14 @@ open import Relation.Binary                        using  ( Setoid )
 open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl )
 open import Relation.Nullary                       using  ( ¬_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
+-- Imports from agda-algebras -----------------------------------------------------
 open import Classical.Properties.Lattice        using  ( module Lattice-Order )
-open import Classical.Structures.Lattice.Basic  using  ( Lattice
-                                                       ; module Lattice-Op )
-open import Lattices.Breadth                    using  ( other₁ ; other₂
-                                                       ; others )
-open import Lattices.Free.Term                  using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_
-                                                       ; module Evaluation )
+open import Classical.Structures.Lattice.Basic  using  ( Lattice ; module Lattice-Op )
 open import Setoid.Algebras.Basic               using  ( 𝔻[_] ; 𝕌[_] )
+
+-- Imports from agda-lattices  --------------------------------------------------------
+open import Lattices.Breadth    using ( other₁ ; other₂ ; others )
+open import Lattices.Free.Term  using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; module Evaluation )
 
 private variable
   α ρ ι : Level

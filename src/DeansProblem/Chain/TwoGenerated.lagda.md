@@ -66,15 +66,15 @@ open import Relation.Nullary                       using  ( ¬_ ; Dec ; yes ; no
 open import Relation.Nullary.Decidable.Core        using  ( from-yes ; map′ )
 open import Relation.Unary                         using  ( _⊆_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
-                                                  ; ∧̇-cong ; ∨̇-cong )
-open import DeansProblem.Chain.Condition   using  ( ⟨_⟩ ; ⟨⟩-resp ; gen∈ ; gens⊆
-                                                  ; StrictlyAscending ; ChainCondition
-                                                  ; strict→ascending ; ascends-≤ )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-cong )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Whitman          using  ( _≈ʷ_ ; module Decision )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ∧̇-cong ; ∨̇-cong
+                                 ; Sub ; _[_] ; []-cong ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_
+                                 ; _≈ʷ_ ; module Decision )
+
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.Chain.Condition using  ( ⟨_⟩ ; ⟨⟩-resp ; gen∈ ; gens⊆
+                                                ; StrictlyAscending ; ChainCondition
+                                                ; strict→ascending ; ascends-≤ )
 
 private variable
   χ : Level

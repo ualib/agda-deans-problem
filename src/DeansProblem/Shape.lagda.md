@@ -25,49 +25,44 @@ joins, and has the bounds `x ≤ Φ(x) ≤ (x ∨ y) ∧ (x ∨ z)` and
 
 module DeansProblem.Shape where
 
-open import Agda.Primitive                         using  ()
-                                                   renaming ( Set to Type )
-open import Data.Empty                             using  ( ⊥-elim )
-open import Data.Fin.Base                          using  ( Fin )
-open import Data.Fin.Patterns                      using  ( 0F ; 1F ; 2F )
-open import Data.Fin.Properties                    using  ( _≟_ )
-open import Data.List.Base                         using  ( [] ; _∷_ )
-open import Data.List.Membership.Propositional     using  ( _∈_ )
-open import Data.List.Relation.Unary.Any           using  ( here ; there )
-open import Data.Nat.Base                          using  ( ℕ ; zero ; suc )
-open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
-                                                          ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using  ( _⊎_ ; inj₁
-                                                          ; inj₂ ; [_,_]′ )
-open import Function                               using  ( id )
-open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; _≢_ ; sym
-                                                          ; trans ; subst )
-open import Relation.Nullary                       using  ( ¬_ )
-open import Relation.Nullary.Decidable.Core        using  ( Dec ; yes ; no )
+open import Agda.Primitive using () renaming ( Set to Type )
 
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-sym )
-open import DeansProblem.Chain             using  ( iter ; []-iter-suc
-                                                  ; []-iter-sucʳ )
-open import Lattices.Free.Duality          using  ( dual-cong )
-open import DeansProblem.Fixed             using  ( iter-free ; fixed→image )
-open import DeansProblem.FixedGenerator    using  ( dualˢ ; dual-free
-                                                  ; fixes-generator
-                                                  ; inflationary-power )
-open import Lattices.Free.Generation       using  ( FreelyGenerates
-                                                  ; freelyGenerates→injective )
-open import DeansProblem.Inflationary      using  ( Inflationary
-                                                  ; inflationary-term
-                                                  ; fixes-join )
-open import DeansProblem.Partition         using  ( other ; other' ; cover₃
-                                                  ; ∉others₃ ; module Partition
-                                                  ; fix-two-generators )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-ℊ ; []-mono
-                                                  ; injective→reflects )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∨̇_ ; _∧̇_ )
-open import Lattices.Free.Whitman          using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl
-                                                  ; ∨≤ ; ≤∧ ; ≤ʷ-trans
-                                                  ; ≤∨ʳ ; ∨̇-upperˡ
-                                                  ; ∨̇-upperʳ ; ℊ≤ℊ-inv )
+-- Imports from the Agda Standard Library ---------------------------------------
+open import Data.Empty                       using  ( ⊥-elim )
+open import Data.Fin.Base                    using  ( Fin )
+open import Data.Fin.Patterns                using  ( 0F ; 1F ; 2F )
+open import Data.Fin.Properties              using  ( _≟_ )
+open import Data.List.Base                   using  ( [] ; _∷_ )
+open import Data.List.Membership.Propositional
+                                             using  ( _∈_ )
+open import Data.List.Relation.Unary.Any     using  ( here ; there )
+open import Data.Nat.Base                    using  ( ℕ ; zero ; suc )
+open import Data.Product                     using  ( Σ-syntax ; _×_ ; _,_
+                                                    ; proj₁ ; proj₂ )
+open import Data.Sum.Base                    using  ( _⊎_ ; inj₁ ; inj₂ ; [_,_]′ )
+open import Function                         using  ( id )
+open import Relation.Binary.PropositionalEquality
+                                             using  ( _≡_ ; _≢_ ; sym ; trans ; subst )
+open import Relation.Nullary                 using  ( ¬_ )
+open import Relation.Nullary.Decidable.Core  using  ( Dec ; yes ; no )
+
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free  using  ( ≈ʷ-sym ; dual-cong ; FreelyGenerates
+                                  ; freelyGenerates→injective ; Sub ; _[_] ; []-ℊ
+                                  ; []-mono ; injective→reflects ; LatTerm ; ℊ
+                                  ; _∨̇_ ; _∧̇_ ; _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl ; ∨≤ ; ≤∧
+                                  ; ≤ʷ-trans ; ≤∨ʳ ; ∨̇-upperˡ ; ∨̇-upperʳ ; ℊ≤ℊ-inv )
+
+-- Imports from agda-deans-problem ------------------------------------
+open import DeansProblem.Chain           using  ( iter ; []-iter-suc ; []-iter-sucʳ )
+open import DeansProblem.Fixed           using  ( iter-free ; fixed→image )
+open import DeansProblem.FixedGenerator  using  ( dualˢ ; fixes-generator
+                                                ; inflationary-power ; dual-free )
+open import DeansProblem.Inflationary    using  ( Inflationary ; fixes-join
+                                                ; inflationary-term )
+open import DeansProblem.Partition       using  ( other ; other' ; cover₃
+                                                ; ∉others₃ ; module Partition
+                                                ; fix-two-generators )
 ```
 
 #### The statement

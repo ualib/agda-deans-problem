@@ -58,24 +58,23 @@ module DeansProblem.Ladder where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using  ( Fin )
-open import Data.Fin.Patterns                      using  ( 0F ; 1F ; 2F )
-open import Data.Nat.Base                          using  ( ℕ ; zero ; suc
-                                                          ; z≤n ; s≤s )
-                                                   renaming ( _≤_ to _≤ℕ_ )
-open import Data.Product                           using  ( _×_ ; _,_
-                                                          ; proj₁ ; proj₂ )
-open import Level                                  using  ( Level )
-open import Relation.Binary                        using  ( Setoid )
-open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; cong )
+open import Data.Fin.Base      using ( Fin )
+open import Data.Fin.Patterns  using ( 0F ; 1F ; 2F )
+open import Data.Nat.Base      using ( ℕ ; zero ; suc ; z≤n ; s≤s )
+                               renaming ( _≤_ to _≤ℕ_ )
+open import Data.Product       using ( _×_ ; _,_ ; proj₁ ; proj₂ )
+open import Level              using ( Level )
+open import Relation.Binary    using ( Setoid )
+open import Relation.Binary.PropositionalEquality
+                               using  ( _≡_ ; refl ; cong )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Classical.Properties.Lattice        using  ( module Lattice-Order )
-open import Classical.Structures.Lattice.Basic  using  ( Lattice
-                                                       ; module Lattice-Op )
-open import Lattices.Free.Term                  using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_
-                                                       ; module Evaluation )
-open import Setoid.Algebras.Basic               using  ( 𝔻[_] ; 𝕌[_] )
+-- Imports from agda-algebras -----------------------------------------------------
+open import Classical.Properties.Lattice        using ( module Lattice-Order )
+open import Classical.Structures.Lattice.Basic  using ( Lattice ; module Lattice-Op )
+open import Setoid.Algebras.Basic               using ( 𝔻[_] ; 𝕌[_] )
+
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free.Term using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; module Evaluation )
 
 private variable
   α ρ : Level

@@ -190,29 +190,26 @@ open import Relation.Unary                           using  ( Pred ; _⊆_ ; _�
 import Data.List.Relation.Unary.All as All
 import Data.List.Relation.Unary.Any as Any
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain             using  ( Step ; module Step ; Chain
-                                                  ; module Chain ; fresh∉⟨σ⟩ ; iter
-                                                  ; []-iter-suc ; []-iter-sucʳ )
-open import DeansProblem.Chain.Copies      using  ( CopyChain ; copyChain→chain
-                                                  ; copy ; ≤→freelyGenerates )
-open import Lattices.Free.Complexity       using  ( complexity ; complexity-resp
-                                                  ; complexity-mono ; module Bounded
-                                                  ; pigeonhole-≈ )
-open import Lattices.Free.Generation       using  ( FreelyGenerates
-                                                  ; freelyGenerates→injective
-                                                  ; freelyGenerates-reindex
-                                                  ; freelyGenerates-resp
-                                                  ; free-generator-in-image )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟
-                                                  ; []-cong ; []-congʳ ; subst-hom
-                                                  ; restriction ; hom-induced )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Universal        using  ( FL ; ℊ-injective )
-open import Lattices.Free.Whitman          using  ( _≈ʷ_ )
+-- Imports from agda-algebras ------------------------------------------------------
 open import Setoid.Functions               using  ( IsInjective )
 open import Setoid.Subalgebras.Basic       using  ( _IsSubalgebraOf_ )
+
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; complexity
+                                  ; complexity-resp ; complexity-mono
+                                  ; module Bounded ; pigeonhole-≈ ; FreelyGenerates
+                                  ; freelyGenerates→injective ; freelyGenerates-reindex
+                                  ; freelyGenerates-resp ; free-generator-in-image
+                                  ; Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong ; _≈ʷ_
+                                  ; []-congʳ ; subst-hom ; restriction ; hom-induced
+                                  ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; FL ; ℊ-injective )
+
+-- Imports from agda-deans-problem -------------------------------------------------
+open import DeansProblem.Chain         using  ( module Chain ; module Step ; Step
+                                              ; Chain ; fresh∉⟨σ⟩ ; iter
+                                              ; []-iter-suc ; []-iter-sucʳ )
+open import DeansProblem.Chain.Copies  using  ( CopyChain ; copyChain→chain
+                                              ; copy ; ≤→freelyGenerates )
 
 private variable
   ι κ χ υ : Level

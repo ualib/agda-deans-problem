@@ -83,59 +83,36 @@ open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; _≢_ ; refl
 open import Relation.Nullary                       using  ( ¬_ )
 open import Relation.Nullary.Decidable             using  ( from-yes ; _⊎-dec_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Algorithm   using  ( module Canonicalization )
-open import Lattices.Free.Canonical.Basic       using  ( CTerm ; genᶜ ; joinᶜ
-                                                       ; meetᶜ ; CJand ; jgen
-                                                       ; jmeet ; CMand ; mgen
-                                                       ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ
-                                                       ; ⌊_⌋ᴹ ; ⋁ᴶ-upper
-                                                       ; ⋀ᴹ-greatest ; ≈ʷ-sym
-                                                       ; ≈ʷ-trans ; IsCanonical
-                                                       ; cjoin ; cmeet
-                                                       ; IsCanonicalJ ; cjmeet
-                                                       ; IsCanonicalM ; cmjoin )
-open import Lattices.Free.Canonical.Joinands    using  ( canonicalJoinands
-                                                       ; canonicalMeetands )
-open import Lattices.Free.Canonical.Uniqueness  using  ( gen≉join ; gen≉meet )
-open import DeansProblem.Chain                  using  ( Chain ; iter
-                                                       ; []-iter-sucʳ )
-open import DeansProblem.Coherent.Finite        using  ( Coherent ; Coherentω
-                                                       ; Recurs
-                                                       ; chain→coherent₃ )
-open import Lattices.Free.Complexity            using  ( complexity
-                                                       ; complexityᴶ
-                                                       ; complexityᴹ ; depth
-                                                       ; depthΣJ-upper
-                                                       ; depthΣM-upper )
-open import Lattices.Free.Duality               using  ( dual ; dual-cong )
-open import DeansProblem.Fixed                  using  ( iter-free
-                                                       ; fixed→image )
-open import DeansProblem.FixedGenerator         using  ( fixes-generator
-                                                       ; inflationary-power
-                                                       ; dualˢ ; dual-free
-                                                       ; dual-misses
-                                                       ; dual-iter )
-open import Lattices.Free.Generation            using  ( FreelyGenerates
-                                                       ; freelyGenerates→injective
-                                                       ; generator-in-image )
-open import DeansProblem.Inflationary           using  ( Inflationary
-                                                       ; fixed-joinand-inflationary
-                                                       ; fixed-meetand-inflationary
-                                                       ; meetand-gen-fixed )
-open import DeansProblem.Partition              using  ( other ; other' ; cover₃
-                                                       ; ∉others₃
-                                                       ; module Partition
-                                                       ; fix-two-generators )
-open import Lattices.Free.Substitution          using  ( Sub ; _[_] ; []-cong
-                                                       ; injective→reflects )
-open import Lattices.Free.Term                  using  ( LatTerm ; ℊ ; _∧̇_
-                                                       ; _∨̇_ )
-open import Lattices.Free.Whitman               using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl
-                                                       ; ≤ʷ-trans ; ∨≤ ; ≤∧
-                                                       ; ∧ˡ≤ ; ∧ʳ≤ ; ℊ≤ℊ
-                                                       ; ℊ≤ℊ-inv ; ℊ≤∨-inv
-                                                       ; module Decision )
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free using  ( module Canonicalization ; module Decision ; CTerm
+                                 ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; jgen ; jmeet ; CMand
+                                 ; mgen ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ ; ⋁ᴶ-upper ; cmjoin
+                                 ; ⋀ᴹ-greatest ; ≈ʷ-sym ; ≈ʷ-trans ; IsCanonical
+                                 ; cjoin ; cmeet ; IsCanonicalJ ; cjmeet ; IsCanonicalM
+                                 ; canonicalJoinands ; canonicalMeetands ; gen≉join
+                                 ; gen≉meet ; complexity ; complexityᴶ ; complexityᴹ
+                                 ; depth ; depthΣJ-upper ; depthΣM-upper ; dual
+                                 ; dual-cong ; FreelyGenerates ; Sub ; _[_] ; []-cong
+                                 ; freelyGenerates→injective ; generator-in-image
+                                 ; injective→reflects ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; _≤ʷ_
+                                 ; _≈ʷ_ ; ≤ʷ-refl ; ≤ʷ-trans ; ∨≤ ; ≤∧ ; ∧ˡ≤ ; ∧ʳ≤
+                                 ; ℊ≤ℊ ; ℊ≤ℊ-inv ; ℊ≤∨-inv )
+
+-- Imports from agda-deans-problem ----------------------------------------------
+open import DeansProblem.Chain            using  ( Chain ; iter ; []-iter-sucʳ )
+open import DeansProblem.Coherent.Finite  using  ( Coherent ; Coherentω ; Recurs
+                                                 ; chain→coherent₃ )
+open import DeansProblem.Fixed            using  ( iter-free ; fixed→image )
+open import DeansProblem.FixedGenerator   using  ( fixes-generator ; inflationary-power
+                                                 ; dualˢ ; dual-free ; dual-misses
+                                                 ; dual-iter )
+open import DeansProblem.Inflationary     using  ( Inflationary
+                                                 ; fixed-joinand-inflationary
+                                                 ; fixed-meetand-inflationary
+                                                 ; meetand-gen-fixed )
+open import DeansProblem.Partition        using  ( module Partition ; other
+                                                 ; other' ; cover₃ ; ∉others₃
+                                                 ; fix-two-generators )
 
 open Decision (_≟_ {3}) using ( _≤ʷ?_ )
 
@@ -238,7 +215,7 @@ module _
   meet-joinand n w h t eq cs b fix mh mt a∈ = recurse (lookup cs a∈)
     where
     joinandsOfC : CTerm (Fin 3) → CJand (Fin 3) × List (CJand (Fin 3))
-    joinandsOfC = Lattices.Free.Canonical.Basic.joinandsOf
+    joinandsOfC = Lattices.Free.joinandsOf
 
     -- The joinand has complexity at most n.
     small : IsCanonicalJ (jmeet mh mt) → κ ⌊ jmeet mh mt ⌋ᴶ ≤ n
@@ -309,7 +286,7 @@ module _
         (Data.List.Membership.Propositional.Properties.∈-map⁺ ⌊_⌋ᴹ a∈)
       where
       meetandsOfC : CTerm (Fin 3) → CMand (Fin 3) × List (CMand (Fin 3))
-      meetandsOfC = Lattices.Free.Canonical.Basic.meetandsOf
+      meetandsOfC = Lattices.Free.meetandsOf
 
     -- A generator meetand is z; a join meetand is fixed, and above c by
     -- induction.
@@ -390,7 +367,7 @@ module _
       (partition (Θ₁ x ∨̇ Θ₁ y))
       where
       ℊ≤∨ˡ′ : Θ₁ x ≤ʷ Θ₁ x ∨̇ Θ₁ y
-      ℊ≤∨ˡ′ = Lattices.Free.Whitman.∨̇-upperˡ
+      ℊ≤∨ˡ′ = Lattices.Free.∨̇-upperˡ
 
       below : ℊ z ≤ʷ Θ₁ x ∨̇ Θ₁ y → ⊥
       below q =

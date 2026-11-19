@@ -72,10 +72,8 @@ open import Level                                  using  ( Level )
 open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
                                                           ; trans ; subst )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Complexity  using  ( tuple-code ; tuple-code-sound )
-open import Lattices.Free.Term        using  ( LatTerm )
-open import Lattices.Free.Whitman     using  ( _≈ʷ_ )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( tuple-code ; tuple-code-sound ; LatTerm; _≈ʷ_ )
 
 private variable
   ℓ χ : Level

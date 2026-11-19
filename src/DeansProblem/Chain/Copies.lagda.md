@@ -56,34 +56,34 @@ module DeansProblem.Chain.Copies where
 open import Agda.Primitive  using () renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Empty                             using ( ⊥-elim )
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Properties                    using ( _≟_ ; any? ; all? ; ¬∀⟶∃¬ )
-open import Data.Nat.Base                          using ( ℕ ; suc )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ ; proj₂ )
-open import Function                               using ( Func ; _∘_ ; _⇔_ ; mk⇔ )
-open import Level                                  using ( Level ; _⊔_ )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl )
-open import Relation.Nullary                       using ( ¬_ ; Dec ; yes ; no )
-open import Relation.Unary                         using ( Pred ; _⊆_ ; _⊂_ ; _≐_ )
+open import Data.Empty                             using  ( ⊥-elim )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Fin.Properties                    using  ( _≟_ ; any? ; all? ; ¬∀⟶∃¬ )
+open import Data.Nat.Base                          using  ( ℕ ; suc )
+open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
+                                                          ; proj₁ ; proj₂ )
+open import Function                               using  ( Func ; _∘_ ; _⇔_ ; mk⇔ )
+open import Level                                  using  ( Level ; _⊔_ )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl )
+open import Relation.Nullary                       using  ( ¬_ ; Dec ; yes ; no )
+open import Relation.Unary                         using  ( Pred ; _⊆_ ; _⊂_ ; _≐_ )
 
 import Relation.Binary.Reasoning.Setoid as SetoidReasoning
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Chain ; module Chain ; ⟨σ⟩⊆⟨τ⟩
-                                                         ; fresh∉⟨σ⟩ )
-open import Lattices.Free.Generation               using ( FreelyGenerates ; freelyGenerates→≤
-                                                         ; injective→freelyGenerates )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; _⨟_ ; []-⨟ ; []-cong
-                                                         ; []-congʳ ; subst-hom ; restriction
-                                                         ; hom-induced )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Universal                using ( FL ; FL-setoid )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ ; module Decision )
-open import Setoid.Functions                       using ( IsInjective ; IsInRange )
-open import Setoid.Homomorphisms.Basic             using ( hom )
-open import Setoid.Subalgebras.Basic               using ( _≤_ )
+-- Imports from agda-algebras ------------------------------------------------------
+open import Setoid.Functions             using ( IsInjective ; IsInRange )
+open import Setoid.Homomorphisms.Basic   using ( hom )
+open import Setoid.Subalgebras.Basic     using ( _≤_ )
+
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; FreelyGenerates
+                                 ; freelyGenerates→≤ ; injective→freelyGenerates
+                                 ; Sub ; _[_] ; _⨟_ ; []-⨟ ; []-cong ; []-congʳ
+                                 ; subst-hom ; restriction ; hom-induced ; LatTerm
+                                 ; ℊ ; FL ; FL-setoid ; _≈ʷ_ ; module Decision )
+
+-- Imports from agda-deans-problem -------------------------------------------------
+open import DeansProblem.Chain using ( Chain ; module Chain ; ⟨σ⟩⊆⟨τ⟩ ; fresh∉⟨σ⟩ )
 
 open Func using () renaming ( to to _⟨$⟩_ )
 

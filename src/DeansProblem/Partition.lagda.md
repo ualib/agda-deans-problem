@@ -63,17 +63,12 @@ open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; _≢_ ; refl
                                                           ; sym ; subst )
 open import Relation.Nullary                       using  ( ¬_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ⋁⁺ ; ⋀⁺
-                                                  ; ⋁⁺-upper ; ⋁⁺-least
-                                                  ; ⋀⁺-lower ; ⋀⁺-greatest
-                                                  ; gen-⋁⁺-prime ; ⋀⁺-gen-below )
-open import Lattices.Free.Generation       using  ( FreelyGenerates )
-open import Lattices.Free.Substitution     using  ( Sub )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Whitman          using  ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ℊ≤ℊ
-                                                  ; ℊ≤ℊ-inv ; ≤∧ ; ≤∨ˡ ; ≤∨ʳ
-                                                  ; ∧ˡ≤ ; ∧ʳ≤ ; ≤ʷ-trans )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ⋁⁺ ; ⋀⁺ ; ⋁⁺-upper ; ⋁⁺-least
+                                 ; ⋀⁺-lower ; ⋀⁺-greatest ; gen-⋁⁺-prime
+                                 ; ⋀⁺-gen-below ; FreelyGenerates ; Sub ; LatTerm
+                                 ; ℊ ; _∧̇_ ; _∨̇_ ; _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ℊ≤ℊ ; ℊ≤ℊ-inv
+                                 ; ≤∧ ; ≤∨ˡ ; ≤∨ʳ ; ∧ˡ≤ ; ∧ʳ≤ ; ≤ʷ-trans )
 
 private variable
   χ : Level

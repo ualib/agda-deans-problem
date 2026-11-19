@@ -93,29 +93,23 @@ open import Relation.Nullary       using ( ¬_ )
 open import Relation.Unary         using ( _⊆_ ; _≐_ ; ⋃ )
 
 -- Imports from agda-algebras ---------------------------------------------------
-open import Classical.Structures.Lattice.Basic  using  ( Lattice )
-open import Setoid.Functions                    using  ( IsInjective ; IsSurjective
-                                                       ; eq ; IsInRange
-                                                       ; IsInRange→IsInImage )
-open import Setoid.Homomorphisms.Basic          using  ( hom )
-open import Setoid.Homomorphisms.Isomorphisms   using  ( _≅_ )
-open import Setoid.Subalgebras.Basic            using  ( _≤_ )
-open import Setoid.Subalgebras.Properties       using  ( ≤-trans )
+open import Classical.Structures.Lattice  using  ( Lattice )
+open import Setoid.Functions              using  ( IsInjective ; IsSurjective ; eq
+                                                 ; IsInRange ; IsInRange→IsInImage )
+open import Setoid.Homomorphisms          using  ( hom ; _≅_ )
+open import Setoid.Subalgebras            using  ( _≤_ ; ≤-trans )
 
 -- Imports from agda-lattices ---------------------------------------------------
-open import Lattices.DirectLimit           using  ( DirectLimit ; ι∞ ; ι∞-cocone
-                                                  ; ι∞-embedding ; ι∞-range-step
-                                                  ; limit-extend-embedding )
-open import Lattices.DirectLimit.Union     using  ( step ; step-commutes
-                                                  ; step-injective ; rangeUnion
-                                                  ; rangeUnion≅limit )
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import Lattices.Free.Term             using  ( LatTerm )
-open import Lattices.Free.Universal        using  ( FL )
-open import Lattices.Free.Whitman          using  ( _≈ʷ_ )
+open import Lattices.DirectLimit        using  ( DirectLimit ; ι∞ ; ι∞-cocone
+                                               ; ι∞-embedding ; ι∞-range-step
+                                               ; limit-extend-embedding )
+open import Lattices.DirectLimit.Union  using  ( step ; step-commutes ; step-injective
+                                               ; rangeUnion ; rangeUnion≅limit )
+open import Lattices.Free               using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
+                                               ; LatTerm ; FL ; _≈ʷ_ )
 
 -- Imports from agda-deans-problem ----------------------------------------------
-open import DeansProblem.Chain.Copies  using ( CopyChain ; copy ; copy-map )
+open import DeansProblem.Chain.Copies using ( CopyChain ; copy ; copy-map )
 
 open Func using ( cong ) renaming ( to to _⟨$⟩_ )
 

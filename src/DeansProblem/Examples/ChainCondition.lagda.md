@@ -111,37 +111,32 @@ open import Relation.Nullary                       using  ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using  ( from-no )
 open import Relation.Unary                         using  ( _⊆_ ; _⊂_ ; _≐_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
-                                                  ; ∨̇-cong )
-open import DeansProblem.Chain.Condition   using  ( ⟨_⟩ ; gen∈ ; gens⊆
-                                                  ; StrictlyAscending
-                                                  ; ChainCondition ; Stabilizes
-                                                  ; strict→ascending
-                                                  ; interleaved-chain ; strict-⨟
-                                                  ; interleave-all
-                                                  ; interleave-even
-                                                  ; interleave-odd
-                                                  ; copy≐→freelyGenerates )
-open import DeansProblem.Chain.Copies      using  ( copy )
-open import DeansProblem.Ladder            using  ( module Rungs )
-import DeansProblem.Ladder
-open import Lattices.Free.Complexity       using  ( pigeonhole-≈ )
-open import Lattices.Free.Countable        using  ( three-generators
-                                                  ; three-generators-free )
-open import Lattices.Free.Generation       using  ( freelyGenerates→injective )
-open import Lattices.Free.Universal        using  ( FL ; ≤ʷ→≤ ; ≤→≤ʷ )
-open import Setoid.Subalgebras.Basic       using  ( _IsSubalgebraOf_ )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-ℊ ; []-⨟
-                                                  ; []-cong ; []-congʳ ; []-mono
-                                                  ; subst-hom )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Whitman          using  ( _≤ʷ_ ; _≈ʷ_ ; ∨≤ ; ≤ʷ-refl
-                                                  ; ≤ʷ-trans ; ≤∧ ; ≤∧-inv ; ≤∨ˡ
-                                                  ; ≤∨ʳ ; ∧ˡ≤ ; ∧ʳ≤ ; ∨≤-inv
-                                                  ; ℊ≤∨-inv ; ∧≤∨-inv
-                                                  ; module Decision )
+-- Imports from agda-algebras ---------------------------------------------------
 open import Setoid.Functions               using  ( IsInjective )
+open import Setoid.Subalgebras.Basic       using  ( _IsSubalgebraOf_ )
+
+
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; ∨̇-cong ; pigeonhole-≈
+                                 ; three-generators ; three-generators-free ; FL
+                                 ; freelyGenerates→injective ; ≤ʷ→≤ ; ≤→≤ʷ ; Sub ; _[_]
+                                 ; []-ℊ ; []-⨟ ; []-cong ; []-congʳ ; []-mono ; _≈ʷ_
+                                 ; subst-hom ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; _≤ʷ_ ; ∨≤
+                                 ; ≤ʷ-refl ; ≤ʷ-trans ; ≤∧ ; ≤∧-inv ; ≤∨ˡ ; ≤∨ʳ ; ∧ˡ≤
+                                 ; ∧ʳ≤ ; ∨≤-inv ; ℊ≤∨-inv ; ∧≤∨-inv ; module Decision )
+
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.Chain.Condition  using  ( ⟨_⟩ ; gen∈ ; gens⊆ ; Stabilizes
+                                                 ; StrictlyAscending ; ChainCondition
+                                                 ; strict→ascending ; interleaved-chain
+                                                 ; strict-⨟ ; interleave-all
+                                                 ; interleave-even ; interleave-odd
+                                                 ; copy≐→freelyGenerates )
+open import DeansProblem.Chain.Copies     using  ( copy )
+open import DeansProblem.Ladder           using  ( module Rungs )
+
+import DeansProblem.Ladder
+
 
 private variable
   χ υ : Level

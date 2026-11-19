@@ -63,58 +63,48 @@ module DeansProblem.Coherent.Infinite where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using  ( Fin )
-open import Data.Fin.Properties                    using  ( _≟_ )
-open import Data.List.Base                         using  ( allFin )
+open import Data.Fin.Base                 using  ( Fin )
+open import Data.Fin.Properties           using  ( _≟_ )
+open import Data.List.Base                using  ( allFin )
 open import Data.List.Membership.Propositional.Properties
-                                                   using  ( ∈-allFin )
-open import Data.List.Relation.Unary.Any           using  ( Any )
-open import Data.Nat.Base                          using  ( ℕ ; zero ; suc
-                                                          ; _+_ ; _∸_ ; _≤_
-                                                          ; _<_ ; pred ; z≤n ; s≤s )
-open import Data.Nat.Properties                    using  ( ≤-refl ; ≤-reflexive
-                                                          ; ≤-trans ; <-trans
-                                                          ; <⇒≤ ; n≤1+n
-                                                          ; n<1+n ; m≤n+m
-                                                          ; +-comm ; +-∸-assoc
-                                                          ; m∸n+n≡m ; n∸n≡0
-                                                          ; m+n≤o⇒m≤o∸n
-                                                          ; m≤n⇒m<n∨m≡n
-                                                          ; m≤n⇒∃[o]m+o≡n )
-open import Data.Product                           using  ( Σ-syntax ; _×_
-                                                          ; _,_ ; proj₁ ; proj₂ )
-open import Data.Sum.Base                          using  ( [_,_]′ )
-open import Function                               using  ( _⇔_ ; mk⇔ )
-open import Level                                  using  ( Level ; 0ℓ )
-                                                   renaming ( suc to lsuc )
-open import Relation.Binary.Definitions            using  ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
-                                                          ; trans ; cong
-                                                          ; subst ; subst₂ )
-open import Relation.Nullary                       using  ( ¬_ )
+                                          using  ( ∈-allFin )
+open import Data.List.Relation.Unary.Any  using  ( Any )
+open import Data.Nat.Base                 using  ( ℕ ; zero ; suc ; _+_ ; _∸_ ; _≤_
+                                                 ; _<_ ; pred ; z≤n ; s≤s )
+open import Data.Nat.Properties           using  ( ≤-refl ; ≤-reflexive ; ≤-trans
+                                                 ; <-trans ; <⇒≤ ; n≤1+n ; n<1+n
+                                                 ; m≤n+m ; +-comm ; +-∸-assoc
+                                                 ; m∸n+n≡m ; n∸n≡0 ; m+n≤o⇒m≤o∸n
+                                                 ; m≤n⇒m<n∨m≡n ; m≤n⇒∃[o]m+o≡n )
+open import Data.Product                  using  ( Σ-syntax ; _×_ ; _,_ ; proj₁
+                                                 ; proj₂ )
+open import Data.Sum.Base                 using  ( [_,_]′ )
+open import Function                      using  ( _⇔_ ; mk⇔ )
+open import Level                         using  ( Level ; 0ℓ ) renaming ( suc to lsuc )
+open import Relation.Binary.Definitions   using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality
+                                          using  ( _≡_ ; refl ; sym ; trans ; cong
+                                                 ; subst ; subst₂ )
+open import Relation.Nullary              using  ( ¬_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain             using  ( Chain )
-open import DeansProblem.Chain.Copies      using  ( CopyChain ; copyChain→chain
-                                                  ; chain→copyChain )
-open import DeansProblem.Coherent          using  ( bound ; first-factor-injective
-                                                  ; transition ; gens≈transition
-                                                  ; transition-bound′ )
-open import DeansProblem.Coherent.Finite   using  ( Coherent ; Coherentω
-                                                  ; Recurs ; chain→coherent₃
-                                                  ; transition-⨟′ )
-open import DeansProblem.Pigeonhole        using  ( InfinitePigeonhole
-                                                  ; constant-along )
-open import Lattices.Free.Complexity       using  ( complexity ; module Bounded )
-open import Lattices.Free.Generation       using  ( FreelyGenerates
-                                                  ; freelyGenerates→injective
-                                                  ; injective→freelyGenerates
-                                                  ; generator-in-image )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-cong )
-open import Lattices.Free.Term             using  ( ℊ )
-open import Lattices.Free.Whitman          using  ( _≈ʷ_ )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-sym ; ≈ʷ-trans ; complexity ; module Bounded
+                                 ; FreelyGenerates ; freelyGenerates→injective
+                                 ; injective→freelyGenerates ; generator-in-image
+                                 ; Sub ; _[_] ; []-cong ; ℊ ; _≈ʷ_ )
 
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.Chain            using  ( Chain )
+open import DeansProblem.Chain.Copies     using  ( CopyChain ; copyChain→chain
+                                                 ; chain→copyChain )
+open import DeansProblem.Coherent         using  ( bound ; first-factor-injective
+                                                 ; transition ; gens≈transition
+                                                 ; transition-bound′ )
+open import DeansProblem.Coherent.Finite  using  ( Coherent ; Coherentω
+                                                 ; Recurs ; chain→coherent₃
+                                                 ; transition-⨟′ )
+open import DeansProblem.Pigeonhole       using  ( InfinitePigeonhole
+                                                 ; constant-along )
 private variable
   χ : Level
   X : Type χ

@@ -55,22 +55,18 @@ open import Relation.Binary.PropositionalEquality  using ( _≡_ )
 open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Unary                         using ( _⊆_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using  ( ≈ʷ-sym )
-open import DeansProblem.AlmostProof               using  ( InBox ; IrredundantAt
-                                                          ; StronglyIrredundant
-                                                          ; box-agree
-                                                          ; no-step-in-box )
-open import DeansProblem.Chain                     using  ( Step ; module Step
-                                                          ; Chain ; module Chain )
-open import DeansProblem.Chain.Condition           using  ( ⟨_⟩ ; gen∈ ; gens⊆
-                                                          ; StrictlyAscending
-                                                          ; strict→ascending
-                                                          ; ascends-≤ ; chain→strict )
-open import Lattices.Free.Generation               using  ( FreelyGenerates )
-open import Lattices.Free.Substitution             using  ( Sub ; _[_] )
-open import Lattices.Free.Term                     using  ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman                  using  ( _≈ʷ_ )
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-sym ; FreelyGenerates ; Sub ; _[_] ; LatTerm
+                                 ; ℊ ; _≈ʷ_ )
+
+-- Imports from agda-deans-problem ------------------------------------
+open import DeansProblem.AlmostProof      using  ( InBox ; no-step-in-box ; box-agree
+                                                 ; StronglyIrredundant ; IrredundantAt )
+open import DeansProblem.Chain            using  ( Step ; module Step ; Chain
+                                                 ; module Chain )
+open import DeansProblem.Chain.Condition  using  ( ⟨_⟩ ; gen∈ ; gens⊆ ; ascends-≤
+                                                 ; StrictlyAscending ; strict→ascending
+                                                 ; chain→strict )
 
 private variable
   χ : Level

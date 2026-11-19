@@ -83,23 +83,22 @@ open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym ;
                                                           ; cong ; subst ; subst₂ )
 open import Relation.Nullary                       using  ( ¬_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain             using ( Chain ; module Chain ; iter
-                                                 ; []-iter-+ ; []-iter-suc
-                                                 ; []-iter-sucʳ )
-open import DeansProblem.Chain.Copies      using ( CopyChain ; copyChain→chain
-                                                 ; copy-terms )
-open import DeansProblem.Coherent          using ( transition ; gens≈transition
-                                                 ; transition-repeats
-                                                 ; first-factor-injective )
-open import Lattices.Free.Generation       using ( freelyGenerates→injective
-                                                 ; generator-in-image )
-open import Lattices.Free.Substitution     using ( Sub ; _[_] ; []-ℊ ; []-⨟
-                                                 ; []-cong ; []-congʳ ; subst-hom )
-open import Lattices.Free.Term             using ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman          using ( _≈ʷ_ )
-open import Setoid.Functions               using ( IsInjective )
+-- Imports from agda-algebras ---------------------------------------------------
+open import Setoid.Functions using ( IsInjective )
+
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; generator-in-image
+                                 ; freelyGenerates→injective ; Sub ; _[_] ; []-ℊ
+                                 ; []-⨟ ; []-cong ; []-congʳ ; subst-hom ; LatTerm
+                                 ; ℊ ; _≈ʷ_ )
+
+-- Imports from agda-deans-problem ----------------------------------------------
+open import DeansProblem.Chain         using  ( Chain ; module Chain ; []-iter-+
+                                              ; []-iter-suc ; []-iter-sucʳ ; iter )
+open import DeansProblem.Chain.Copies  using  ( CopyChain ; copyChain→chain
+                                              ; copy-terms )
+open import DeansProblem.Coherent      using  ( gens≈transition ; transition-repeats
+                                              ; transition ; first-factor-injective )
 
 private variable
   χ : Level

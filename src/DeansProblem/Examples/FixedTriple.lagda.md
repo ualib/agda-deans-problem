@@ -76,20 +76,19 @@ open import Relation.Nullary                       using  ( ¬_ )
 open import Relation.Unary                         using  ( _⊂_ )
 open import Relation.Nullary.Decidable.Core        using  ( from-yes ; from-no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; FreelyGenerates
+                                 ; module Decide ; Sub ; _[_] ; []-cong ; LatTerm
+                                 ; ℊ ; _∧̇_ ; _∨̇_ ; _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans ; ∨≤-inv
+                                 ; ℊ≤∨-inv ; ≤∧-inv ; ∧≤ℊ-inv ; ∧≤∨-inv ; ℊ≤ℊ-inv
+                                 ; ∨̇-upperˡ ; module Decision )
+
+-- Imports from agda-deans-problem ------------------------------------------------
 open import DeansProblem.Chain             using  ( Step )
 open import DeansProblem.Chain.Condition   using  ( ⟨_⟩ ; step→⊂ )
 open import DeansProblem.Coherent          using  ( FixedSublattice ; lower-step )
 open import DeansProblem.Coherent.Finite   using  ( Coherent ; fixed→coherent₂ )
-open import Lattices.Free.Generation       using  ( FreelyGenerates
-                                                  ; module Decide )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-cong )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Whitman          using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans
-                                                  ; ∨≤-inv ; ℊ≤∨-inv ; ≤∧-inv
-                                                  ; ∧≤ℊ-inv ; ∧≤∨-inv ; ℊ≤ℊ-inv
-                                                  ; ∨̇-upperˡ ; module Decision )
+
 ```
 -->
 

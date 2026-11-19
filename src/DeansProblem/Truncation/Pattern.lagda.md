@@ -104,15 +104,14 @@ open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
 
 import Data.List.Relation.Unary.All as All
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( CTerm ; genᶜ ; joinᶜ ; meetᶜ
-                                                  ; CJand ; jgen ; jmeet ; CMand
-                                                  ; mgen ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ
-                                                  ; ⌊_⌋ᴹ ; ⋁ᴶ ; ⋀ᴹ )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( CTerm ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; jgen
+                                 ; jmeet ; CMand ; mgen ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ
+                                 ; ⋁ᴶ ; ⋀ᴹ ; Sub ; _[_] ; []-ℊ ; LatTerm ; ℊ ; _≤ʷ_
+                                 ; _≈ʷ_ ; ≤ʷ-refl )
+
+-- Imports from agda-deans-problem ------------------------------------------------
 open import DeansProblem.Truncation        using  ( module Truncates ; ≡→≈ʷ )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-ℊ )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman          using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-refl )
 
 private variable
   ι υ ℓ : Level

@@ -109,20 +109,13 @@ open import Setoid.Subalgebras.Basic               using ( _≤_ )
 open import Setoid.Subalgebras.Properties          using ( ≤-trans )
 
 -- Imports from agda-lattices ---------------------------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-trans )
-open import Lattices.Free.Countable        using  ( countable-embedding
-                                                  ; three-generators
-                                                  ; three-generators-free )
-open import Lattices.Free.Extrema          using  ( generators ; generators-∷ )
-open import Lattices.Free.Generation       using  ( FreelyGenerates
-                                                  ; freelyGenerates→≤
-                                                  ; freelyGenerates→injective
-                                                  ; injective→freelyGenerates )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟
-                                                  ; []-cong ; subst-hom )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Universal        using  ( FL ; FL-setoid )
-open import Lattices.Free.Whitman          using  ( _≈ʷ_ )
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-trans ; countable-embedding
+                                 ; three-generators ; three-generators-free
+                                 ; generators ; generators-∷ ; FreelyGenerates
+                                 ; freelyGenerates→≤ ; freelyGenerates→injective
+                                 ; injective→freelyGenerates ; Sub ; _[_] ; _⨟_
+                                 ; []-ℊ ; []-⨟ ; []-cong ; subst-hom ; LatTerm
+                                 ; ℊ ; _∧̇_ ; _∨̇_ ; FL ; FL-setoid ; _≈ʷ_ )
 
 -- Imports from agda-deans-problem ----------------------------------------------
 open import DeansProblem.Chain         using ( Chain ; module Chain )

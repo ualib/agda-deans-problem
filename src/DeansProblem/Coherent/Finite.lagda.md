@@ -99,25 +99,21 @@ open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; refl ; sym
 open import Relation.Nullary                       using  ( ¬_ )
 open import Relation.Unary                         using  ( _⊂_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain             using  ( Step ; Chain ; fresh∉⟨σ⟩ )
-open import DeansProblem.Chain.Condition   using  ( ⟨_⟩ ; step→⊂ )
-open import DeansProblem.Coherent          using  ( FixedSublattice ; Θ-misses
-                                                  ; ℊ-free ; first-factor-injective
-                                                  ; bound ; transition
-                                                  ; gens≈transition )
-open import DeansProblem.Coherent public   using  ( transition-bound′ )
-open import Lattices.Free.Complexity       using  ( complexity ; module Bounded
-                                                  ; pigeonhole-≈ⁿ )
-open import Lattices.Free.Generation       using  ( FreelyGenerates
-                                                  ; freelyGenerates→injective
-                                                  ; injective→freelyGenerates
-                                                  ; generator-in-image )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; []-ℊ ; []-⨟
-                                                  ; []-cong ; []-congʳ )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman          using  ( _≈ʷ_ )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; complexity
+                                 ; module Bounded ; pigeonhole-≈ⁿ ; FreelyGenerates
+                                 ; freelyGenerates→injective ; injective→freelyGenerates
+                                 ; generator-in-image ; Sub ; _[_] ; []-ℊ ; []-⨟
+                                 ; []-cong ; []-congʳ ; LatTerm ; ℊ ; _≈ʷ_ )
+
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.Chain            using  ( Step ; Chain ; fresh∉⟨σ⟩ )
+open import DeansProblem.Chain.Condition  using  ( ⟨_⟩ ; step→⊂ )
+open import DeansProblem.Coherent         using  ( FixedSublattice ; Θ-misses ; ℊ-free
+                                                 ; first-factor-injective ; bound
+                                                 ; transition ; gens≈transition )
+open import DeansProblem.Coherent public  using  ( transition-bound′ )
+
 
 private variable
   χ : Level

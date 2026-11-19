@@ -71,26 +71,18 @@ open import Setoid.Functions          using  ( IsInjective )
 open import Setoid.Subalgebras.Basic  using  ( _IsSubalgebraOf_ )
 
 -- Imports from the agda-lattices library ---------------------------------------
-open import Lattices.Free.Canonical.Basic      using  ( ≈ʷ-sym ; ≈ʷ-trans )
-open import Lattices.Free.Canonical.Joinands   using  ( canonicalJoinands )
-open import Lattices.Free.Complexity           using  ( pigeonhole-≈ )
-open import Lattices.Free.Countable            using  ( countable-injective )
-open import Lattices.Free.Generation           using  ( FreelyGenerates
-                                                      ; freelyGenerates→injective
-                                                      ; injective→freelyGenerates )
-open import Lattices.Free.Substitution         using  ( Sub ; _[_] ; _⨟_
-                                                      ; []-mono ; []-congʳ
-                                                      ; []-⨟ ; subst-hom
-                                                      ; ⨟-injective )
-open import Lattices.Free.Term                 using  ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Universal            using  ( FL )
-open import Lattices.Free.Whitman              using  ( _≤ʷ_ ; _≈ʷ_
-                                                      ; ≤ʷ-trans ; ℊ≤ℊ-inv
-                                                      ; module Decision )
-open import Lattices.Free.WhitmanPolynomials   using  ( σ )
-open import DeansProblem.Examples.FixedTriple  using  ( x ; y ; z ; θ₁ ; c ; p
-                                                      ; q ; m₃ ; Θ ; m-free
-                                                      ; θ₁-fixes ; θ₁-free )
+open import Lattices.Free using  ( module Decision ; ≈ʷ-sym ; ≈ʷ-trans
+                                 ; canonicalJoinands ; pigeonhole-≈ ; _∧̇_ ; _∨̇_
+                                 ; countable-injective ; Sub ; _[_] ; _⨟_
+                                 ; FreelyGenerates ; freelyGenerates→injective
+                                 ; injective→freelyGenerates ; []-mono ; []-congʳ
+                                 ; []-⨟ ; subst-hom ; ⨟-injective ; LatTerm ; ℊ
+                                 ; FL ; _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans ; ℊ≤ℊ-inv ; σ )
+
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.Examples.FixedTriple using  ( x ; y ; z ; θ₁ ; c ; p
+                                                     ; q ; m₃ ; Θ ; m-free
+                                                     ; θ₁-fixes ; θ₁-free )
 
 private variable
   ι : Level

@@ -67,20 +67,22 @@ open import Relation.Binary.PropositionalEquality  using ( sym ; subst )
 open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using ( from-yes ; from-no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.FixedGenerator            using ( T₁₁ ; strict-fixed-in-T₁₁ ; moves→no-fixed-triple )
-open import DeansProblem.Inflationary              using ( Inflationary )
-open import DeansProblem.Chain                     using ( Step ; iter ; iter-injective
-                                                         ; freelyGenerates-⨟ )
-open import Lattices.Free.Generation
-                                                   using ( FreelyGenerates
-                                                         ; freelyGenerates→injective
-                                                         ; generator-in-image ; module Decide )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; []-ℊ ; []-cong ; subst-hom )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ ; module Decision )
-open import Setoid.Functions                       using ( IsInjective )
+-- Imports from agda-algebras ---------------------------------------------------
+open import Setoid.Functions  using ( IsInjective )
+
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; FreelyGenerates
+                                 ; freelyGenerates→injective ; generator-in-image
+                                 ; module Decide ; Sub ; _[_] ; []-ℊ ; []-cong
+                                 ; subst-hom ; LatTerm ; ℊ ; _∧̇_ ; _∨̇_ ; _≈ʷ_
+                                 ; module Decision )
+
+-- Imports from agda-deans-problem ------------------------------------------------
+open import DeansProblem.FixedGenerator  using  ( T₁₁ ; strict-fixed-in-T₁₁
+                                                ; moves→no-fixed-triple )
+open import DeansProblem.Inflationary    using  ( Inflationary )
+open import DeansProblem.Chain           using  ( Step ; iter ; iter-injective
+                                                ; freelyGenerates-⨟ )
 ```
 -->
 

@@ -111,23 +111,20 @@ open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; sym ; trans
 open import Relation.Nullary                       using  ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using  ( Dec ; yes ; no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic  using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain             using  ( Step ; Chain )
-open import Lattices.Free.Complexity       using  ( complexity ; complexity-resp
-                                                  ; complexity-mono ; module Bounded
-                                                  ; pigeonhole-≈ⁿ ; tuple-code
-                                                  ; tuple-code-sound )
-open import Lattices.Free.Generation       using  ( FreelyGenerates
-                                                  ; freelyGenerates→injective
-                                                  ; injective→freelyGenerates
-                                                  ; generator-in-image )
-open import Lattices.Free.Substitution     using  ( Sub ; _[_] ; _⨟_ ; []-ℊ
-                                                  ; []-⨟ ; []-cong ; []-congʳ
-                                                  ; subst-hom )
-open import Lattices.Free.Term             using  ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman          using  ( _≈ʷ_ ; module Decision )
-open import Setoid.Functions               using  ( IsInjective )
+-- Imports from agda-algebras --------------------------------------------------
+open import Setoid.Functions using ( IsInjective )
+
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans ; complexity
+                                 ; complexity-resp ; complexity-mono ; module Bounded
+                                 ; pigeonhole-≈ⁿ ; tuple-code ; tuple-code-sound
+                                 ; FreelyGenerates ; freelyGenerates→injective
+                                 ; injective→freelyGenerates ; generator-in-image
+                                 ; Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong ; []-congʳ
+                                 ; subst-hom ; LatTerm ; ℊ ; _≈ʷ_ ; module Decision )
+
+-- Imports from agda-deans-problem ------------------------------------
+open import DeansProblem.Chain using  ( Step ; Chain )
 
 private variable
   ι χ υ : Level

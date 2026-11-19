@@ -87,19 +87,12 @@ open import Relation.Binary.PropositionalEquality  using ( _≡_ ; refl ; cong�
 open import Relation.Nullary                       using ( ¬_ )
 open import Relation.Nullary.Decidable.Core        using ( from-yes ; from-no )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic
-                                                   using ( ≈ʷ-sym ; ≈ʷ-trans )
-open import Lattices.Free.Generation
-                                                   using ( FreelyGenerates ; freelyGenerates-resp
-                                                         ; freelyGenerates→injective
-                                                         ; free-generator-in-image ; module Decideᵖ )
-open import Lattices.Free.Substitution
-                                                   using ( Sub ; _[_] ; _⨟_ ; []-mono ; []-cong
-                                                         ; []-congʳ )
-open import Lattices.Free.Term using ( LatTerm ; ℊ ; _∧̇_ ; _∨̇_ )
-open import Lattices.Free.Whitman                  using ( _≤ʷ_ ; _≈ʷ_ )
-open import Lattices.Free.Whitman.Polynomial       using ( module Decisionᵖ )
+-- Imports from agda-lattices ---------------------------------------------------
+open import Lattices.Free using  ( ≈ʷ-sym ; ≈ʷ-trans ; FreelyGenerates ; LatTerm
+                                 ; freelyGenerates-resp ; freelyGenerates→injective
+                                 ; free-generator-in-image ; module Decideᵖ ; Sub
+                                 ; _[_] ; _⨟_ ; []-mono ; []-cong ; []-congʳ ; ℊ
+                                 ; _∧̇_ ; _∨̇_ ; _≤ʷ_ ; _≈ʷ_ ; module Decisionᵖ )
 ```
 -->
 

@@ -100,34 +100,22 @@ import Data.List.Relation.Unary.All.Properties       as All
 import Data.List.Relation.Unary.AllPairs.Properties  as AllPairs
 import Data.List.Relation.Unary.Any.Properties       as Any
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Algorithm   using  ( module Canonicalization )
-open import Lattices.Free.Canonical.Basic       using  ( CTerm ; genᶜ ; joinᶜ
-                                                       ; meetᶜ ; CJand ; jgen
-                                                       ; jmeet ; CMand ; mgen
-                                                       ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ
-                                                       ; ⌊_⌋ᴹ ; ⋁ᴶ ; ⋀ᴹ ; ⋁⁺
-                                                       ; ⋀⁺ ; ⋁ᴶ≡⋁⁺ ; ⋀ᴹ≡⋀⁺
-                                                       ; ⋁ᴶ-upper ; ⋀ᴹ-lower
-                                                       ; ≈ʷ-refl ; ≈ʷ-sym
-                                                       ; ≈ʷ-trans ; IsCanonical
-                                                       ; cjoin ; cmeet
-                                                       ; IsCanonicalJ ; cjmeet
-                                                       ; IsCanonicalM ; cmjoin )
-open import Lattices.Free.Canonical.Joinands    using  ( joinands-refine
-                                                       ; meetands-refine )
-open import Lattices.Free.Canonical.Uniqueness  using  ( module Antichains
-                                                       ; gen≉join ; gen≉meet )
-open import Lattices.Free.Embedding             using  ( joinand-image
-                                                       ; meetand-image )
-open import Lattices.Free.Generation            using  ( generator-in-image )
-open import Lattices.Free.Substitution          using  ( Sub ; _[_] ; subst-hom
-                                                       ; injective→reflects
-                                                       ; []-mono ; []-cong
-                                                       ; ⋁⁺-[] ; ⋀⁺-[] )
-open import Lattices.Free.Term                  using  ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman               using  ( _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans )
-open import Setoid.Functions                    using  ( IsInjective )
+-- Imports from agda-algebras ------------------------------------------------------
+open import Setoid.Functions using  ( IsInjective )
+
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free using  ( module Canonicalization ; module Antichains
+                                 ; CTerm ; genᶜ ; joinᶜ ; meetᶜ ; CJand ; jgen
+                                 ; jmeet ; CMand ; mgen ; mjoin ; ⌊_⌋ ; ⌊_⌋ᴶ ; ⌊_⌋ᴹ
+                                 ; ⋁ᴶ ; ⋀ᴹ ; ⋁⁺ ; ⋀⁺ ; ⋁ᴶ≡⋁⁺ ; ⋀ᴹ≡⋀⁺ ; ⋁ᴶ-upper
+                                 ; ⋀ᴹ-lower ; ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
+                                 ; IsCanonical ; cjoin ; cmeet ; IsCanonicalJ
+                                 ; cjmeet ; IsCanonicalM ; cmjoin ; joinands-refine
+                                 ; meetands-refine ; gen≉join ; gen≉meet
+                                 ; joinand-image ; meetand-image ; generator-in-image
+                                 ; Sub ; _[_] ; subst-hom ; injective→reflects
+                                 ; []-mono ; []-cong ; ⋁⁺-[] ; ⋀⁺-[] ; LatTerm ; ℊ
+                                 ; _≤ʷ_ ; _≈ʷ_ ; ≤ʷ-trans )
 
 private variable
   ι υ ζ ℓ : Level

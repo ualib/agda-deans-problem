@@ -73,36 +73,37 @@ module DeansProblem.SelfSimilar where
 open import Agda.Primitive  using ( Setω ) renaming ( Set to Type )
 
 -- Imports from the Agda Standard Library ---------------------------------------
-open import Data.Fin.Base                          using ( Fin )
-open import Data.Fin.Properties                    using ( _≟_ )
-open import Data.List.Base                         using ( allFin )
+open import Data.Fin.Base                          using  ( Fin )
+open import Data.Fin.Properties                    using  ( _≟_ )
+open import Data.List.Base                         using  ( allFin )
 open import Data.List.Membership.Propositional.Properties
-                                                   using ( ∈-allFin )
-open import Data.Nat.Base                          using ( ℕ ; zero ; suc ; _+_ ; _≤_ ; _<_ )
-open import Data.Nat.Properties                    using ( ≤-trans ; ≤-reflexive ; +-comm
-                                                         ; m≤n⇒∃[o]m+o≡n )
-open import Data.Product                           using ( Σ-syntax ; _×_ ; _,_ ; proj₁ )
-open import Level                                  using ( Level )
-open import Relation.Binary.Definitions            using ( DecidableEquality )
-open import Relation.Binary.PropositionalEquality  using ( _≡_ ; sym ; trans ; cong ; subst )
-open import Relation.Nullary                       using ( ¬_ )
+                                                   using  ( ∈-allFin )
+open import Data.Nat.Base                          using  ( ℕ ; zero ; suc ; _+_
+                                                          ; _≤_ ; _<_ )
+open import Data.Nat.Properties                    using  ( ≤-trans ; ≤-reflexive
+                                                          ; +-comm ; m≤n⇒∃[o]m+o≡n )
+open import Data.Product                           using  ( Σ-syntax ; _×_ ; _,_
+                                                          ; proj₁ )
+open import Level                                  using  ( Level )
+open import Relation.Binary.Definitions            using  ( DecidableEquality )
+open import Relation.Binary.PropositionalEquality  using  ( _≡_ ; sym ; trans
+                                                          ; cong ; subst )
+open import Relation.Nullary                       using  ( ¬_ )
 
--- Imports from the Agda Universal Algebra Library ------------------------------
-open import Lattices.Free.Canonical.Basic          using ( ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans )
-open import DeansProblem.Chain                     using ( Step ; iter ; []-iter-suc ; []-iter-sucʳ
-                                                         ; []-iter-+ ; iter-injective )
-open import Lattices.Free.Complexity               using ( complexity ; complexity-resp
-                                                         ; complexity-mono ; module Bounded
-                                                         ; pigeonhole-≈ )
-open import Lattices.Free.Generation               using ( FreelyGenerates
-                                                         ; freelyGenerates→injective
-                                                         ; generator-in-image )
-open import Lattices.Free.Substitution             using ( Sub ; _[_] ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong
-                                                         ; []-congʳ ; subst-hom )
-open import Lattices.Free.Term                     using ( LatTerm ; ℊ )
-open import Lattices.Free.Whitman                  using ( _≈ʷ_ )
-open import Setoid.Functions                       using ( IsInjective )
+-- Imports from agda-algebras ------------------------------------------------------
+open import Setoid.Functions using ( IsInjective )
 
+-- Imports from agda-lattices ------------------------------------------------------
+open import Lattices.Free using  ( module Bounded ; ≈ʷ-refl ; ≈ʷ-sym ; ≈ʷ-trans
+                                 ; complexity ; complexity-resp ; complexity-mono
+                                 ; pigeonhole-≈ ; FreelyGenerates ; Sub ; _[_]
+                                 ; freelyGenerates→injective ; generator-in-image
+                                 ; _⨟_ ; []-ℊ ; []-⨟ ; []-cong ; []-congʳ ; subst-hom
+                                 ; LatTerm ; ℊ ; _≈ʷ_ )
+
+-- Imports from agda-deans-problem ------------------------------------
+open import DeansProblem.Chain using  ( Step ; iter ; []-iter-suc ; []-iter-sucʳ
+                                      ; []-iter-+ ; iter-injective )
 private variable
   χ : Level
 ```
